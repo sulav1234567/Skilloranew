@@ -75,7 +75,7 @@ const Footer = () => {
       {/* BOTTOM BAR */}
       <div className={styles.footerBottom}>
         <div className={styles.copyright}>
-          © 2026 Skillora. All rights reserved.
+          © 2026 Skillora. All rights reserved. Created By Sulav Khatiwada
         </div>
 
         <div className={styles.bottomLinks}>
