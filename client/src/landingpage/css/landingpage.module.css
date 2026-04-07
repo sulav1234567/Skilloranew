@@ -1,0 +1,218 @@
+.topnavbar {
+  display: flex;
+  height: 80px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  border-bottom: 1px solid rgb(219, 219, 219);
+  background-color: rgba(255, 255, 255, 0.962);
+  z-index: 999;
+  overflow: hidden;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0px 80px;
+}
+.topnavbarlogoholder {
+  display: flex;
+  padding: 5px 0px;
+  height: 100%;
+  width: fit-content;
+  align-items: center;
+}
+.topnavbarlogo {
+  height: 60px;
+  width: 60px;
+  overflow: hidden;
+}
+.topnavbarlogo img {
+  height: 100%;
+  width: 100%;
+}
+
+.topnavbarlogotext {
+  font-size: 25px;
+  font-weight: 600;
+  font-family: sans-serif;
+  color: transparent;
+  background: linear-gradient(to right, rgb(61, 0, 104), rgb(100, 0, 171));
+  background-clip: text;
+}
+.loginandsignupbtnholder {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0px;
+  height: 100%;
+  width: fit-content;
+  align-items: center;
+}
+.primarybtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  width: fit-content;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 2px solid black;
+  font-size: 14px;
+  font-weight: 500;
+  color: black;
+  cursor: pointer;
+  transition: 0.1s ease-in-out;
+}
+.primarybtn:hover {
+  background-color: black;
+  color: white;
+}
+
+.secondarybtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  width: fit-content;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(255, 255, 255);
+  background-color: black;
+  cursor: pointer;
+}
+.heroSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  height: calc(100vh + 50px);
+  max-height: calc(100vh + 50px);
+  padding: 40px 60px 90px 60px;
+  gap: 10px;
+}
+.herochild {
+  height: calc(100vh - 80px);
+  width: 100%;
+}
+.heroright{
+    position:relative;
+
+}
+
+.herorightimage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.herorightimage img {
+  height: 100%;
+  width: 100%;
+}
+
+.heroleft {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 30px;
+}
+.herochildmaintext {
+  font-size: 4rem;
+  color: transparent;
+  background-image: linear-gradient(
+    to bottom right,
+    black,
+    rgb(56, 56, 56),
+    rgb(95, 95, 95)
+  );
+  background-clip: text;
+  margin-bottom: 50px;
+}
+
+.herochilddiscriptivetext {
+  font-size: 1.2rem;
+  color: rgb(98, 98, 98);
+  font-weight: 300;
+
+  
+}
+.herobtnsholder{
+    display: flex;
+    gap: 10px;
+    margin-top: 40px;
+}
+
+.herobtnsholder .primarybtn, .herobtnsholder .secondarybtn{
+    height: 60px;
+    font-size: 16px;
+    padding: 10px 30px;
+}
+.herolefttag{
+    display: flex;
+    align-items: center;
+    height: 35px;
+    width: fit-content;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid rgb(209, 209, 209);
+    background-color: rgb(243, 243, 243);
+    margin-bottom: 50px;
+    gap: 10px;
+}
+.tagglow{
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: rgb(0, 224, 0);
+}
+.tagtext{
+    font-size: 14px;
+    font-weight: 300;
+}
+.herorighttag{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    height: 100px;
+    width: fit-content;
+    border-radius: 15px;
+    border: 1px solid rgb(221, 221, 221);
+    gap: 10px;
+    padding: 10px 20px;
+    bottom: -40px;
+    left: -40px;
+    background-color: white;
+    box-shadow:  0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+
+}
+.herotagicon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: rgb(240, 223, 255);
+
+}
+
+.herotagicon svg{
+    height: 100%;
+    width: 100%;
+    color: blueviolet;
+}
+.herorighttagprimarytext{
+    font-size: 19px;
+    margin-bottom: 2px;
+    color: black;
+    font-weight: 300;
+}
+.herorighttagsecondarytext{
+    font-size: 14px;
+    color: rgb(96, 96, 96);
+    font-weight: 400;
+
+}
