@@ -1,0 +1,68 @@
+.inputholder{
+    height: fit-content;
+    width: 100%;
+}
+
+.inputlabel{
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.input{
+    display: flex;
+    align-items: center;
+    height: 50px;
+    border: 1px solid rgb(217, 217, 217);
+    border-radius: 8px;
+    padding: 10px 15px;
+    gap: 10px;
+    background-color: rgb(244, 244, 244);
+    margin-bottom: 20px;
+}
+
+.inputicon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px ;
+    width: 22px;
+}
+.inputicon svg{
+    height: 100%;
+    width: 100%;
+    color: rgb(160, 160, 160);
+}
+
+.input input{
+    height: 100%;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+}
+
+.input input:focus{
+    outline: none;
+    border: none;
+}
+.input:focus-within{
+    border: 1.5px solid rgb(97, 0, 243);
+}
+
+.viewbtnforpassword{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px ;
+    cursor: pointer;
+    width: 22px;
+
+}
+
+.viewbtnforpassword svg{
+    height: 100%;
+    width: 100%;
+    color: rgb(99, 99, 99);
+
+}

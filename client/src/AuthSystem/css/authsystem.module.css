@@ -23,14 +23,14 @@
     width: 450px;
     border-radius:1.5rem;
     background-color: white;
-    padding: 1.8rem 1.5rem;
+    padding: 3rem 1.5rem 1.8rem 1.5rem;
     overflow: hidden;
 }
 
 .exitbtn{
     position: absolute;
     right: 1.5rem;
-    top: 1.4rem;
+    top: 1rem;
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -59,6 +59,8 @@
     height: 100%;
     width: 100%;
     overflow-y: scroll;
+    scroll-behavior: smooth;
+    
     
 }
 .logoholder{
@@ -151,6 +153,7 @@
     font-size: 14px;
     font-weight: 400;
     color: rgb(100, 100, 100);
+    margin-bottom: 30px;
 }
 
 .continuewithdivider::after{
@@ -170,4 +173,89 @@
     background-color: rgb(157, 157, 157) ;
     right: 15px;
 
+}
+
+.remembermeandforgotpasssettings{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.remembermeholder{
+    display: flex;
+    align-items: center;
+    height: fit-content;
+    width: fit-content;
+    gap: 10px;
+}
+
+.togglebtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15px;
+    width: 15px;
+    border-radius: 3px;
+    border: 1.5px solid rgb(199, 199, 199);
+    cursor: pointer;
+    padding: 2px;
+    background-color: rgb(242, 242, 242);
+}
+.togglebtn svg{
+    height: 100%;
+    width: 100%;
+    color: white;
+}
+
+.remembermetext{
+    font-size: 14px;
+    font-weight: 400;
+    color: rgb(114, 114, 114);
+}
+.forgotpassbtn{
+    font-size: 14px;
+    font-weight: 300;
+    cursor: pointer;
+}
+.forgotpassbtn:hover{
+    text-decoration: underline;
+}
+
+.loginbtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px;
+    min-height: 55px;
+    width: 100%;
+    border-radius: 10px;
+    background-color: rgb(41, 0, 224);
+    color: white;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.loginbtn:hover{
+    background-color: rgb(31, 0, 167);
+}
+
+
+.navigationlink{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 400;
+    color: rgb(123, 123, 123);
+    gap: 5px;
+    margin-bottom: 30px;
+}
+.navigationlink div{
+    cursor: pointer;
+    color: black;
 }

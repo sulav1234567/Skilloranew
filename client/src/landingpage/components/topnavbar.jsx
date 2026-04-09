@@ -6,6 +6,7 @@ import AuthSystem from "../../AuthSystem/pages/AuthSystem";
 const Topnavbar = () => {
 
   const [AuthForm,setAuthForm]=useState(false)
+   const[type,setType]=useState("signin")
   return (
     <>
      <div className={styles.topnavbar}>
@@ -17,12 +18,12 @@ const Topnavbar = () => {
             </div>
     
             <div className={styles.loginandsignupbtnholder}>
-              <div className={styles.primarybtn} onClick={()=>{setAuthForm(true)}}>Login</div>
-              <div className={styles.secondarybtn}>Get Started</div>
+              <div className={styles.primarybtn} onClick={()=>{setAuthForm(true); setType("signin")}}>Login</div>
+              <div className={styles.secondarybtn} onClick={()=>{setAuthForm(true); setType("signup")}}>Get Started</div>
             </div>
           </div>
 
-          {AuthForm && <AuthSystem onclose={()=>{setAuthForm(false)}}/>}
+          {AuthForm && <AuthSystem onclose={()=>{setAuthForm(false)}} formtype={type} setformtype={setType}/>}
           </>
   );
 };
