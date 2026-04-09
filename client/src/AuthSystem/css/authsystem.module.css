@@ -1,0 +1,173 @@
+.maincontainerBg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.548);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    z-index: 999;
+}
+
+.authformcontainer{
+   position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 450px;
+    border-radius:1.5rem;
+    background-color: white;
+    padding: 1.8rem 1.5rem;
+    overflow: hidden;
+}
+
+.exitbtn{
+    position: absolute;
+    right: 1.5rem;
+    top: 1.4rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    justify-content: center;
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    padding: 3px;
+
+
+
+
+}
+
+.exitbtn:hover{
+    background-color: rgb(227, 227, 227);
+}
+.exitbtn svg{
+    height: 100%;
+    width: 100%;
+    color: rgb(109, 109, 109);
+}
+.authfromcontentholder{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    
+}
+.logoholder{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    width: 100%;
+    margin-bottom: 0px;
+}
+.logo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    width: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.logo img{
+    height: 100%;
+    width: 100%;
+}
+.welcomeMessage{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size:1.6rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+
+}
+
+.welcomeSubMessage{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size:1rem;
+    font-weight: 300;
+    margin-bottom: 40px;
+    color: rgb(88, 88, 88);
+}
+.authpagebtn{
+    display: flex;
+    align-items: center;
+   justify-content: center;
+   height:50px ;
+   width: 100%;
+   border-radius: 10px;
+   padding: 10px;
+   gap: 15px;
+   border: 1px solid rgb(212, 212, 212);
+   transition: 0.3s ease-in-out;
+   cursor: pointer;
+   margin-bottom: 15px;
+}
+.authpagebtn:hover{
+    background-color: rgb(240, 240, 240);
+}
+.authpagebtnlogo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 30px;
+    padding: 3px;
+
+}
+
+.authpagebtnlogo svg{
+    height: 100%;
+    width: 100%;
+}
+.authpagebtntext{
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.continuewithdivider{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    width: 100%;
+   margin-top: 10px;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgb(100, 100, 100);
+}
+
+.continuewithdivider::after{
+    position: absolute;
+    content: "";
+    height: 1px;
+    width: 24%;
+    background-color: rgb(157, 157, 157) ;
+    left: 15px;
+
+}
+.continuewithdivider::before{
+    position: absolute;
+    content: "";
+    height: 1px;
+    width: 24%;
+    background-color: rgb(157, 157, 157) ;
+    right: 15px;
+
+}

@@ -8,6 +8,7 @@ import PricingSection from "../components/pricingSection";
 import Topnavbar from "../components/topnavbar";
 
 const Landingpage = () => {
+  
   return (
     <>
     <Topnavbar/>
