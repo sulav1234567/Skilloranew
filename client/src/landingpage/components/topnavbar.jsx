@@ -3,6 +3,7 @@ import logo from "../../assets/image.svg";
 import { useState } from "react";
 import AuthSystem from "../../AuthSystem/pages/AuthSystem";
 import { useUserInfo } from "../../userinfo/userinfo";
+import Usernavigation from "./usernavigation";
 
 const Topnavbar = () => {
 
@@ -18,7 +19,7 @@ const Topnavbar = () => {
               </div>
               <div className={styles.topnavbarlogotext}>SkillOra</div>
             </div>
-    {!loading && user && <div className={styles.usermessage}>Welcome! <div className={styles.username}>{user.Fullname}</div></div>}
+    {!loading && user && <Usernavigation name={user.Fullname}/>}
     {!loading && !user &&  <div className={styles.loginandsignupbtnholder}>
               <div className={styles.primarybtn} onClick={()=>{setAuthForm(true); setType("signin")}}>Login</div>
               <div className={styles.secondarybtn} onClick={()=>{setAuthForm(true); setType("signup")}}>Get Started</div>

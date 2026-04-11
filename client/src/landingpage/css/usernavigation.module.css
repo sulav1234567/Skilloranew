@@ -1,0 +1,30 @@
+.usernavigation{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: fit-content;
+    gap: 15px;
+}
+.usericon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    border: 1px solid rgb(22, 33, 255);
+    padding: 8px;
+    background-color: rgb(249, 248, 255);
+}
+
+.usericon svg{
+    height: 100%;
+    width: 100%;
+    color: rgb(171, 171, 171);
+
+}
+.username{
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
