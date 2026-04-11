@@ -86,11 +86,21 @@ export const LoginUser = async (req, res) => {
 
   let finduser = await User.findOne({ email: skilloraloginemail });
 
+ 
+
   if (!finduser) {
     return res.status(400).json({
       message: "Wrongn Credentials",
     });
   }
+
+   let compare = await bcrypt.compare(skilloraloginpassword,finduser.password)
+   if(!compare){
+     return res.status(400).json({
+      message: "Wrongn Credentials",
+    });
+
+   }
 
   try {
     let accesstoken = GenerateAccessToken(finduser);
