@@ -19,6 +19,67 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
   const [errors, setErrors] = useState({});
   const [btnstate, setBtnState] = useState(false);
   const [loading, setloading] = useState(false);
+
+
+  const LoginFunction = async () => {
+    let error = {};
+
+    Object.entries(formdata).forEach((entry) => {
+      let [key, value] = entry;
+
+      if (key != "skilloraloginemail" && (!value || value === "")) {
+        error = {
+          ...error,
+          [key]: "Do Not Leave This Field Empty",
+        };
+      }
+
+      if (
+        key === "skilloraloginemail" &&
+        !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(value)
+      ) {
+        error = {
+          ...error,
+          [key]: "Enter a valid email",
+        };
+      }
+    });
+
+    setErrors(error);
+
+    if (Object.entries(error).length === 0) {
+      setloading(true);
+      let formdatainp = new FormData();
+
+      Object.entries(formdata).forEach(([key, value]) => {
+        formdatainp.append(key, value);
+      });
+
+      try {
+        let res = await api.post("/auth/login/me", formdatainp);
+        localStorage.setItem("accesstoken",res.data.accesstoken)
+        showMessages(res?.data.message, "success");
+        closeform();
+      } catch (err) {
+        if (err) {
+          showMessages(err?.response?.data.message, "reject");
+        }
+      } finally {
+        setloading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    let isactive = true;
+    Object.entries(formdata).forEach(([key, value]) => {
+      if (!value || value === "") {
+        isactive = false;
+      }
+    });
+
+    setBtnState(isactive);
+  }, [formdata]);
   return (
     <>
       <AuthInputs
@@ -27,6 +88,7 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
         label="Email Address:"
         name="skilloraloginemail"
         errors={errors}
+        getdata={setFormData}
       >
         <LuMail />
       </AuthInputs>
@@ -37,6 +99,7 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
         label="Password:"
         name="skilloraloginpassword"
         errors={errors}
+        getdata={setFormData}
       >
         <GoLock />
       </AuthInputs>
@@ -51,7 +114,11 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
         <div className={styles.forgotpassbtn}>Forgot password?</div>
       </div>
 
-      <div className={ btnstate && !loading ? styles.loginbtnactive : styles.loginbtndeactive}>
+      <div className={ btnstate && !loading ? styles.loginbtnactive : styles.loginbtndeactive}  onClick={() => {
+          if (btnstate && !loading) {
+            LoginFunction();
+          }
+        }}>
         {!loading?" Sign in":<div className={styles.loader}></div>}
        
         </div>
@@ -290,7 +357,7 @@ const AuthSystem = ({
             Or continue with email
           </div>
 
-          {formtype == "signin" && <Loginform setformtype={setformtype} />}
+          {formtype == "signin" && <Loginform setformtype={setformtype} closeform={onclose} />}
           {formtype == "signup" && (
             <SignupForm setformtype={setformtype} closeform={onclose} />
           )}

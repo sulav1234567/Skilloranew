@@ -18,8 +18,11 @@ const UserSchema = new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    refreshtoken:{
+        type:String
     }
-})
+},{timestamps:true})
 let User = mongoose.model("User",UserSchema)
 
 export default User
