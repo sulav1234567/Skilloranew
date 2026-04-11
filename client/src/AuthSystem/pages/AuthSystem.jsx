@@ -51,7 +51,10 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
         <div className={styles.forgotpassbtn}>Forgot password?</div>
       </div>
 
-      <div className={ btnstate && !loading ? styles.loginbtnactive : styles.loginbtndeactive}>Sign in</div>
+      <div className={ btnstate && !loading ? styles.loginbtnactive : styles.loginbtndeactive}>
+        {!loading?" Sign in":<div className={styles.loader}></div>}
+       
+        </div>
 
       <div className={styles.navigationlink}>
         Don't have an account?{" "}
@@ -204,7 +207,8 @@ let SignupForm = ({ setformtype = () => {}, closeform = () => {} }) => {
           }
         }}
       >
-        Create Account
+         {!loading?"Create Account":<div className={styles.loader}></div>}
+      
       </div>
 
       <div className={styles.navigationlink}>
