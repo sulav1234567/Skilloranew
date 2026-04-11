@@ -93,11 +93,7 @@ export const LoginUser = async(req,res)=>{
         let refreshtoken= GenerateRefreshToken(finduser);
         let hashrefreshtoken = await bcrypt.hash(refreshtoken,10)
 
-        res.cookie("refreshtoken",refreshtoken,{
-            httpOnly:true,
-            secure:true,
-            sameSite:process.env.SAME_SITE
-        })
+        res.setHeader("Set-Cookie", `refreshtoken=${refreshtoken}; HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=${7 * 24 * 60 * 60}`)
 
         finduser.refreshtoken= hashrefreshtoken;
         await finduser.save()
