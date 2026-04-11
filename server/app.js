@@ -7,9 +7,8 @@ import logger from "morgan"
 
 import Cors from "cors"
 import AuthRouter from "./routes/Auth.routes.js"
-
-Dotenv.config()
 import connect from "./database/db.js"
+import InfoRouter from "./routes/userinfo.routes.js"
 var app = express();
 app.use(Cors({
    origin:[
@@ -31,6 +30,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser());
 
 app.use("/auth",AuthRouter)
+app.use("/user",InfoRouter)
 
 
 export default app

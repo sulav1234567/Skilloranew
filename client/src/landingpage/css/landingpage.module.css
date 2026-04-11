@@ -38,6 +38,20 @@
   background: linear-gradient(to right, rgb(61, 0, 104), rgb(100, 0, 171));
   background-clip: text;
 }
+.usermessage{
+  display: flex;
+  gap: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(85, 0, 255);
+}
+.usermessage .username{
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: rgb(0, 0, 0);
+
+}
 .loginandsignupbtnholder {
   display: flex;
   gap: 10px;

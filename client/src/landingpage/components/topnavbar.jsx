@@ -2,11 +2,13 @@ import styles from "../css/landingpage.module.css"
 import logo from "../../assets/image.svg";
 import { useState } from "react";
 import AuthSystem from "../../AuthSystem/pages/AuthSystem";
+import { useUserInfo } from "../../userinfo/userinfo";
 
 const Topnavbar = () => {
 
   const [AuthForm,setAuthForm]=useState(false)
    const[type,setType]=useState("signin")
+   const{user}=useUserInfo()
   return (
     <>
      <div className={styles.topnavbar}>
@@ -16,11 +18,12 @@ const Topnavbar = () => {
               </div>
               <div className={styles.topnavbarlogotext}>SkillOra</div>
             </div>
-    
-            <div className={styles.loginandsignupbtnholder}>
+    {user && <div className={styles.usermessage}>Welcome! <div className={styles.username}>{user.Fullname}</div></div>}
+    {!user &&  <div className={styles.loginandsignupbtnholder}>
               <div className={styles.primarybtn} onClick={()=>{setAuthForm(true); setType("signin")}}>Login</div>
               <div className={styles.secondarybtn} onClick={()=>{setAuthForm(true); setType("signup")}}>Get Started</div>
-            </div>
+            </div>}
+           
           </div>
 
           {AuthForm && <AuthSystem onclose={()=>{setAuthForm(false)}} formtype={type} setformtype={setType}/>}

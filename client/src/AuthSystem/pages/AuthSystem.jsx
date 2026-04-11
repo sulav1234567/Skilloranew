@@ -10,6 +10,7 @@ import { GoLock } from "react-icons/go";
 import { RxPerson } from "react-icons/rx";
 import api from "../../axios/axios";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
+import { useUserInfo } from "../../userinfo/userinfo";
 const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
   const [formdata, setFormData] = useState({
     skilloraloginemail: "",
@@ -19,6 +20,7 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
   const [errors, setErrors] = useState({});
   const [btnstate, setBtnState] = useState(false);
   const [loading, setloading] = useState(false);
+  const {getUserInfo}=useUserInfo()
 
 
   const LoginFunction = async () => {
@@ -57,8 +59,8 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
 
       try {
         let res = await api.post("/auth/login/me", formdatainp);
-        localStorage.setItem("accesstoken",res.data.accesstoken)
         showMessages(res?.data.message, "success");
+        await getUserInfo()
         closeform();
       } catch (err) {
         if (err) {
