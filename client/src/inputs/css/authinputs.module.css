@@ -4,12 +4,22 @@
 }
 
 .inputlabel{
+    display: flex;
+    gap: 5px;
     font-size: 15px;
     font-weight: 500;
-    margin-bottom: 10px;
+    
+}
+
+.error{
+    font-size: 12px;
+    font-weight: 400;
+    margin-top: 2px;
+    color: red;
 }
 
 .input{
+    margin-top: 10px;
     display: flex;
     align-items: center;
     height: 50px;

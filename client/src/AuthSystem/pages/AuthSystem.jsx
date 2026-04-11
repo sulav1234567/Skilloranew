@@ -1,6 +1,6 @@
-import styles from "../css/authsystem.module.css"
-import logo from "../../assets/image.svg"
-import { useEffect, useRef, useState } from "react"
+import styles from "../css/authsystem.module.css";
+import logo from "../../assets/image.svg";
+import { useEffect, useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { BsGithub } from "react-icons/bs";
 import { RxCross2 } from "react-icons/rx";
@@ -8,137 +8,278 @@ import AuthInputs from "../../inputs/components/AuthInputs";
 import { LuMail } from "react-icons/lu";
 import { GoLock } from "react-icons/go";
 import { RxPerson } from "react-icons/rx";
-const Loginform=({setformtype=()=>{}})=>{
-    return (
-        <>
+import api from "../../axios/axios"
+const Loginform = ({ setformtype = () => {} }) => {
+  return (
+    <>
+      <AuthInputs
+        type="email"
+        placeholder="youremail@gmail.com"
+        label="Email Address:"
+      >
+        <LuMail />
+      </AuthInputs>
 
-         <AuthInputs type="email" placeholder="youremail@gmail.com" label="Email Address:">
-                       <LuMail/>
-                    </AuthInputs>
+      <AuthInputs type="password" placeholder="••••••••••" label="Password:">
+        <GoLock />
+      </AuthInputs>
 
-                    <AuthInputs type="password" placeholder="••••••••••" label="Password:">
-                       <GoLock/>
-                    </AuthInputs>
+      <div className={styles.remembermeandforgotpasssettings}>
+        <div className={styles.remembermeholder}>
+          <div className={styles.togglebtn}></div>
 
-                    <div className={styles.remembermeandforgotpasssettings}>
-                        <div className={styles.remembermeholder}>
-                            <div className={styles.togglebtn}>
+          <div className={styles.remembermetext}>Remember me</div>
+        </div>
 
-                            </div>
+        <div className={styles.forgotpassbtn}>Forgot password?</div>
+      </div>
 
-                            <div className={styles.remembermetext}>Remember me</div>
-                        </div>
+      <div className={styles.loginbtn}>Sign in</div>
 
-                        <div className={styles.forgotpassbtn}>
-                            Forgot password?
-                        </div>
-                    </div>
+      <div className={styles.navigationlink}>
+        Don't have an account?{" "}
+        <div
+          onClick={() => {
+            setformtype("signup");
+          }}
+        >
+          Sign Up
+        </div>
+      </div>
+    </>
+  );
+};
 
-                    <div className={styles.loginbtn}>
-                        Sign in
-                    </div>
+let SignupForm = ({ setformtype = () => {},closeform=()=>{} }) => {
+  const [formdata, setFormData] = useState({
+    skillorafullname: "",
+    skilloraemail: "",
+    skillorapassword: "",
+    skilloraconfirmpassword: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [btnstate,setBtnState]=useState(false)
+  const [loading,setloading]=useState(false)
 
-                    <div className={styles.navigationlink}>
-                        Don't have an account? <div onClick={()=>{setformtype("signup")}}>Sign Up</div>
-                    </div>
-        </>
-    )
-}
+  const RegisterFunction = async () => {
+    let error = {};
 
-let SignupForm=({setformtype=()=>{}})=>{
-    return(
-        <>
-        <AuthInputs type="text" placeholder="Write Your Full Name" label="Full Name :">
-                       <RxPerson/>
-                    </AuthInputs>
+    Object.entries(formdata).forEach((entry) => {
+      let [key, value] = entry;
 
-                     <AuthInputs type="email" placeholder="youremail@gmail.com" label="Email Address :">
-                       <LuMail/>
-                    </AuthInputs>
+      if (key != "skilloraemail" && (!value || value === "")) {
+        error = {
+          ...error,
+          [key]: "Do Not Leave This Field Empty",
+        };
+      }
 
-                    <AuthInputs type="password" placeholder="••••••••••" label="Password:">
-                       <GoLock/>
-                    </AuthInputs>
+      if (
+        key === "skilloraemail" &&
+        !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(value)
+      ) {
+        error = {
+          ...error,
+          [key]: "Enter a valid email",
+        };
+      }
+    });
+    if (
+      formdata["skilloraconfirmpassword"] &&
+      formdata["skillorapassword"] &&
+      formdata["skillorapassword"] !== formdata["skilloraconfirmpassword"]
+    ) {
+      error = {
+        ...error,
+        ["skilloraconfirmpassword"]: "Passwords doesnot match",
+        ["skillorapassword"]: "Passwords doesnot match",
+      };
+    }
 
-                    <AuthInputs type="password" placeholder="••••••••••" label="Confirm Password:">
-                       <GoLock/>
-                    </AuthInputs>
-
-                    <div className={styles.loginbtn}>
-                        Create Account
-                    </div>
-
-                     <div className={styles.navigationlink}>
-                        Already have an account? <div onClick={()=>{setformtype("signin")}}>Sign In</div>
-                    </div>
-        </>
-    )
-}
+    setErrors(error);
 
 
-const AuthSystem=({onclose=()=>{},formtype="signin",setformtype=()=>{}})=>{
-   
-    const scrolldiv = useRef()
-    useEffect(()=>{
-        document.body.style.overflowY="hidden";
-        return()=>{
-            document.body.style.overflowY="scroll"
-        }
-    },[])
+    if(Object.entries(error).length === 0){
+      setloading(true)
+        let formdatainp = new FormData();
 
-    useEffect(()=>{
-        scrolldiv.current.scrollTo({
-            top:0,
-            behaviour:"smooth"
+
+        Object.entries(formdata).forEach(([key,value])=>{
+            formdatainp.append(key,value)
         })
 
-    },[formtype])
-    return (
+       try{
 
-        <div className={styles.maincontainerBg} >
-            <div className={styles.authformcontainer}>
-                <div className={styles.exitbtn} onClick={()=>{onclose()}}>
-                    <RxCross2/>
+        let res = await api.post("/auth/register/me",formdatainp)
+        console.log(res?.data?.message)
+        closeform()
+       }
+       catch(err){
 
-                </div>
-                <div className={styles.authfromcontentholder} ref={scrolldiv}>
-                    <div className={styles.logoholder}>
-                        <div className={styles.logo}>
-                            <img src={logo} alt="logo" />
-                        </div>
-                    </div>
-
-                    <div className={styles.welcomeMessage}>
-
-                        {formtype=="signin"?"Welcome Back":"Create Account"}
-                    </div>
-
-                    <div className={styles.welcomeSubMessage}>
-                       {formtype=="signin"?"Sign in to continue your learning journey":"Join thousands of learners on Skillora"} 
-                    </div>
-
-                    <div className={styles.authpagebtn}>
-                        <div className={styles.authpagebtnlogo}><FcGoogle/></div>
-                        <div className={styles.authpagebtntext}>Continue With Google</div>
-                    </div>
+        if(err){
+            console.log(err.response?.data.message)
+        }
+       }
+       finally{
+        setloading(false)
+       }
+    }
+  };
 
 
-                    <div className={styles.authpagebtn}>
-                        <div className={styles.authpagebtnlogo}><BsGithub/></div>
-                        <div className={styles.authpagebtntext}>Continue With Github</div>
-                    </div>
+useEffect(()=>{
+    let isactive = true
+Object.entries(formdata).forEach(([key,value])=>{
+    if(!value || value===""){
+        isactive=false
+    }
+})
 
-                    <div className={styles.continuewithdivider}>Or continue with email</div>
+setBtnState(isactive)
 
-                   {formtype=="signin" && <Loginform setformtype={setformtype}/>}
-                   {formtype=="signup" && <SignupForm setformtype={setformtype}/>}
+},[formdata])
+  return (
+    <>
+      <AuthInputs
+        type="text"
+        placeholder="Write Your Full Name"
+        label="Full Name :"
+        name="skillorafullname"
+        getdata={setFormData}
+        errors={errors}
+      >
+        <RxPerson />
+      </AuthInputs>
 
-                </div>
+      <AuthInputs
+        type="email"
+        placeholder="youremail@gmail.com"
+        label="Email Address :"
+        name="skilloraemail"
+        getdata={setFormData}
+        errors={errors}
+      >
+        <LuMail />
+      </AuthInputs>
 
-            </div>
+      <AuthInputs
+        type="password"
+        placeholder="••••••••••"
+        label="Password:"
+        name="skillorapassword"
+        getdata={setFormData}
+        errors={errors}
+      >
+        <GoLock />
+      </AuthInputs>
 
+      <AuthInputs
+        type="password"
+        placeholder="••••••••••"
+        label="Confirm Password:"
+        name="skilloraconfirmpassword"
+        getdata={setFormData}
+        errors={errors}
+      >
+        <GoLock />
+      </AuthInputs>
+
+      <div className={btnstate && !loading?styles.loginbtnactive:styles.loginbtndeactive} onClick={
+        ()=>{
+            if(btnstate && !loading){
+            RegisterFunction()
+            }
+
+        }
+        }>
+        Create Account
+      </div>
+
+      <div className={styles.navigationlink}>
+        Already have an account?{" "}
+        <div
+          onClick={() => {
+            setformtype("signin");
+          }}
+        >
+          Sign In
         </div>
-    )
-}
+      </div>
+    </>
+  );
+};
+
+const AuthSystem = ({
+  onclose = () => {},
+  formtype = "signin",
+  setformtype = () => {},
+}) => {
+  const scrolldiv = useRef();
+  useEffect(() => {
+    document.body.style.overflowY = "hidden";
+    return () => {
+      document.body.style.overflowY = "scroll";
+    };
+  }, []);
+
+  useEffect(() => {
+    scrolldiv.current.scrollTo({
+      top: 0,
+      behaviour: "smooth",
+    });
+  }, [formtype]);
+  return (
+    <div className={styles.maincontainerBg}>
+      <div className={styles.authformcontainer}>
+        <div
+          className={styles.exitbtn}
+          onClick={() => {
+            onclose();
+          }}
+        >
+          <RxCross2 />
+        </div>
+        <div className={styles.authfromcontentholder} ref={scrolldiv}>
+          <div className={styles.logoholder}>
+            <div className={styles.logo}>
+              <img src={logo} alt="logo" />
+            </div>
+          </div>
+
+          <div className={styles.welcomeMessage}>
+            {formtype == "signin" ? "Welcome Back" : "Create Account"}
+          </div>
+
+          <div className={styles.welcomeSubMessage}>
+            {formtype == "signin"
+              ? "Sign in to continue your learning journey"
+              : "Join thousands of learners on Skillora"}
+          </div>
+
+          <div className={styles.authpagebtn}>
+            <div className={styles.authpagebtnlogo}>
+              <FcGoogle />
+            </div>
+            <div className={styles.authpagebtntext}>Continue With Google</div>
+          </div>
+
+          <div className={styles.authpagebtn}>
+            <div className={styles.authpagebtnlogo}>
+              <BsGithub />
+            </div>
+            <div className={styles.authpagebtntext}>Continue With Github</div>
+          </div>
+
+          <div className={styles.continuewithdivider}>
+            Or continue with email
+          </div>
+
+          {formtype == "signin" && <Loginform setformtype={setformtype} />}
+          {formtype == "signup" && <SignupForm setformtype={setformtype}  closeform={onclose}/>}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default AuthSystem;

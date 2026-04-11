@@ -223,7 +223,7 @@
     text-decoration: underline;
 }
 
-.loginbtn{
+.loginbtnactive{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -237,8 +237,23 @@
     margin-bottom: 20px;
 }
 
-.loginbtn:hover{
+.loginbtnactive:hover{
     background-color: rgb(31, 0, 167);
+}
+
+.loginbtndeactive{
+     display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px;
+    min-height: 55px;
+    width: 100%;
+    border-radius: 10px;
+    background-color: rgb(171, 171, 171);
+    color: rgb(222, 222, 222);
+    cursor:not-allowed;
+    margin-bottom: 20px;
+
 }
 
 
