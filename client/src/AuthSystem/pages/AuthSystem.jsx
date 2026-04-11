@@ -8,19 +8,36 @@ import AuthInputs from "../../inputs/components/AuthInputs";
 import { LuMail } from "react-icons/lu";
 import { GoLock } from "react-icons/go";
 import { RxPerson } from "react-icons/rx";
-import api from "../../axios/axios"
-const Loginform = ({ setformtype = () => {} }) => {
+import api from "../../axios/axios";
+import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
+const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
+  const [formdata, setFormData] = useState({
+    skilloraloginemail: "",
+    skilloraloginpassword: "",
+  });
+  const { showMessages } = useGlobalMessageContext();
+  const [errors, setErrors] = useState({});
+  const [btnstate, setBtnState] = useState(false);
+  const [loading, setloading] = useState(false);
   return (
     <>
       <AuthInputs
         type="email"
         placeholder="youremail@gmail.com"
         label="Email Address:"
+        name="skilloraloginemail"
+        errors={errors}
       >
         <LuMail />
       </AuthInputs>
 
-      <AuthInputs type="password" placeholder="••••••••••" label="Password:">
+      <AuthInputs
+        type="password"
+        placeholder="••••••••••"
+        label="Password:"
+        name="skilloraloginpassword"
+        errors={errors}
+      >
         <GoLock />
       </AuthInputs>
 
@@ -34,7 +51,7 @@ const Loginform = ({ setformtype = () => {} }) => {
         <div className={styles.forgotpassbtn}>Forgot password?</div>
       </div>
 
-      <div className={styles.loginbtn}>Sign in</div>
+      <div className={ btnstate && !loading ? styles.loginbtnactive : styles.loginbtndeactive}>Sign in</div>
 
       <div className={styles.navigationlink}>
         Don't have an account?{" "}
@@ -50,16 +67,17 @@ const Loginform = ({ setformtype = () => {} }) => {
   );
 };
 
-let SignupForm = ({ setformtype = () => {},closeform=()=>{} }) => {
+let SignupForm = ({ setformtype = () => {}, closeform = () => {} }) => {
   const [formdata, setFormData] = useState({
     skillorafullname: "",
     skilloraemail: "",
     skillorapassword: "",
     skilloraconfirmpassword: "",
   });
+  const { showMessages } = useGlobalMessageContext();
   const [errors, setErrors] = useState({});
-  const [btnstate,setBtnState]=useState(false)
-  const [loading,setloading]=useState(false)
+  const [btnstate, setBtnState] = useState(false);
+  const [loading, setloading] = useState(false);
 
   const RegisterFunction = async () => {
     let error = {};
@@ -98,46 +116,38 @@ let SignupForm = ({ setformtype = () => {},closeform=()=>{} }) => {
 
     setErrors(error);
 
+    if (Object.entries(error).length === 0) {
+      setloading(true);
+      let formdatainp = new FormData();
 
-    if(Object.entries(error).length === 0){
-      setloading(true)
-        let formdatainp = new FormData();
+      Object.entries(formdata).forEach(([key, value]) => {
+        formdatainp.append(key, value);
+      });
 
-
-        Object.entries(formdata).forEach(([key,value])=>{
-            formdatainp.append(key,value)
-        })
-
-       try{
-
-        let res = await api.post("/auth/register/me",formdatainp)
-        console.log(res?.data?.message)
-        closeform()
-       }
-       catch(err){
-
-        if(err){
-            console.log(err.response?.data.message)
+      try {
+        let res = await api.post("/auth/register/me", formdatainp);
+        showMessages(res?.data.message, "success");
+        closeform();
+      } catch (err) {
+        if (err) {
+          showMessages(err?.response?.data.message, "reject");
         }
-       }
-       finally{
-        setloading(false)
-       }
+      } finally {
+        setloading(false);
+      }
     }
   };
 
+  useEffect(() => {
+    let isactive = true;
+    Object.entries(formdata).forEach(([key, value]) => {
+      if (!value || value === "") {
+        isactive = false;
+      }
+    });
 
-useEffect(()=>{
-    let isactive = true
-Object.entries(formdata).forEach(([key,value])=>{
-    if(!value || value===""){
-        isactive=false
-    }
-})
-
-setBtnState(isactive)
-
-},[formdata])
+    setBtnState(isactive);
+  }, [formdata]);
   return (
     <>
       <AuthInputs
@@ -184,14 +194,16 @@ setBtnState(isactive)
         <GoLock />
       </AuthInputs>
 
-      <div className={btnstate && !loading?styles.loginbtnactive:styles.loginbtndeactive} onClick={
-        ()=>{
-            if(btnstate && !loading){
-            RegisterFunction()
-            }
-
+      <div
+        className={
+          btnstate && !loading ? styles.loginbtnactive : styles.loginbtndeactive
         }
-        }>
+        onClick={() => {
+          if (btnstate && !loading) {
+            RegisterFunction();
+          }
+        }}
+      >
         Create Account
       </div>
 
@@ -275,7 +287,9 @@ const AuthSystem = ({
           </div>
 
           {formtype == "signin" && <Loginform setformtype={setformtype} />}
-          {formtype == "signup" && <SignupForm setformtype={setformtype}  closeform={onclose}/>}
+          {formtype == "signup" && (
+            <SignupForm setformtype={setformtype} closeform={onclose} />
+          )}
         </div>
       </div>
     </div>
