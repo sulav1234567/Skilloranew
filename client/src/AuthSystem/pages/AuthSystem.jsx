@@ -59,9 +59,12 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
 
       try {
         let res = await api.post("/auth/login/me", formdatainp);
-        showMessages(res?.data.message, "success");
-        await getUserInfo()
-        closeform();
+        if(res?.status === 200){
+          showMessages(res?.data.message, "success");
+          await getUserInfo()
+          closeform();
+
+        }
       } catch (err) {
         if (err) {
           showMessages(err?.response?.data.message, "reject");
