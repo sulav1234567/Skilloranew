@@ -13,7 +13,7 @@ import connect from "./database/db.js"
 var app = express();
 app.use(Cors({
    origin:[
-    `${process.env.FRONTEND_URL}`
+    process.env.FRONTEND_URL
    ],
    methods:["POST","GET"],
    credentials:true ,
