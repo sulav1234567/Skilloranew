@@ -6,6 +6,13 @@ import {
   VerifyRefreshToken,
 } from "../../utlits/jwt.utlits.js";
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const cookieOptions = isProduction
+  ? `HttpOnly; Secure; SameSite=${process.env.SAME_SITE}`   
+  : `HttpOnly; SameSite=${process.env.SAME_SITE}`;   
+
+
 export const SignupUser = async (req, res) => {
   try {
     const {
@@ -71,6 +78,7 @@ export const SignupUser = async (req, res) => {
 
 export const LoginUser = async (req, res) => {
   let { skilloraloginemail, skilloraloginpassword } = req.body;
+  
 
   if (!skilloraloginemail || !skilloraloginpassword) {
     return res.status(400).json({
@@ -108,8 +116,8 @@ export const LoginUser = async (req, res) => {
     let hashrefreshtoken = await bcrypt.hash(refreshtoken, 10);
 
     res.setHeader("Set-Cookie", [
-      `refreshtoken=${refreshtoken}; HttpOnly; ${process.env.HTTP_ONLY}  SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=${7 * 24 * 60 * 60}`,
-      `accesstoken=${accesstoken}; HttpOnly; ${process.env.HTTP_ONLY}  SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=${15 * 60}`,
+      `refreshtoken=${refreshtoken}; ${cookieOptions}; Path=/; Max-Age=${7 * 24 * 60 * 60}`,
+      `accesstoken=${accesstoken}; ${cookieOptions}; Path=/; Max-Age=${15 * 60}`,
     ]);
 
     finduser.refreshtoken = hashrefreshtoken;
@@ -128,10 +136,11 @@ export const LoginUser = async (req, res) => {
 
 export const RefreshToken = async (req, res) => {
   let refreshtoken = req.cookies.refreshtoken;
+  
   if (!refreshtoken) {
     res.setHeader("Set-Cookie", [
-      `refreshtoken=; HttpOnly; ${process.env.HTTP_ONLY}  SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
-      `accesstoken=; HttpOnly; ${process.env.HTTP_ONLY}  SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
+      `refreshtoken=; ${cookieOptions}; Path=/; Max-Age=0`,
+      `accesstoken=; ${cookieOptions}; Path=/; Max-Age=0`,
     ]);
 
     return res.status(401).json({
@@ -165,8 +174,8 @@ export const RefreshToken = async (req, res) => {
    user.refreshtoken=hashrefreshtoken;
    await user.save();
    res.setHeader("Set-Cookie", [
-      `refreshtoken=${refreshtokeng}; HttpOnly; ${process.env.HTTP_ONLY}  SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=${7 * 24 * 60 * 60}`,
-      `accesstoken=${accesstoken}; HttpOnly; ${process.env.HTTP_ONLY} SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=${15 * 60}`,
+      `refreshtoken=${refreshtokeng}; ${cookieOptions}; Path=/; Max-Age=${7 * 24 * 60 * 60}`,
+      `accesstoken=${accesstoken}; ${cookieOptions}; Path=/; Max-Age=${15 * 60}`,
     ]);
 
    res.status(200).json({
@@ -178,8 +187,8 @@ export const RefreshToken = async (req, res) => {
   }catch(err){
 
     res.setHeader("Set-Cookie", [
-      `refreshtoken=; HttpOnly; ${process.env.HTTP_ONLY}  SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
-      `accesstoken=; HttpOnly; ${process.env.HTTP_ONLY}  SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
+      `refreshtoken=; ${cookieOptions}; Path=/; Max-Age=0`,
+      `accesstoken=; ${cookieOptions}; Path=/; Max-Age=0`,
     ]);
 
     return res.status(401).json({
@@ -196,6 +205,7 @@ export const RefreshToken = async (req, res) => {
 export const Logout=async(req,res)=>{
   try {
     const refreshtoken = req.cookies.refreshtoken;
+    
 
     if (refreshtoken) {
       try {
@@ -212,8 +222,8 @@ export const Logout=async(req,res)=>{
     }
 
     res.setHeader("Set-Cookie", [
-      `refreshtoken=; HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
-      `accesstoken=; HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
+      `refreshtoken=; ${cookieOptions}; Path=/; Max-Age=0`,
+      `accesstoken=; ${cookieOptions}; Path=/; Max-Age=0`,
     ]);
 
     return res.status(200).json({
