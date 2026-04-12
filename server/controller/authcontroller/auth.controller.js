@@ -116,8 +116,8 @@ export const LoginUser = async (req, res) => {
     let hashrefreshtoken = await bcrypt.hash(refreshtoken, 10);
 
     res.setHeader("Set-Cookie", [
-      `refreshtoken=${refreshtoken}; ${cookieOptions}; Path=/; Max-Age=${7 * 24 * 60 * 60}`,
-      `accesstoken=${accesstoken}; ${cookieOptions}; Path=/; Max-Age=${15 * 60}`,
+      `refreshtoken=${refreshtoken}; ${cookieOptions}; Path=/`,
+      `accesstoken=${accesstoken}; ${cookieOptions}; Path=/`,
     ]);
 
     finduser.refreshtoken = hashrefreshtoken;
@@ -139,8 +139,8 @@ export const RefreshToken = async (req, res) => {
   
   if (!refreshtoken) {
     res.setHeader("Set-Cookie", [
-      `refreshtoken=; ${cookieOptions}; Path=/; Max-Age=0`,
-      `accesstoken=; ${cookieOptions}; Path=/; Max-Age=0`,
+      `refreshtoken=; ${cookieOptions}; Path=/`,
+      `accesstoken=; ${cookieOptions}; Path=/`,
     ]);
 
     return res.status(401).json({
@@ -174,8 +174,8 @@ export const RefreshToken = async (req, res) => {
    user.refreshtoken=hashrefreshtoken;
    await user.save();
    res.setHeader("Set-Cookie", [
-      `refreshtoken=${refreshtokeng}; ${cookieOptions}; Path=/; Max-Age=${7 * 24 * 60 * 60}`,
-      `accesstoken=${accesstoken}; ${cookieOptions}; Path=/; Max-Age=${15 * 60}`,
+      `refreshtoken=${refreshtokeng}; ${cookieOptions}; Path=/`,
+      `accesstoken=${accesstoken}; ${cookieOptions}; Path=/`,
     ]);
 
    res.status(200).json({
@@ -187,8 +187,8 @@ export const RefreshToken = async (req, res) => {
   }catch(err){
 
     res.setHeader("Set-Cookie", [
-      `refreshtoken=; ${cookieOptions}; Path=/; Max-Age=0`,
-      `accesstoken=; ${cookieOptions}; Path=/; Max-Age=0`,
+      `refreshtoken=; ${cookieOptions}; Path=/`,
+      `accesstoken=; ${cookieOptions}; Path=/`,
     ]);
 
     return res.status(401).json({
@@ -222,8 +222,8 @@ export const Logout=async(req,res)=>{
     }
 
     res.setHeader("Set-Cookie", [
-      `refreshtoken=; ${cookieOptions}; Path=/; Max-Age=0`,
-      `accesstoken=; ${cookieOptions}; Path=/; Max-Age=0`,
+      `refreshtoken=; ${cookieOptions}; Path=/`,
+      `accesstoken=; ${cookieOptions}; Path=/`,
     ]);
 
     return res.status(200).json({

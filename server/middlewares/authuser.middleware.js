@@ -27,7 +27,6 @@ export const AuthUser = async(req,res,next)=>{
      next();
     }
     catch(err){
-      console.log(err.name)
       if(err.name === "TokenExpiredError"){
         return res.status(401).json({
             message:"ACCESS_TOKEN_EXPIRED"

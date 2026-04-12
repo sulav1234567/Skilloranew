@@ -17,7 +17,7 @@ api.interceptors.response.use(
 
     if (
       error.response?.status === 401 &&
-      error.response?.data?.message === "ACCESS_TOKEN_EXPIRED" &&
+      (error.response?.data?.message === "ACCESS_TOKEN_EXPIRED" || error.response?.data?.message==="Unauthorized") &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
