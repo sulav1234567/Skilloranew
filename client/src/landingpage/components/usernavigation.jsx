@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { logout } from "../../logout/logout.js";
 import { useUserInfo } from "../../userinfo/userinfo.jsx";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage.jsx";
+import "../../loader.css"
 
 
 const DropDownMenu = ({name=""})=>{
@@ -24,7 +25,9 @@ const DropDownMenu = ({name=""})=>{
         if(!freezeLogoutBtn){
           logout(setFreezeLogoutBtn,getUserInfo,showMessages)
         }
-       }}> Log Out</div>
+       }}>
+        {!freezeLogoutBtn?"Log Out":<div className="loader"></div>} 
+       </div>
     </div>
   )
 }
