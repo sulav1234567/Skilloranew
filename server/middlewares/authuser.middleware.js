@@ -9,8 +9,8 @@ export const AuthUser = async(req,res,next)=>{
     let accesstoken = req.cookies.accesstoken;
   if (!accesstoken) {
     res.setHeader("Set-Cookie", [
-      `refreshtoken=; HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
-      `accesstoken=; HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
+      `refreshtoken=; HttpOnly; ${process.env.HTTP_ONLY}  SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
+      `accesstoken=; HttpOnly; ${process.env.HTTP_ONLY}  SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
     ]);
 
     return res.status(401).json({
@@ -34,8 +34,15 @@ export const AuthUser = async(req,res,next)=>{
      next();
     }
     catch(err){
-        res.status(401).json({
+      console.log(err.name)
+      if(err.name === "TokenExpiredError"){
+        return res.status(401).json({
             message:"ACCESS_TOKEN_EXPIRED"
+        })
+
+      }
+      res.status(401).json({
+            message:"unauthorized"
         })
 
     }
