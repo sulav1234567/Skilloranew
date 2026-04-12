@@ -190,3 +190,38 @@ export const RefreshToken = async (req, res) => {
 
 
 };
+
+
+export const Logout=async(req,res)=>{
+  try {
+    const refreshtoken = req.cookies.refreshtoken;
+
+    if (refreshtoken) {
+      try {
+        const decoded = VerifyRefreshToken(refreshtoken);
+        const user = await User.findById(decoded.id);
+
+        if (user) {
+          user.refreshtoken = null;
+          await user.save();
+        }
+      } catch (err) {
+        
+      }
+    }
+
+    res.setHeader("Set-Cookie", [
+      `refreshtoken=; HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
+      `accesstoken=; HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=0`,
+    ]);
+
+    return res.status(200).json({
+      message: "Logged out successfully",
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      message: "Logout failed",
+    });
+  }
+}

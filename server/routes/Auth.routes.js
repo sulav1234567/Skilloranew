@@ -4,11 +4,12 @@ const Router = express.Router()
 
 
 
-import {LoginUser, RefreshToken, SignupUser}from "../controller/authcontroller/auth.controller.js"
+import {LoginUser, Logout, RefreshToken, SignupUser}from "../controller/authcontroller/auth.controller.js"
 
 
 Router.post("/register/me",upload("all").none(),SignupUser);
 Router.post("/login/me",upload("all").none(),LoginUser)
 Router.post("/refresh/accesstoken",RefreshToken)
+Router.post("/logout/me",Logout)
 
 export default Router;

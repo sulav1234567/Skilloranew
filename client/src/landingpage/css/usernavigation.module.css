@@ -4,6 +4,8 @@
     height: 100%;
     width: fit-content;
     gap: 15px;
+    cursor: Pointer;
+    position: relative;
 }
 .usericon{
     display: flex;
@@ -23,8 +25,75 @@
     color: rgb(171, 171, 171);
 
 }
-.username{
+.dropdownicon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15px;
+    width: 15px;
+    
+}
+.dropdownicon svg{
+    height: 100%;
+    width: 100%;
+    color: rgb(127, 127, 127);
+}
+
+.dropdownmenu{
+    position: absolute;
+    height: fit-content;
+    top: 70px;
+    right: -60px;
+    width: 250px;
+   background-color: rgb(246, 245, 255);
+   border: 1px solid rgb(226, 226, 226);
+   border-radius: 20px;
+   padding: 20px 15px;
+   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+.welcomemessage{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 300;
     text-transform: capitalize;
+    margin-bottom: 25px;
+
+}
+
+.dropdownbtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px;
+    width: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    
+}
+
+.normalbtn{
+     background-color: rgb(9, 0, 189);
+      color: white;
+       margin-bottom: 10px;
+       transition: filter 0.1s ease-in-out;
+
+}
+.normalbtn:hover{
+   filter: brightness(70%);
+}
+
+.logoutbtn{
+    background-color: rgba(219, 219, 219, 0.879);
+    color: black;
+    font-weight: 500;
+     transition: filter 0.1s ease-in-out;
+}
+
+.logoutbtn:hover{
+   filter: brightness(70%);
 }

@@ -25,6 +25,7 @@ const UserContext = createContext()
             if(err?.response?.status===400){
                 setUser(null)
             }
+            throw err
 
         }
         finally{
@@ -33,33 +34,39 @@ const UserContext = createContext()
     }
     
 
-    let getUserInfo=async()=>{
-        setLoading(true)
+    let getUserInfo = async () => {
+    setLoading(true)
 
-        try{
-            let res = await api.post("/user/getmyinfo");
+    try {
+        let res = await api.post("/user/getmyinfo");
+        setUser(res?.data.user);
 
-            setUser(res?.data.user);
+    } catch (err) {
 
-        }
-        catch(err){
-
-            if(err?.response?.status===401 && err?.response?.data.message==="Unauthorized"){
-                setUser(null)
-
+        if (
+            err?.response?.status === 401 &&
+            err?.response?.data.message === "ACCESS_TOKEN_EXPIRED"
+        ) {
+            try {
+                await refreshtoken();   
+                let res = await api.post("/user/getmyinfo");
+                setUser(res?.data.user);
+            } catch (refreshErr) {
+                setUser(null);
             }
-            if(err?.response?.status===402 && err?.response?.data.message==="ACCESS_TOKEN_EXPIRED"){
-               await refreshtoken()
-
-            }
-
-            
-
-        } finally{
-            setLoading(false)
         }
 
+        else if (
+            err?.response?.status === 401 &&
+            err?.response?.data.message === "Unauthorized"
+        ) {
+            setUser(null)
+        }
+
+    } finally {
+        setLoading(false)
     }
+}
     
 useEffect(()=>{
    getUserInfo()
