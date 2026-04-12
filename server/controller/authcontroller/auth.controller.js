@@ -160,8 +160,9 @@ export const RefreshToken = async (req, res) => {
 
    const accesstoken = GenerateAccessToken(user);
    const refreshtokeng=GenerateRefreshToken(user);
+   const hashrefreshtoken = await bcrypt.hash(refreshtokeng,10)
 
-   user.refreshtoken=refreshtokeng;
+   user.refreshtoken=hashrefreshtoken;
    await user.save();
    res.setHeader("Set-Cookie", [
       `refreshtoken=${refreshtokeng}; HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Path=/; Max-Age=${7 * 24 * 60 * 60}`,
