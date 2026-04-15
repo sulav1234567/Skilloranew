@@ -5,27 +5,32 @@ import Globalmessageholder from "./Globalmessage/components/globalmessagecontain
 import { useEffect, useState } from "react"
 import NepaliNewYear2083 from "./newyearanimation/newyearanimation"
 import Organizationoutlet from "./organizationpage/pages/organizationoutlet.jsx"
+import Privacy from "./privacy/privacy.jsx"
+import Terms from "./privacy/terms.jsx"
 
 
 function App() {
-  const [newYearAnimation,setNewYearAnimation]=useState(true)
+  
 
   useEffect(()=>{
-   setTimeout(()=>{
-    setNewYearAnimation(false)
-   },10000)
+   
+let useragent = navigator.userAgent
+console.log(useragent)
+   
 
   },[])
   
 
   return (
     <>
-   {/* {newYearAnimation && <NepaliNewYear2083/>} */}
+  
       <Routes>
         <Route path="/" element={<Landingpage/>}/>
         <Route path="/organization/*" element={<Organizationoutlet/>}>
         
         </Route>
+         <Route path="/privacy" element={<Privacy/>}/>
+          <Route path="/terms" element={<Terms/>}/>
 
       </Routes>
      <Globalmessageholder/>
