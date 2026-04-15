@@ -11,6 +11,9 @@ import { RxPerson } from "react-icons/rx";
 import api from "../../axios/axios";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 import { useUserInfo } from "../../userinfo/userinfo";
+import {useNavigate} from "react-router-dom"
+
+let backendurl = import.meta.env.VITE_BASE_URL 
 const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
   const [formdata, setFormData] = useState({
     skilloraloginemail: "",
@@ -303,6 +306,7 @@ const AuthSystem = ({
   setformtype = () => {},
 }) => {
   const scrolldiv = useRef();
+  let navigate=useNavigate()
   useEffect(() => {
     document.body.style.overflowY = "hidden";
     return () => {
@@ -348,7 +352,11 @@ const AuthSystem = ({
             <div className={styles.authpagebtnlogo}>
               <FcGoogle />
             </div>
-            <div className={styles.authpagebtntext}>Continue With Google</div>
+            <div className={styles.authpagebtntext} onClick={()=>{
+              window.location.href=`${backendurl}/auth/google`
+              
+
+            }}>Continue With Google</div>
           </div>
 
           <div className={styles.authpagebtn}>

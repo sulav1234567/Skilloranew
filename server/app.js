@@ -1,5 +1,4 @@
-import Dotenv from "dotenv"
-Dotenv.config()
+import "./config/dotenv.config.js"
 import express from "express"
 import path from "path";
 import cookieParser from "cookie-parser";
@@ -9,12 +8,14 @@ import Cors from "cors"
 import AuthRouter from "./routes/Auth.routes.js"
 import connect from "./database/db.js"
 import InfoRouter from "./routes/userinfo.routes.js"
+import "./config/passport.config.js"
+
 var app = express();
 app.use(Cors({
    origin:[
     process.env.FRONTEND_URL
    ],
-   methods:["POST"],
+   methods:["POST","GET","PUT","DELETE"],
    credentials:true ,
    allowedHeaders: ["Content-Type", "Authorization"]
 }))
@@ -22,6 +23,8 @@ app.use(Cors({
 
 
 connect()
+
+
 
 
 app.use(logger('dev'));

@@ -4,6 +4,7 @@ import Landingpage from "./landingpage/pages/landingpage"
 import Globalmessageholder from "./Globalmessage/components/globalmessagecontainer"
 import { useEffect, useState } from "react"
 import NepaliNewYear2083 from "./newyearanimation/newyearanimation"
+import Organizationoutlet from "./organizationpage/pages/organizationoutlet.jsx"
 
 
 function App() {
@@ -19,9 +20,12 @@ function App() {
 
   return (
     <>
-   {newYearAnimation && <NepaliNewYear2083/>}
+   {/* {newYearAnimation && <NepaliNewYear2083/>} */}
       <Routes>
         <Route path="/" element={<Landingpage/>}/>
+        <Route path="/organization/*" element={<Organizationoutlet/>}>
+        
+        </Route>
 
       </Routes>
      <Globalmessageholder/>

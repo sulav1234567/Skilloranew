@@ -6,6 +6,7 @@ import { logout } from "../../logout/logout.js";
 import { useUserInfo } from "../../userinfo/userinfo.jsx";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage.jsx";
 import "../../loader.css"
+import { NavLink } from "react-router";
 
 
 const DropDownMenu = ({name=""})=>{
@@ -19,8 +20,9 @@ const DropDownMenu = ({name=""})=>{
       <div className={styles.welcomemessage}>
         Welcome! {name}
       </div>
-
-      <div className={`${styles.dropdownbtn} ${styles.normalbtn}`}>Go To Dashboard</div>
+        <NavLink to={"/organization"} >
+          <div className={`${styles.dropdownbtn} ${styles.normalbtn}`}>Go To Dashboard</div>
+        </NavLink>
        <div className={`${styles.dropdownbtn} ${styles.logoutbtn}`} onClick={()=>{
         if(!freezeLogoutBtn){
           logout(setFreezeLogoutBtn,getUserInfo,showMessages)

@@ -17,11 +17,13 @@ const UserSchema = new mongoose.Schema({
     },
     password:{
         type:String,
-        required:true
+        required:false
     },
     refreshtoken:{
         type:String
-    }
+    },
+    googleId: String,
+    avatar: String
 },{timestamps:true})
 let User = mongoose.model("User",UserSchema)
 
