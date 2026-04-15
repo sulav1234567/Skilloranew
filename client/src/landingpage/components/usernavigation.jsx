@@ -34,12 +34,12 @@ const DropDownMenu = ({name=""})=>{
   )
 }
 
-const Usernavigation = ({ name = "" }) => {
+const Usernavigation = ({ name = "",image="" }) => {
   const[drop,setDrop]=useState(false)
   return (
     <div className={styles.usernavigation} onClick={(e)=>{ e.stopPropagation();setDrop(!drop)}}>
       <div className={styles.usericon}>
-        <GoPersonFill />
+        {image && image!=""?<img src={image} alt="" />:<GoPersonFill /> }
       </div>
       <div className={styles.dropdownicon}>
         <FaChevronDown />

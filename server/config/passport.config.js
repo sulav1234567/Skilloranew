@@ -15,8 +15,12 @@ passport.use(
 
         let user = await User.findOne({ email });
 
+        if(user && !user.avatar){
+            user.avatar=profile.photos[0].value
+        }
+
         if (!user) {
-          user = await User.create({
+          user = new User({
             Fullname: profile.displayName,
             email,
             password:null,
@@ -25,6 +29,7 @@ passport.use(
           });
         }
 
+        await user.save()
         return done(null, user);
       } catch (err) {
         return done(err, null);

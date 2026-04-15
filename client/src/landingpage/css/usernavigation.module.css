@@ -14,15 +14,22 @@
     height: 40px;
     width: 40px;
     border-radius: 50%;
-    border: 1px solid rgb(22, 33, 255);
-    padding: 8px;
+    border: 1px solid rgb(252, 253, 255);
+    padding: 0px;
     background-color: rgb(249, 248, 255);
+    overflow: hidden;
 }
 
 .usericon svg{
+    height: 80%;
+    width: 80%;
+    color: rgb(171, 171, 171);
+
+}
+.usericon img{
     height: 100%;
     width: 100%;
-    color: rgb(171, 171, 171);
+    
 
 }
 .dropdownicon{

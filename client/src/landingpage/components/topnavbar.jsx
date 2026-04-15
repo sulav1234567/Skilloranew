@@ -19,7 +19,7 @@ const Topnavbar = () => {
               </div>
               <div className={styles.topnavbarlogotext}>SkillOra</div>
             </div>
-             {!loading && user && <Usernavigation name={user.Fullname}/>}
+             {!loading && user && <Usernavigation name={user.Fullname} image={user.avatar}/>}
                {!loading && !user &&  <div className={styles.loginandsignupbtnholder}>
               <div className={styles.primarybtn} onClick={()=>{setAuthForm(true); setType("signin")}}>Login</div>
               <div className={styles.secondarybtn} onClick={()=>{setAuthForm(true); setType("signup")}}>Get Started</div>
