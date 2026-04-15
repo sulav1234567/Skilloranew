@@ -46,7 +46,10 @@ const Leftnavbar = ({ orgname = "", ispowered = true,children }) => {
         {user && (
           <>
             <div className={styles.userprofilepicture}>
-             { NameInitials(user.Fullname)}
+
+
+              {user.avatar?<img src={user.avatar} alt="" />:NameInitials(user.Fullname)}
+             
             </div>
             <div className={styles.userinfoholder}>
               <div className={styles.username}>{user.Fullname}</div>

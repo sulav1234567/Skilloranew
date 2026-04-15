@@ -13,11 +13,8 @@ passport.use(
          try {
         const email = profile.emails[0].value;
 
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email:email });
 
-        if(user && !user.avatar){
-            user.avatar=profile.photos[0].value
-        }
 
         if (!user) {
           user = new User({
@@ -26,10 +23,28 @@ passport.use(
             password:null,
             googleId: profile.id,
             avatar: profile.photos[0].value,
+            authprovider:{
+                google:true,
+                local:false
+            }
           });
+          await user.save()
+          return done(null, user);
         }
 
-        await user.save()
+        if (user.authprovider === "local" && !user.googleId) {
+          user.googleId = profile.id;
+          user.authprovider = {
+            google:true,
+            local:true
+          };
+          if (!user.avatar) {
+            user.avatar = profile.photos?.[0]?.value;
+          }
+
+          await user.save();
+          return done(null, user);
+        }
         return done(null, user);
       } catch (err) {
         return done(err, null);

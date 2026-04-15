@@ -107,11 +107,15 @@
     min-width: 40px;
     border-radius: 50%;
     background-color: blue;
-    padding: 5px;
     color: white;
     font-size: 14px;
     font-weight: 400;
     margin-right: 5px;
+    overflow: hidden;
+}
+.userprofilepicture img{
+    height: 100%;
+    width: 100%;
 }
 .username{
     font-size: 16px;

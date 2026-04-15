@@ -15,15 +15,28 @@ const UserSchema = new mongoose.Schema({
         match:[/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/,
       'Please enter a valid email address']
     },
-    password:{
-        type:String,
-        required:false
-    },
+    
     refreshtoken:{
         type:String
     },
-    googleId: String,
-    avatar: String
+    googleId: {type:String},
+    password:{
+        type:String,
+        required:function () {
+            return !this.googleId
+        }
+    },
+    avatar: {type:String},
+    authprovider:{
+      local:{
+        type:Boolean,
+        default:false
+      },
+      google:{
+        type:Boolean,
+        default:false
+      }
+    }
 },{timestamps:true})
 let User = mongoose.model("User",UserSchema)
 

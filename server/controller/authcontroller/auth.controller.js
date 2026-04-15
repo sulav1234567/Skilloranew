@@ -47,11 +47,7 @@ export const SignupUser = async (req, res) => {
     }
 
     let finduser = await User.findOne({ email: skilloraemail });
-    if (finduser) {
-      return res.status(400).json({
-        message: "Wrong Credentials",
-      });
-    }
+  
     if (skillorapassword != skilloraconfirmpassword) {
       return res.status(400).json({
         message: "Passwords Doesnot Match",
@@ -60,16 +56,37 @@ export const SignupUser = async (req, res) => {
 
     const hashedpassword = await bcrypt.hash(skillorapassword, 10);
 
-    const createUser = new User({
-      Fullname: skillorafullname,
-      email: skilloraemail,
-      password: hashedpassword,
-    });
-
-    await createUser.save();
+    if(!finduser){
+      const createUser = new User({
+        Fullname: skillorafullname,
+        email: skilloraemail,
+        password: hashedpassword,
+        authprovider:{
+          local:true,
+          google:false
+        }
+      });
+        await createUser.save()
     return res.status(200).json({
       message: "You Are Successfully registered to this system",
     });
+    }
+
+    if(finduser && finduser.authprovider?.google){
+      finduser.password = hashedpassword;
+      finduser.authprovider.local = true;
+      await finduser.save()
+      return res.status(200).json({
+        message: "Local account linked to Google account",
+      });
+    }
+
+    return res.status(400).json({
+        message: "Wrong Credentials",
+      });
+
+
+   
   } catch (err) {
     return res.status(err.status || 500).json({
       message: err.message || "Internal Server Error",
@@ -101,6 +118,13 @@ export const LoginUser = async (req, res) => {
     return res.status(400).json({
       message: "Wrongn Credentials",
     });
+  }
+
+  if(!finduser.authprovider.local){
+    return res.status(400).json({
+      message:"wrong credentials"
+    })
+
   }
 
    let compare = await bcrypt.compare(skilloraloginpassword,finduser.password)
