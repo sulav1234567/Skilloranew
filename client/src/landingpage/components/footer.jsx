@@ -1,4 +1,5 @@
 
+import { useNavigate } from "react-router";
 import styles from "../css/footer.module.css";
 import {
   FaFacebookF,
@@ -9,6 +10,7 @@ import {
 } from "react-icons/fa";
 
 const Footer = () => {
+  let navigate=useNavigate()
   return (
     <div className={styles.footerContainer}>
       <div className={styles.footerContent}>
@@ -62,8 +64,13 @@ const Footer = () => {
 
           <div className={styles.linkColumn}>
             <div className={styles.columnTitle}>Legal</div>
-            <div className={styles.link}>Privacy Policy</div>
-            <div className={styles.link}>Terms of Service</div>
+            <div className={styles.link} onClick={()=>{
+              navigate("/privacy")
+
+            }}>Privacy Policy</div>
+            <div className={styles.link} onClick={()=>{
+              navigate("/terms")
+            }}>Terms of Service</div>
             <div className={styles.link}>Cookie Policy</div>
             <div className={styles.link}>GDPR</div>
             <div className={styles.link}>Accessibility</div>
