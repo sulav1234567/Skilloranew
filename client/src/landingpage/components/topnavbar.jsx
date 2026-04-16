@@ -4,6 +4,7 @@ import { useState } from "react";
 import AuthSystem from "../../AuthSystem/pages/AuthSystem";
 import { useUserInfo } from "../../userinfo/userinfo";
 import Usernavigation from "./usernavigation";
+import SkeletonLoader from "../../loader/loaders";
 
 const Topnavbar = () => {
 
@@ -19,8 +20,11 @@ const Topnavbar = () => {
               </div>
               <div className={styles.topnavbarlogotext}>SkillOra</div>
             </div>
-
-            
+              
+            {loading && <div className={styles.loginandsignupbtnholder}>
+              <SkeletonLoader style={{height:"45px", width:"100px", minHeight:"45px", overflow:"hidden",borderRadius:"8px"}}/>
+               <SkeletonLoader style={{height:"45px", width:"100px", minHeight:"45px", overflow:"hidden",borderRadius:"8px"}}/>
+            </div>}
              {!loading && user && <Usernavigation name={user.Fullname} image={user.avatar}/>}
                {!loading && !user &&  <div className={styles.loginandsignupbtnholder}>
               <div className={styles.primarybtn} onClick={()=>{setAuthForm(true); setType("signin")}}>Login</div>
