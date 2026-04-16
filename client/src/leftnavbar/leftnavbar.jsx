@@ -2,6 +2,7 @@ import styles from "./leftnavbar.module.css";
 import logo from "../assets/image.svg";
 import { NavLink } from "react-router";
 import { useUserInfo } from "../userinfo/userinfo";
+import SkeletonLoader from "../loader/loaders";
 
 let NameInitials = (name) => {
   let namearray = name.split(" ");
@@ -30,7 +31,7 @@ export const NavbarLink = ({ text = "", icon = {}, path = "",end=false }) => {
 };
 
 const Leftnavbar = ({ orgname = "", ispowered = true,children }) => {
-  let { user } = useUserInfo();
+  let { user,loading } = useUserInfo();
   return (
     <div className={styles.leftnavbar}>
       <div className={styles.LNtopsection}>
@@ -43,6 +44,7 @@ const Leftnavbar = ({ orgname = "", ispowered = true,children }) => {
         {children}
       </div>
       <div className={styles.LNbottomsection}>
+         {!user || loading && <SkeletonLoader/>}
         {user && (
           <>
             <div className={styles.userprofilepicture}>
