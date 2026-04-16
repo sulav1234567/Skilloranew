@@ -32,6 +32,8 @@ export const NavbarLink = ({ text = "", icon = {}, path = "",end=false }) => {
 
 const Leftnavbar = ({ orgname = "", ispowered = true,children }) => {
   let { user,loading } = useUserInfo();
+
+  
   return (
     <div className={styles.leftnavbar}>
       <div className={styles.LNtopsection}>
@@ -44,7 +46,22 @@ const Leftnavbar = ({ orgname = "", ispowered = true,children }) => {
         {children}
       </div>
       <div className={styles.LNbottomsection}>
-         {!user || loading && <SkeletonLoader/>}
+
+
+        {!user && (
+          <>
+          <div className={styles.userprofilepicture}>
+            <SkeletonLoader style={{width:"100%",height:"100%"}}/>
+          </div>
+
+          <div className={styles.userinfoholder}>
+             <SkeletonLoader style={{width:"150px", height:"10px", borderRadius:"5px", marginBottom:"5px"}}/>
+              <SkeletonLoader style={{width:"100px", height:"10px", borderRadius:"4px"}}/>
+             
+            </div>
+          </>
+        )}
+       
         {user && (
           <>
             <div className={styles.userprofilepicture}>
