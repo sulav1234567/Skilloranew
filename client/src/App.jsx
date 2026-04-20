@@ -6,6 +6,7 @@ import NepaliNewYear2083 from "./newyearanimation/newyearanimation";
 import Organizationoutlet from "./organizationpage/pages/organizationoutlet.jsx";
 import Privacy from "./privacy/privacy.jsx";
 import Terms from "./privacy/terms.jsx";
+import Department from "./departmentmodule/pages/department.jsx";
 
 function App() {
   useEffect(() => {
@@ -17,7 +18,10 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Landingpage />} />
-        <Route path="/organization/*" element={<Organizationoutlet />}></Route>
+        <Route path="/organization/*" element={<Organizationoutlet />}>
+        <Route path="department" element={<Department/>}/>
+
+        </Route>
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
       </Routes>

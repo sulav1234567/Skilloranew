@@ -11,16 +11,15 @@ const DepartmentSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
-    faculties:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Faculty"
-    }],
-    students:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User"
-    }],
-    
+    description:{
+        type:String,
+        default:"N/A"
+    },
+    established:{
+        type:Date
+    },
+
 },{timestamps:true})
 let Department = mongoose.model("Department",DepartmentSchema)
 
-export default User
+export default Department
