@@ -26,10 +26,16 @@ passport.use(
             authprovider:{
                 google:true,
                 local:false
-            }
+            },
+            role:"user"
           });
           await user.save()
           return done(null, user);
+        }
+        if(user && !user.avatar){
+          user.avatar = profile.photos?.[0]?.value;
+          await user.save()
+
         }
 
         if (user.authprovider === "local" && !user.googleId) {
@@ -38,7 +44,7 @@ passport.use(
             google:true,
             local:true
           };
-          if (!user.avatar) {
+          if (!user.avatar || user.avatar =="") {
             user.avatar = profile.photos?.[0]?.value;
           }
 

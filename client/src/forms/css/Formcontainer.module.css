@@ -1,0 +1,570 @@
+.Formcontainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100000;
+    background-color: rgba(0, 0, 0, 0.41);
+    padding: 20px;
+}
+.formcontentsholder{
+    overflow: hidden;
+    min-width: 400px;
+    background-color: white;
+    border-radius: 20px;
+
+}
+.formheader{
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+    height: 80px;
+    width: 100%;
+    border-bottom: 1px solid rgb(230, 230, 230);
+    padding: 10px 30px ;
+    background-color: white;
+
+}
+.formheaderheading{
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: capitalize;
+    margin-bottom: 5px;
+}
+.formheadingsubtitle{
+    font-size: 15px;
+    font-weight: 400;
+    text-transform: capitalize;
+    color: rgb(82, 82, 82);
+}
+.formexitbtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: rgb(238, 238, 238);
+    cursor: pointer;
+    margin-left: 15px;
+
+}
+.formexitbtn svg{
+    height: 100%;
+    width: 100%;
+}
+.formcontentholder{
+    display: flex;
+    height: calc(100% - 160px);
+    flex-direction: column;
+    width: 100%;
+    background-color: white;
+    padding: 30px 30px ;
+    overflow-y: scroll;
+
+}
+.formfooterorbtnholder{
+    display: flex;
+    align-items: center;
+    justify-content:flex-end;
+    height: 80px;
+    width: 100%;
+    border-top: 1px solid rgb(230, 230, 230);
+    padding: 10px 30px ;
+    background-color: white;
+
+}
+.formfooterorbtnholder{
+    gap: 10px;
+}
+.formbuttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    width: fit-content;
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 120px;
+    text-transform: capitalize;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s ease;
+
+}
+.formsubmitbtnactive{
+     background-color: rgb(0, 0, 209);
+
+}
+.formsubmitbtndeactive{
+    background-color: rgb(191, 191, 191);
+
+}
+.loadercontainer{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center ;
+    padding: 5px;
+
+}
+.formsubmitbtn{
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: center;
+    height: 45px;
+    width: fit-content;
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 120px;
+    text-transform: capitalize;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    color: white;
+   
+    
+}
+
+.formsubmitbtnactive:hover{
+    background-color: rgb(0, 0, 255);
+
+}
+
+.formrow{
+    height: fit-content;
+    width: 100%;
+    margin-bottom: 30px;
+}
+.formrowheading{
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: capitalize;
+    margin-bottom: 15px;
+    color: rgb(90, 90, 90);
+
+}
+.formrowinputsholder{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: clamp(10px, 2vw, 20px);
+
+}
+.formrowinputsholder>*{
+    min-width: 0;
+}
+.forminputs{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px;
+    border-radius: 10px;
+    border: 1px solid rgb(219, 219, 219);
+    padding: 10px 15px;
+}
+.forminputsholderwithlabel:focus-within
+.forminputs{
+    border: 1px solid rgb(0, 0, 209);
+}
+.forminputsholderwithlabel:focus-within .forminputlabel{
+color:  rgb(0, 0, 209);
+}
+.forminputs input,.forminputs select{
+    border: none;
+    height: 100%;
+    width: 100%;
+    font-size: 17px;
+    padding: 0px;
+}
+
+.forminputs input:focus,select:focus{
+    border: none;
+    outline: none;
+}
+.forminputlabel{
+    font-size: 15px;
+    font-weight: 600;
+    margin-left: 6px;
+    margin-bottom: 5px;
+    color: rgb(0, 0, 0);
+}
+
+.forminputrequiredtag{
+    height: 8px;
+    width: 8px;
+    margin-left: 5px;
+    color: red;
+
+}
+
+.formfileinputholder{
+    height: fit-content;
+    width: 100%;
+}
+.formerror{
+    font-size: 12px;
+    color: red;
+    font-weight: 500;
+    text-transform: capitalize;
+    margin-bottom: 2px;
+    margin-left: 7px;
+}
+.formfileinputheading{
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 3px;
+    text-transform: capitalize;
+    color: black;
+}
+.formfileinputheadingdis{
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: capitalize;
+
+}
+.formfileinputlabel{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    height: 200px;
+    width: 100%;
+    border-radius: 20px;
+    border: 2px dashed blue;
+    padding: 20px;
+    background-color: rgb(244, 244, 255);
+    cursor: pointer; 
+    transition: background-color 0.3s ease-in-out;
+    color: blue;   
+}
+.formfileinputlabel:hover{
+    background-color: rgb(227, 227, 255);
+
+}
+.formfileinputlabelsvg{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    margin-bottom: 15px;
+    padding: 5px;
+
+}
+.formfileinputlabelsvg svg{
+    height: 100%;
+    width: 100%;
+}
+.formfileinputlabeltext{
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 5px;
+}
+
+.formfileinputlabeltextsmall{
+    font-size: 12px;
+    font-weight: 600;
+    color: rgb(98, 98, 255); 
+
+}
+.formimagepreview{
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    height: 400px;
+    min-height: 400px;
+    width: 100%;
+    min-width: 100%;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 2px dashed blue;
+    padding: 10px;
+}
+.formimagepreview img{
+    height: 100%;
+    width: 100%;
+}
+.formimagepreviewexit{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    padding: 8px;
+    border-radius: 50%;
+    background-color: rgb(244, 244, 244);
+    position: absolute;
+    top: 20px;
+    right:  20px;
+}
+
+
+.fileChip {
+  width: 100%;
+  background: #f4f7fb;
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon {
+  font-size: 22px;
+  color: #7c3aed;
+}
+
+.fileName {
+  font-size: 16px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.close {
+  font-size: 22px;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.close:hover {
+  color: #111827;
+}
+
+
+
+
+.previewContainer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #00000077;
+  z-index: 9999;
+  padding: 50px 100px;
+}
+
+/* iframe full size */
+.previewIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* iframe wrapper fallback */
+.iframeWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+/* Close button */
+.closeBtn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
+.unsupported {
+  width: 100%;
+  height: 100%;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.unsupported a {
+  color: #60a5fa;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+
+/* Toggle Switch */
+
+.toggle {
+  appearance: none;
+  width: 46px;
+  height: 26px;
+  background: #d1d5db;
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+}
+
+.toggle::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: 0.25s;
+}
+
+.toggle:checked {
+  background: #020617;
+}
+
+.toggle:checked::before {
+  left: 23px;
+}
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+}
+
+.toggleTitle {
+  font-weight: 600;
+}
+
+.toggleDesc {
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+
+/*loaders*/
+/* HTML: <div class="loader"></div> */
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 25px;
+  padding: 3px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #696969;
+  --_m: 
+    conic-gradient(#0000 10%,#000),
+    linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+          mask: var(--_m);
+  -webkit-mask-composite: source-out;
+          mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {to{transform: rotate(1turn)}}
+
+/*confirmmessage*/
+.confirmmessagemainholder{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000000;
+    background-color: rgba(0, 0, 0, 0.34);
+    padding: 10px;
+
+}
+.confirmmessage{
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    min-height: 250px;
+    width: 500px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(213, 213, 213);
+}
+.confirmmessagetext{
+    height: fit-content;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 50px;
+    text-align: center;
+    line-height: 1.5;
+}
+.confirmmessagebtnholder{
+    display: flex;
+    align-items: center;
+    height: fit-content;
+    width: 100%;
+    gap: 10px;
+}
+.confirmmessagebtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+   transition: background-color 0.3s ease-in-out;
+    text-transform: capitalize;
+    border-radius: 8px;
+    flex: 1;
+}
+.confirmmessagecancelbtn{
+    background-color: rgb(236, 236, 236);
+    color: rgb(79, 79, 79);
+
+}
+.confirmmessagecancelbtn:hover{
+    background-color: rgb(206, 206, 206);
+    color: black;
+}
+.confirmmessageconfirmbtnloading{
+    background-color: rgb(177, 177, 177);
+
+}
+
+.confirmmessageconfirmbtn{
+    background-color: rgb(0, 0, 255);
+    color: rgb(255, 255, 255);
+
+}
+
+.confirmmessageconfirmbtn:hover{
+    background-color: rgb(0, 0, 197);
+
+}

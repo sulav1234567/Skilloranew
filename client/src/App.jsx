@@ -3,10 +3,11 @@ import Landingpage from "./landingpage/pages/landingpage";
 import Globalmessageholder from "./Globalmessage/components/globalmessagecontainer";
 import { useEffect, useState } from "react";
 import NepaliNewYear2083 from "./newyearanimation/newyearanimation";
-import Organizationoutlet from "./organizationpage/pages/organizationoutlet.jsx";
+
 import Privacy from "./privacy/privacy.jsx";
 import Terms from "./privacy/terms.jsx";
-import Department from "./departmentmodule/pages/department.jsx";
+import Adminpanneloutlet from "./Adminpannel/pages/adminpanneloutlet.jsx";
+
 
 function App() {
   useEffect(() => {
@@ -18,8 +19,8 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Landingpage />} />
-        <Route path="/organization/*" element={<Organizationoutlet />}>
-        <Route path="department" element={<Department/>}/>
+        <Route path="/admin/*" element={<Adminpanneloutlet/>}>
+       
 
         </Route>
         <Route path="/privacy" element={<Privacy />} />

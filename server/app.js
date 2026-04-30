@@ -7,12 +7,9 @@ import logger from "morgan";
 import Cors from "cors";
 import AuthRouter from "./routes/Auth.routes.js";
 import connect from "./database/db.js";
-import InfoRouter from "./routes/userinfo.routes.js";
+import UserInfoRouter from "./routes/userinfo.routes.js";
 import "./config/passport.config.js";
-import DepartmentRouter from "./routes/department.routes.js";
-import CourseRouter from "./routes/course.routes.js"
-import SemesterRouter from "./routes/Semester.routes.js"
-import ClassRouter from "./routes/class.routes.js"
+
 
 
 var app = express();
@@ -33,10 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/auth", AuthRouter);
-app.use("/user", InfoRouter);
-app.use("/department", DepartmentRouter);
-app.use("/course", CourseRouter);
-app.use("/semester", SemesterRouter);
-app.use("/class",ClassRouter)
+app.use("/user", UserInfoRouter);
+
 
 export default app;

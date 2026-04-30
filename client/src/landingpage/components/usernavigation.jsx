@@ -20,7 +20,7 @@ const DropDownMenu = ({name=""})=>{
       <div className={styles.welcomemessage}>
         Welcome! {name}
       </div>
-        <NavLink to={"/organization"} >
+        <NavLink to={"/admin"} >
           <div className={`${styles.dropdownbtn} ${styles.normalbtn}`}>Go To Dashboard</div>
         </NavLink>
        <div className={`${styles.dropdownbtn} ${styles.logoutbtn}`} onClick={()=>{

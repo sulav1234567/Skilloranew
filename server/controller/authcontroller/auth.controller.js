@@ -10,7 +10,7 @@ import {
 const isProduction = process.env.NODE_ENV === "production";
 
 const cookieOptions = isProduction
-  ? `HttpOnly; Secure; SameSite=${process.env.SAME_SITE}`   
+  ? `HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Domain=.skillsoora.com`   
   : `HttpOnly; SameSite=${process.env.SAME_SITE}`;   
 
 
@@ -64,7 +64,8 @@ export const SignupUser = async (req, res) => {
         authprovider:{
           local:true,
           google:false
-        }
+        },
+        role:"user"
       });
         await createUser.save()
     return res.status(200).json({
