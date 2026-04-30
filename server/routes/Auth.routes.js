@@ -13,7 +13,7 @@ import bcrypt from "bcryptjs";
 const isProduction = process.env.NODE_ENV === "production";
 
 const cookieOptions = isProduction
-  ? `HttpOnly; Secure; SameSite=${process.env.SAME_SITE}`   
+  ? `HttpOnly; Secure; SameSite=${process.env.SAME_SITE}; Domain=.skillsoora.com`   
   : `HttpOnly; SameSite=${process.env.SAME_SITE}`;   
 
 Router.post("/register/me",upload("all").none(),SignupUser);
