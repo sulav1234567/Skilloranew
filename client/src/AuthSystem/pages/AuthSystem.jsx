@@ -369,7 +369,7 @@ const AuthSystem = ({
             <div
               className={styles.authpagebtntext}
               onClick={() => {
-                window.location.href = `${backendurl}auth/github`;
+                window.location.href = `${backendurl}/auth/github`;
               }}
             >
               Continue With Github
