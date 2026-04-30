@@ -1,6 +1,6 @@
 import passport  from "passport";
 import { Strategy as GithubStrategy } from "passport-github2";
-import axios     from "axios";
+import axios from "axios"
 import User      from "../models/User.js";
 
 passport.use(
