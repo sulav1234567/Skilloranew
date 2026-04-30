@@ -11,6 +11,7 @@ import api from "../../axios/axios";
 import SkeletonLoader from "../../loader/loaders";
 import Usernavigation from "../../landingpage/components/usernavigation";
 import { useUserInfo } from "../../userinfo/userinfo";
+import { LuHotel } from "react-icons/lu";
 const Adminpanneloutlet = () => {
   let {user}=useUserInfo()
   return (
@@ -32,6 +33,11 @@ const Adminpanneloutlet = () => {
           icon={<PiTreeViewBold />}
           path="/admin/department"
         />
+        <NavbarLink
+          text="Hotels"
+          icon={<LuHotel />}
+          path="/admin/hotels"
+        />
       </Leftnavbar>
       <div className={styles.rightside}>
         <div className={styles.topnavbar}>
@@ -43,7 +49,7 @@ const Adminpanneloutlet = () => {
         </div>
         <div className={styles.maincontentholder}>
           <Outlet />
-          <SkeletonLoader style={{ height: "20vh", width: "100%" }} />
+         
         </div>
       </div>
     </Maincontainer>

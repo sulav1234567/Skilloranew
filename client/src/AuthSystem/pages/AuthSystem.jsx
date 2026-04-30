@@ -11,9 +11,9 @@ import { RxPerson } from "react-icons/rx";
 import api from "../../axios/axios";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 import { useUserInfo } from "../../userinfo/userinfo";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
-let backendurl = import.meta.env.VITE_BASE_URL 
+let backendurl = import.meta.env.VITE_BASE_URL;
 const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
   const [formdata, setFormData] = useState({
     skilloraloginemail: "",
@@ -23,8 +23,7 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
   const [errors, setErrors] = useState({});
   const [btnstate, setBtnState] = useState(false);
   const [loading, setloading] = useState(false);
-  const {getUserInfo}=useUserInfo()
-
+  const { getUserInfo } = useUserInfo();
 
   const LoginFunction = async () => {
     let error = {};
@@ -62,12 +61,10 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
 
       try {
         let res = await api.post("/auth/login/me", formdatainp);
-        
-        await getUserInfo()
+
+        await getUserInfo();
         closeform();
         showMessages(res?.data.message, "success");
-
-        
       } catch (err) {
         if (err) {
           showMessages(err?.response?.data.message, "reject");
@@ -122,14 +119,18 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
         <div className={styles.forgotpassbtn}>Forgot password?</div>
       </div>
 
-      <div className={ btnstate && !loading ? styles.loginbtnactive : styles.loginbtndeactive}  onClick={() => {
+      <div
+        className={
+          btnstate && !loading ? styles.loginbtnactive : styles.loginbtndeactive
+        }
+        onClick={() => {
           if (btnstate && !loading) {
             LoginFunction();
           }
-        }}>
-        {!loading?" Sign in":<div className={styles.loader}></div>}
-       
-        </div>
+        }}
+      >
+        {!loading ? " Sign in" : <div className={styles.loader}></div>}
+      </div>
 
       <div className={styles.navigationlink}>
         Don't have an account?{" "}
@@ -282,8 +283,7 @@ let SignupForm = ({ setformtype = () => {}, closeform = () => {} }) => {
           }
         }}
       >
-         {!loading?"Create Account":<div className={styles.loader}></div>}
-      
+        {!loading ? "Create Account" : <div className={styles.loader}></div>}
       </div>
 
       <div className={styles.navigationlink}>
@@ -306,7 +306,7 @@ const AuthSystem = ({
   setformtype = () => {},
 }) => {
   const scrolldiv = useRef();
-  let navigate=useNavigate()
+  let navigate = useNavigate();
   useEffect(() => {
     document.body.style.overflowY = "hidden";
     return () => {
@@ -352,25 +352,37 @@ const AuthSystem = ({
             <div className={styles.authpagebtnlogo}>
               <FcGoogle />
             </div>
-            <div className={styles.authpagebtntext} onClick={()=>{
-              window.location.href=`${backendurl}/auth/google`
-              
-
-            }}>Continue With Google</div>
+            <div
+              className={styles.authpagebtntext}
+              onClick={() => {
+                window.location.href = `${backendurl}/auth/google`;
+              }}
+            >
+              Continue With Google
+            </div>
           </div>
 
           <div className={styles.authpagebtn}>
             <div className={styles.authpagebtnlogo}>
               <BsGithub />
             </div>
-            <div className={styles.authpagebtntext}>Continue With Github</div>
+            <div
+              className={styles.authpagebtntext}
+              onClick={() => {
+                window.location.href = `${backendurl}auth/github`;
+              }}
+            >
+              Continue With Github
+            </div>
           </div>
 
           <div className={styles.continuewithdivider}>
             Or continue with email
           </div>
 
-          {formtype == "signin" && <Loginform setformtype={setformtype} closeform={onclose} />}
+          {formtype == "signin" && (
+            <Loginform setformtype={setformtype} closeform={onclose} />
+          )}
           {formtype == "signup" && (
             <SignupForm setformtype={setformtype} closeform={onclose} />
           )}
