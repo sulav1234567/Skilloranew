@@ -35,6 +35,10 @@ const UserSchema = new mongoose.Schema({
       google:{
         type:Boolean,
         default:false
+      },
+      github:{
+        type:Boolean,
+        default:false
       }
     },
     role:{

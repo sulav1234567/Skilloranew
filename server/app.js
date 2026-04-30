@@ -9,6 +9,7 @@ import AuthRouter from "./routes/Auth.routes.js";
 import connect from "./database/db.js";
 import UserInfoRouter from "./routes/userinfo.routes.js";
 import "./config/passport.config.js";
+import "./config/github.passport.config.js"
 
 
 
