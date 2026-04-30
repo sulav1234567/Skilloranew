@@ -63,7 +63,8 @@ export const SignupUser = async (req, res) => {
         password: hashedpassword,
         authprovider:{
           local:true,
-          google:false
+          google:false,
+          github:false
         },
         role:"user"
       });
