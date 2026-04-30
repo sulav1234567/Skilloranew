@@ -20,10 +20,11 @@ const UserSchema = new mongoose.Schema({
         type:String
     },
     googleId: {type:String},
+    githubid:{type:String},
     password:{
         type:String,
         required:function () {
-            return !this.googleId
+            return !this.googleId&& !this.githubid
         }
     },
     avatar: {type:String},
@@ -47,6 +48,6 @@ const UserSchema = new mongoose.Schema({
       default:"user"
     }
 },{timestamps:true})
-let User = mongoose.model("User",UserSchema)
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
 
 export default User
