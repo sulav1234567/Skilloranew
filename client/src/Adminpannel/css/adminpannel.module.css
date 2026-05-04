@@ -1,8 +1,11 @@
 .topnavbar{
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 10px;
     height: 80px;
     border-bottom: 1px solid rgb(219, 219, 219);
+    padding:10px 50px ;
 }
 .maincontentholder{
     height: calc(100vh - 80px);
@@ -18,4 +21,10 @@
     width: 40px;
     overflow: hidden;
     border-radius: 50%;
+    background-color: blue;
+    color:white;
+}
+.userprofilepic img{
+    height:100%;
+    width:100%
 }

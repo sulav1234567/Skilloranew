@@ -8,6 +8,8 @@ import Privacy from "./privacy/privacy.jsx";
 import Terms from "./privacy/terms.jsx";
 import Adminpanneloutlet from "./Adminpannel/pages/adminpanneloutlet.jsx";
 import Hotel from "./Adminpannel/pages/Hotel.jsx";
+import { ProtectedRoute } from "./AuthSystem/components/protectedroute.jsx";
+
 
 
 function App() {
@@ -20,7 +22,13 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Landingpage />} />
-        <Route path="/admin/*" element={<Adminpanneloutlet/>}>
+        <Route path="/admin/*" element={
+          <ProtectedRoute allowedroles={["admin"]}>
+            <Adminpanneloutlet/>
+
+          </ProtectedRoute>
+          
+          }>
         <Route path="hotels/*" element={<Hotel/>}/>
        
 

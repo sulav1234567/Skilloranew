@@ -7,7 +7,7 @@ const UserContext = createContext()
 
      const UserContextProvider = ({children})=>{
     let [user,setUser]=useState(null)
-    let [loading,setLoading]=useState(false)
+    let [loading,setLoading]=useState(true)
    
     
 

@@ -4,8 +4,8 @@ import { NavLink } from "react-router";
 import { useUserInfo } from "../userinfo/userinfo";
 import SkeletonLoader from "../loader/loaders";
 
-let NameInitials = (name) => {
-  let namearray = name.split(" ");
+export let NameInitials = (name) => {
+let namearray = name.split(" ");
 
   let initials = "";
   namearray.forEach((name) => {

@@ -1,4 +1,4 @@
-import Leftnavbar, { NavbarLink } from "../../leftnavbar/leftnavbar";
+import Leftnavbar, { NameInitials, NavbarLink } from "../../leftnavbar/leftnavbar";
 import Maincontainer from "../../maincontainer/maincontainer";
 import styles from "../css/adminpannel.module.css";
 import { MdSpaceDashboard } from "react-icons/md";
@@ -44,6 +44,8 @@ const Adminpanneloutlet = () => {
           <div className={styles.topnavbarleftsection}></div>
           <div className={styles.userprofilepic}>
             {!user && <SkeletonLoader style={{height:"100%",width:"100%"}}/>}
+            {user && user.avatar && <img src={user.avatar} alt="User image"/>}
+            {user && !user.avatar && NameInitials(user.Fullname) }
 
           </div>
         </div>
