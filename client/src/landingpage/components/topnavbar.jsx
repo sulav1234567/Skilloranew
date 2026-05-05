@@ -5,11 +5,15 @@ import AuthSystem from "../../AuthSystem/pages/AuthSystem";
 import { useUserInfo } from "../../userinfo/userinfo";
 import Usernavigation from "./usernavigation";
 import SkeletonLoader from "../../loader/loaders";
+import { useSearchParams } from "react-router";
 
 const Topnavbar = () => {
 
-  const [AuthForm,setAuthForm]=useState(false)
-   const[type,setType]=useState("signin")
+  const[searchParams]=useSearchParams()
+  let signin = searchParams.get("login");
+  let signup = searchParams.get("signup");
+  const [AuthForm,setAuthForm]=useState(signin || signup || false)
+   const[type,setType]=useState(signin===true && "signin" || signup === false && "signup" || "signin")
    const{user,loading}=useUserInfo()
   return (
     <>

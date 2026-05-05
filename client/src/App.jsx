@@ -9,10 +9,14 @@ import Terms from "./privacy/terms.jsx";
 import Adminpanneloutlet from "./Adminpannel/pages/adminpanneloutlet.jsx";
 import Hotel from "./Adminpannel/pages/Hotel.jsx";
 import { ProtectedRoute } from "./AuthSystem/components/protectedroute.jsx";
+import Unauthorized from "./commoncomponents/unauthorized.jsx";
+import NotFound404 from "./commoncomponents/pagenotfound.jsx";
+import { useUserInfo } from "./userinfo/userinfo.jsx";
 
 
 
 function App() {
+  let {user}=useUserInfo()
   useEffect(() => {
     let useragent = navigator.userAgent;
     console.log(useragent);
@@ -22,6 +26,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Landingpage />} />
+        {user && user.role==="admin" &&
         <Route path="/admin/*" element={
           <ProtectedRoute allowedroles={["admin"]}>
             <Adminpanneloutlet/>
@@ -33,8 +38,11 @@ function App() {
        
 
         </Route>
+        }
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/unauthorized" element={<Unauthorized/>}/>
+        <Route path="*" element={<NotFound404/>}/>
       </Routes>
       <Globalmessageholder />
     </>

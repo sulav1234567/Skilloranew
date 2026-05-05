@@ -8,7 +8,7 @@ let navigate = useNavigate()
 if(loading) return <div>loading .....</div>
 
 if(!user){
-    return <Navigate to={"/"} replace/>
+    return <Navigate to={"/?login=true"} replace/>
 }
 
 if(!allowedroles.includes(user.role)){

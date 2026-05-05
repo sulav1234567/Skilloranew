@@ -11,7 +11,7 @@ import { RxPerson } from "react-icons/rx";
 import api from "../../axios/axios";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 import { useUserInfo } from "../../userinfo/userinfo";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 let backendurl = import.meta.env.VITE_BASE_URL;
 const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
@@ -306,6 +306,7 @@ const AuthSystem = ({
   setformtype = () => {},
 }) => {
   const scrolldiv = useRef();
+  let[searchParams,setSearchParams]=useSearchParams()
   let navigate = useNavigate();
   useEffect(() => {
     document.body.style.overflowY = "hidden";
@@ -327,6 +328,7 @@ const AuthSystem = ({
           className={styles.exitbtn}
           onClick={() => {
             onclose();
+            setSearchParams({})
           }}
         >
           <RxCross2 />
