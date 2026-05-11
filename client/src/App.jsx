@@ -26,7 +26,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Landingpage />} />
-        {user && user.role==="admin" &&
+        
         <Route path="/admin/*" element={
           <ProtectedRoute allowedroles={["admin"]}>
             <Adminpanneloutlet/>
@@ -38,7 +38,7 @@ function App() {
        
 
         </Route>
-        }
+        
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/unauthorized" element={<Unauthorized/>}/>

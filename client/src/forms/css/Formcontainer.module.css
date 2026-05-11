@@ -167,7 +167,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 55px;
+    min-height: 55px;
+    max-height: fit-content;
+    overflow: hidden;
     border-radius: 10px;
     border: 1px solid rgb(219, 219, 219);
     padding: 10px 15px;
@@ -179,15 +181,19 @@
 .forminputsholderwithlabel:focus-within .forminputlabel{
 color:  rgb(0, 0, 209);
 }
-.forminputs input,.forminputs select{
+.forminputs input,.forminputs select,.forminputs textarea{
     border: none;
     height: 100%;
     width: 100%;
+    min-height: 100%;
     font-size: 17px;
     padding: 0px;
 }
+.forminputs textarea{
+    resize:none;
+}
 
-.forminputs input:focus,select:focus{
+.forminputs input:focus,select:focus, textarea:focus{
     border: none;
     outline: none;
 }

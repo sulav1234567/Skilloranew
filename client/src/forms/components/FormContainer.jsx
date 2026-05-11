@@ -101,6 +101,7 @@ export const FormInput = ({
   required = false,
   name,
   children,
+  onchange=()=>{}
 }) => {
   const [InputValue, setInputValue] = useState(value);
   let { setData, error } = useFormData();
@@ -122,13 +123,14 @@ export const FormInput = ({
       </div>
       <div className={styles.formerror}>{error?.[name]}</div>
       <div className={styles.forminputs}>
-        {type != "select" && (
+        {type != "select" && type!="textarea" && (
           <input
             type={type}
             placeholder={placeholder}
             value={InputValue}
             name={name}
             onChange={(e) => {
+              onchange(e)
               setInputValue(e.target.value);
             }}
           />
@@ -138,11 +140,25 @@ export const FormInput = ({
             name={name}
             value={InputValue}
             onChange={(e) => {
+              onchange(e)
               setInputValue(e.target.value);
+              
             }}
           >
             {children}
           </select>
+        )}
+        {type=="textarea" && (
+          <textarea name={name} value={InputValue} placeholder={placeholder} onChange={(e)=>{
+            onchange(e)
+            setInputValue(e.target.value);
+            let parentdiv = e.target.parentElement
+            e.target.style.height ="auto"
+            let height = e.target.scrollHeight;
+          
+            parentdiv.style.minHeight = height + "px"
+            e.target.style.height=height + "px"
+          }} ></textarea>
         )}
       </div>
     </div>
