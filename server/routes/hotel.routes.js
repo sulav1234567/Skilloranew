@@ -43,7 +43,7 @@ router.post(
 
     const deleteUploadedFile = () => {
       if (orgimage && orgimage.filename) {
-        deleteUploadedFile();
+        deletefile(orgimage.filename);
       }
     };
 
