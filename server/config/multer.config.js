@@ -4,6 +4,9 @@ import fs from "fs";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
 
+
+
+
 const uploadDir = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
@@ -48,7 +51,7 @@ let upload = (type, limit) => {
 const deletefile = (filename) => {
   if (!filename) return;
 
-  const filePath = path.join(__dirname, "../uploads", filename);
+  const filePath = path.join( path.dirname(fileURLToPath(import.meta.url)), "../uploads", filename);
 
   try {
     if (fs.existsSync(filePath)) {

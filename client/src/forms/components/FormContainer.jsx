@@ -11,7 +11,7 @@ let useFormData = () => {
 };
 
 
-export const ToggleRowForm = ({ title,value=false,name, desc, checked,required=false}) => {
+export const ToggleRowForm = ({ title,value=false,name="", desc, checked,required=false}) => {
 
   const [InputValue, setInputValue] = useState(value);
   let { setData, error } = useFormData();
@@ -101,10 +101,15 @@ export const FormInput = ({
   required = false,
   name,
   children,
+  readonly=false,
   onchange=()=>{}
 }) => {
-  const [InputValue, setInputValue] = useState(value);
+  const [InputValue, setInputValue] = useState("");
+
   let { setData, error } = useFormData();
+  useEffect(()=>{
+    setInputValue(value || "")
+  },[value])
   useEffect(() => {
     setData((prev) => ({
       ...prev,
@@ -129,6 +134,7 @@ export const FormInput = ({
             placeholder={placeholder}
             value={InputValue}
             name={name}
+            readOnly={readonly}
             onChange={(e) => {
               onchange(e)
               setInputValue(e.target.value);
@@ -139,6 +145,7 @@ export const FormInput = ({
           <select
             name={name}
             value={InputValue}
+            readOnly={readonly}
             onChange={(e) => {
               onchange(e)
               setInputValue(e.target.value);
@@ -149,7 +156,7 @@ export const FormInput = ({
           </select>
         )}
         {type=="textarea" && (
-          <textarea name={name} value={InputValue} placeholder={placeholder} onChange={(e)=>{
+          <textarea name={name} value={InputValue} placeholder={placeholder} readOnly={readonly} onChange={(e)=>{
             onchange(e)
             setInputValue(e.target.value);
             let parentdiv = e.target.parentElement

@@ -9,6 +9,7 @@ import AuthRouter from "./routes/Auth.routes.js";
 import connect from "./database/db.js";
 import UserInfoRouter from "./routes/userinfo.routes.js";
 import "./config/passport.config.js";
+import hotelRouter from "./routes/hotel.routes.js";
 
 
 
@@ -32,6 +33,7 @@ app.use(cookieParser());
 
 app.use("/auth", AuthRouter);
 app.use("/user", UserInfoRouter);
+app.use("/hotel",hotelRouter)
 
 
 export default app;

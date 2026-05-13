@@ -5,7 +5,6 @@ const hotelSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
 
     name: {
@@ -58,12 +57,13 @@ const hotelSchema = new mongoose.Schema(
       website: String,
     },
 
-    images: [
-      {
-        url: String,
-        publicId: String,
-      },
-    ],
+    image:{
+      originalname:String,
+      mimetype:String,
+      filename:String,
+      size:String
+
+    },
 
     amenities: [
       {

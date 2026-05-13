@@ -36,3 +36,26 @@
     color:blue;
 
 } 
+.getlocationbtnholder{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: fit-content;
+    margin-top: 10px;
+   
+}
+.getlocationbtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: fit-content;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: rgb(0, 0, 211);
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 300;
+}
