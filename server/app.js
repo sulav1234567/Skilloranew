@@ -15,6 +15,8 @@ import hotelRouter from "./routes/hotel.routes.js";
 
 
 var app = express();
+
+app.use("/uploads", express.static("uploads"));
 app.use(
   Cors({
     origin: [process.env.FRONTEND_URL],
