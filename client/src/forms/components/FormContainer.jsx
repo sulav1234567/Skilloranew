@@ -42,6 +42,7 @@ export const ToggleRowForm = ({ title,value=false,name="", desc, checked,require
         checked={checked}
         onChange={(e) => setInputValue(e.target.checked)}
         name={name}
+        value={value}
       />
     </div>
   );
@@ -260,7 +261,7 @@ export const FileAttachment = ({ file, onRemove, onClick }) => {
   );
 };
 
-export const FormFileInput = ({ name, accept = "*/*", required = false}) => {
+export const FormFileInput = ({ name, accept = "*/*", required = false,value}) => {
   let [previewstate, setPreviewState] = useState(false);
   let [file, setFile] = useState(null);
   let [filepreview, setFilePreview] = useState(false);
@@ -286,6 +287,7 @@ export const FormFileInput = ({ name, accept = "*/*", required = false}) => {
             id="fileinput"
             style={{ display: "none" }}
             accept={accept}
+            value={value}
             onChange={(e) => {
               setFile(e.target.files[0]);
               setPreviewState(true);

@@ -1,0 +1,93 @@
+/* organization.module.css */
+
+.topbtnsholder {
+  width: 100%;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
+  border: 1px solid #e6eaf0;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+
+.headingandsubheading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.heading {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+}
+
+.subheading {
+  font-size: 15px;
+  font-weight: 400;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .topbtnsholder {
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  .heading {
+    font-size: 24px;
+  }
+
+  .subheading {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbtnsholder {
+    padding: 18px 16px;
+  }
+
+  .heading {
+    font-size: 21px;
+  }
+
+  .subheading {
+    font-size: 13.5px;
+  }
+}
+
+.buttonholder{
+    display: flex;
+     align-items: center;
+     height: 100%;
+     width: fit-content;
+     gap:10px;
+}
+
+.addbtn{
+    display: flex;
+    align-items: center;
+    border:none;
+    height: 45px;
+    width: fit-content;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background-color: rgb(85, 0, 255);
+    color: white;
+    font-size: 14px;
+    font-weight: 300;
+    transition: background-color 0.3s ease-in-out;
+    cursor: pointer;
+}
+.addbtn:hover{
+    background-color: rgb(67, 0, 200);
+
+}
