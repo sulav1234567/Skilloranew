@@ -32,9 +32,9 @@ let data = {
   ],
 };
 const AddHotelFrom = ({onclose}) => {
-  let [amenities, setAmenities] = useState(JSON.parse(localStorage.getItem("amenities"))||[]);
-  let[hoteldata,setHotelData]=useState(JSON.parse(localStorage.getItem("hoteldata"))||null)
-  let [location, setLocation] = useState({ latitude:hoteldata.latitude.value||"" , longitude: hoteldata.longitude.value || "" });
+  let [amenities, setAmenities] = useState([]);
+  let[hoteldata,setHotelData]=useState(null)
+  let [location, setLocation] = useState({ latitude:"" , longitude:"" });
   let { showMessages } = useGlobalMessageContext();
   let [province, setProvince] = useState("");
   let[formerror,setFormError]=useState({})
@@ -74,12 +74,6 @@ const AddHotelFrom = ({onclose}) => {
   
   const onSubmit = async(data, setLoading) => {
   let errors = {};
-
- 
-    localStorage.setItem("hoteldata",JSON.stringify(data))
-    localStorage.setItem("amenities",JSON.stringify(amenities))
-  
-
   Object.keys(data).forEach((key) => {
     const { value, isrequired, type } = data[key];
 
@@ -199,14 +193,14 @@ const AddHotelFrom = ({onclose}) => {
           name={"organizationname"}
           placeholder="Enter Your Organization Name"
           label="Organization Name"
-          value={hoteldata.organizationname.value || ""}
+         
         />
         <FormInput
           type="select"
           required
           label="Category:"
           name={"organizationcategory"}
-          value={hoteldata.organizationcategory.value || ""}
+          
         >
           <option value={""}>--Select One --</option>
           {data.category.map((categ) => (
@@ -219,7 +213,7 @@ const AddHotelFrom = ({onclose}) => {
           label="Star Rating:"
           placeholder="1-5"
           name={"starrating"}
-          value={hoteldata.starrating.value || 3}
+         
         />
       </FormRow>
       <FormRow>
@@ -232,7 +226,7 @@ const AddHotelFrom = ({onclose}) => {
           required
           name={"organizationdiscription"}
           placeholder="Enter The description of the organization"
-          value={hoteldata.organizationdiscription.value || ""}
+          
         />
       </FormRow>
       <FormRow heading="Amenities:-">
@@ -279,14 +273,12 @@ const AddHotelFrom = ({onclose}) => {
           <>
             <FormInput
               type="text"
-              value={location.latitude}
               name={"latitude"}
               label="Latitude"
               readonly
             />
             <FormInput
               type="text"
-              value={location.longitude}
               name={"longitude"}
               label="Longitude"
               readonly
@@ -305,7 +297,7 @@ const AddHotelFrom = ({onclose}) => {
         </div>
       </FormRow>
       <FormRow>
-        <FormInput type="select" name={"country"} label="Country:" required value={hoteldata.country.value}>
+        <FormInput type="select" name={"country"} label="Country:" required >
           <option value="">---Select One---</option>
           <option value="nepal">Nepal</option>
         </FormInput>
@@ -314,7 +306,6 @@ const AddHotelFrom = ({onclose}) => {
           name={"province"}
           label="Province:"
           required
-          value={hoteldata.province.value}
           onchange={(e) => {
             setProvince(e.target.value);
           }}
@@ -325,7 +316,7 @@ const AddHotelFrom = ({onclose}) => {
           ))}
         </FormInput>
         {province && (
-          <FormInput type="select" name={"city"} label="City:" required value={hoteldata.city.value}>
+          <FormInput type="select" name={"city"} label="City:" required >
             <option value="">---Select One---</option>
             {nepalProvinceCities[province].map((city) => (
               <option value={city}>{city.toUpperCase()}</option>
@@ -339,21 +330,21 @@ const AddHotelFrom = ({onclose}) => {
           label="Area:"
           required
           name={"area"}
-          value={hoteldata.area.value}
+          
         />
         <FormInput
           placeholder="Enter The Street Name"
           label="Street:"
           name={"street"}
           required
-          value={hoteldata.street.value}
+          
         />
         <FormInput
           placeholder="Enter The Zip Code"
           label="Zip Code:"
           name={"zip"}
           required
-          value={hoteldata.zip.value}
+      
         />
       </FormRow>
       <FormRow heading="Contacts:-">
@@ -363,7 +354,7 @@ const AddHotelFrom = ({onclose}) => {
           required
           name={"email"}
           placeholder="Enter Your Email"
-          value={hoteldata.email.value}
+          
         />
         <FormInput
           type="number"
@@ -371,14 +362,14 @@ const AddHotelFrom = ({onclose}) => {
           name={"phonenumber"}
           required
           placeholder="Enter Your Phone Number"
-          value={hoteldata.phonenumber.value}
+          
         />
         <FormInput
           type="text"
           label="Website:"
           name={"website"}
           placeholder="Enter Your website"
-          value={hoteldata.website.value}
+          
         />
       </FormRow>
 
@@ -388,14 +379,14 @@ const AddHotelFrom = ({onclose}) => {
           label="CheckIn Time:"
           required
           name={"checkintime"}
-          value={hoteldata.checkintime.value}
+         
         />
         <FormInput
           type="time"
           label="CheckOut Time:"
           required
           name={"checkouttime"}
-          value={hoteldata.checkouttime.value}
+          
         />
       </FormRow>
       <FormInput
@@ -403,19 +394,19 @@ const AddHotelFrom = ({onclose}) => {
         placeholder="Enter The Cancellation Policy"
         label="Cancellation Policy:"
         name={"cancellationpolicy"}
-        value={hoteldata.cancellationpolicy.value}
+       
       />
       <ToggleRowForm
         title={"Allow Pet"}
         desc={"Toggle this btn to allow the pet entry"}
         name={"allowpet"}
-        value={hoteldata.allowpet.value}
+        
       />
       <ToggleRowForm
         title={"Allow Smoking"}
         name="allowsmoking"
         desc={"Toggle this btn to allow the smoking inside premises"}
-        value={hoteldata.allowsmoking.value=="true" || hoteldata.allowsmoking.value==true}
+       
       />
     </FormContainer>
   );

@@ -5,6 +5,7 @@ import {
   GenerateRefreshToken,
   VerifyRefreshToken,
 } from "../../utlits/jwt.utlits.js";
+import { sendWelcomeMail } from "../mail.controller.js";
 
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -122,12 +123,6 @@ export const LoginUser = async (req, res) => {
     });
   }
 
-  if(!finduser.authprovider.local){
-    return res.status(400).json({
-      message:"wrong credentials"
-    })
-
-  }
 
    let compare = await bcrypt.compare(skilloraloginpassword,finduser.password)
    if(!compare){
@@ -149,6 +144,16 @@ export const LoginUser = async (req, res) => {
 
     finduser.refreshtoken = hashrefreshtoken;
     await finduser.save();
+    try{
+     await sendWelcomeMail({email:finduser.email,name:finduser.Fullname})
+     
+
+    }
+    catch(err){
+
+      console.log("Password email sending failed:", err.message);
+    }
+
 
     res.status(200).json({
       message: "login successful",

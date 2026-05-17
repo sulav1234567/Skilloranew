@@ -1,62 +1,313 @@
-.amenitiesholder{
-    display: flex;
-    align-items: center;
-    height: fit-content;
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 10px;
+.amenitiesholder {
+  display: flex;
+  align-items: center;
+  height: fit-content;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 10px;
 }
-.amenities{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    height: 30px;
-    width: fit-content;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-size: 12px;
-    text-transform: capitalize;
+.amenities {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 30px;
+  width: fit-content;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  text-transform: capitalize;
 
-    background-color: #f4f4ff;
+  background-color: #f4f4ff;
 }
-.amenremove{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 15px;
-    width: 15px;
-    border-radius: 50%;
-    padding: 2px;
-    background-color: rgb(227, 227, 255);
-    cursor: pointer;
+.amenremove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  padding: 2px;
+  background-color: rgb(227, 227, 255);
+  cursor: pointer;
 }
-.amenremove svg{
-    height: 100%;
-    width: 100%;
-    color:blue;
-
-} 
-.getlocationbtnholder{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: fit-content;
-    margin-top: 10px;
-   
+.amenremove svg {
+  height: 100%;
+  width: 100%;
+  color: blue;
 }
-.getlocationbtn{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    width: fit-content;
-    padding: 10px 15px;
-    border-radius: 8px;
-    background-color: rgb(0, 0, 211);
-    color: white;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 300;
+.getlocationbtnholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: fit-content;
+  margin-top: 10px;
+}
+.getlocationbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: fit-content;
+  padding: 10px 15px;
+  border-radius: 8px;
+  background-color: rgb(0, 0, 211);
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 300;
 }
 
+.cardholder{
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+  gap: 20px;
+  width: 100%;
+  height: fit-content;
+  padding: 30px 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
+  border: 1px solid #e6eaf0;
+  border-radius: 18px;
+}
+
+.card{
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid black;
+  overflow: hidden;
+}
+.cardimageholder{
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  width: 100%;
+  overflow: hidden;
+}
+.cardimageholder img{
+  height: 100%;
+  width: 100%;
+}
+
+.actionbtn{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 30px;
+  border:1px solid black;
+  border-radius: 50%;
+  background-color: white;
+  cursor: pointer;
+
+}
+
+
+
+
+/* ── Container ── */
+.tableholder {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
+  border: 1px solid #e6eaf0;
+  border-radius: 18px;
+}
+
+/* ── Table ── */
+.tableholder table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* ── Header row ── */
+.tableholder thead tr {
+  height: 52px;
+}
+
+.tableholder thead th {
+  font-size: 15px;
+  font-weight: 600;
+  color: #6b7280;
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 0.5px solid #e5e7eb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Fixed column widths ── */
+.tableholder thead th:nth-child(1) { width: 60px;  }  /* S.N */
+.tableholder thead th:nth-child(2) { width: 80px;  }  /* Image */
+.tableholder thead th:nth-child(3) { width: 260px; }  /* Organization Name */
+.tableholder thead th:nth-child(4) { width: 180px; }  /* Owner */
+.tableholder thead th:nth-child(5) { width: 140px; }  /* Registered At */
+.tableholder thead th:nth-child(6) { width: 100px; }  /* Category */
+.tableholder thead th:nth-child(7) { width: 120px; }  /* Status */
+.tableholder thead th:nth-child(8) { width: 100px; }  /* Actions */
+
+/* ── Body cells ── */
+.tableholder tbody td {
+  padding: 16px 16px;
+  font-size: 15px;
+  color: #111827;
+  border-bottom: 0.5px solid #e5e7eb;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;          /* ← KEY FIX */
+  text-overflow: ellipsis;   /* ← KEY FIX */
+  max-width: 0;              /* ← KEY FIX: makes ellipsis work in fixed-layout tables */
+}
+
+.tableholder tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tableholder tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* ── Org / hotel image ── */
+.imageholder {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: inline-block;   /* keeps it from stretching */
+}
+
+.imageholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Owner cell ── */
+.ownerholder {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;        /* ← clips the whole flex row */
+  min-width: 0;            /* ← allows flex children to shrink */
+}
+
+.ownerimage {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;          /* ← avatar never shrinks */
+}
+
+.ownerimage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.Ownername {
+  font-size: 15px;
+  color: #374151;
+  overflow: hidden;        /* ← clips the name text */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;            /* ← allows text to shrink inside flex */
+}
+
+/* ── Status badges ── */
+.activetag,
+.pendingtag,
+.latetag,
+.inactivetag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.activetag   { background: #e1e3ff; color: #1900ff; border: 1px solid  #1500d5; text-transform: capitalize; }
+.pendingtag  { background: #FAEEDA; color: #854F0B; }
+.latetag     { background: #FCEBEB; color: #A32D2D; }
+.inactivetag { background: #F1EFE8; color: #5F5E5A; }
+
+.activetag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #1900ff;
+  flex-shrink: 0;
+}
+
+.pendingtag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #854F0B;
+  flex-shrink: 0;
+}
+
+.latetag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #A32D2D;
+  flex-shrink: 0;
+}
+
+.inactivetag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5F5E5A;
+  flex-shrink: 0;
+}
+
+/* ── View button ── */
+.btnView {
+  background: #534AB7;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btnView:hover {
+  background: #3C3489;
+}
+
+.tableactionsholder{
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 10px;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
