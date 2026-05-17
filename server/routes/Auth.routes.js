@@ -41,8 +41,6 @@ Router.get(
   async (req, res) => {
     const user = req.user;
 
-
-
     const accessToken = GenerateAccessToken(user);
     const refreshToken = GenerateRefreshToken(user);
 
@@ -50,20 +48,20 @@ Router.get(
     user.refreshtoken = hashed;
     await user.save();
 
-     try {
-              await sendWelcomeMail({
-                email: user.email ,
-                name:user.Fullname ,
-              });
-            } catch (mailError) {
-              console.log("Password email sending failed:", mailError.message);
-            }
-
     res.setHeader("Set-Cookie", [
       `refreshtoken=${refreshToken}; ${cookieOptions}; Path=/`,
       `accesstoken=${accessToken}; ${cookieOptions}; Path=/`,
     ]);
     res.redirect(process.env.FRONTEND_URL);
+
+    try {
+      await sendWelcomeMail({
+        email: user.email,
+        name: user.Fullname,
+      });
+    } catch (mailError) {
+      console.log("Password email sending failed:", mailError.message);
+    }
   },
 );
 
@@ -86,19 +84,28 @@ Router.get(
     await user.save();
 
     try {
-              await sendWelcomeMail({
-                email: user.email ,
-                name:user.Fullname ,
-              });
-            } catch (mailError) {
-              console.log("Password email sending failed:", mailError.message);
-            }
-            
+      await sendWelcomeMail({
+        email: user.email,
+        name: user.Fullname,
+      });
+    } catch (mailError) {
+      console.log("Password email sending failed:", mailError.message);
+    }
+
     res.setHeader("Set-Cookie", [
       `refreshtoken=${refreshToken}; ${cookieOptions}; Path=/`,
       `accesstoken=${accessToken}; ${cookieOptions}; Path=/`,
     ]);
     res.redirect(process.env.FRONTEND_URL);
+
+    try {
+      await sendWelcomeMail({
+        email: user.email,
+        name: user.Fullname,
+      });
+    } catch (mailError) {
+      console.log("Password email sending failed:", mailError.message);
+    }
   },
 );
 
