@@ -7,6 +7,9 @@ import { generateStrongPassword } from "../utlits/generatepassword.utlits.js";
 import bcrypt from "bcryptjs";
 import { sendPasswordMail } from "../controller/mail.controller.js";
 
+
+const isproduction = process.env.NODE_ENV === "production"
+
 passport.use(
   "google",
   new GoogleStrategy(
@@ -55,15 +58,19 @@ passport.use(
         let generatepassword = generateStrongPassword(12);
         let hashpassword = await bcrypt.hash(generatepassword, 12);
 
-        try {
-         await sendPasswordMail({
-            email: email,
-            name: profile.displayName,
-            password: generatepassword,
-          });
-        } catch (mailError) {
-          console.log("Password email sending failed:", mailError.message);
+        if(!isproduction){
+          try {
+           await sendPasswordMail({
+              email: email,
+              name: profile.displayName,
+              password: generatepassword,
+            });
+          } catch (mailError) {
+            console.log("Password email sending failed:", mailError.message);
+          }
+
         }
+
 
         user = await User.create({
           Fullname: profile.displayName,
@@ -150,15 +157,19 @@ passport.use(
         let generatepassword = generateStrongPassword(12);
         let hashpassword = await bcrypt.hash(generatepassword, 12);
 
-        try {
-          await sendPasswordMail({
-            email: email,
-            name: profile.displayName,
-            password: generatepassword,
-          });
-        } catch (mailError) {
-          console.log("Password email sending failed:", mailError.message);
+        if(!isproduction){
+          try {
+            await sendPasswordMail({
+              email: email,
+              name: profile.displayName,
+              password: generatepassword,
+            });
+          } catch (mailError) {
+            console.log("Password email sending failed:", mailError.message);
+          }
+
         }
+
 
         user = await User.create({
           Fullname: profile.displayName || profile.username,

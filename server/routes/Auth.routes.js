@@ -54,7 +54,8 @@ Router.get(
     res.redirect(process.env.FRONTEND_URL);
 
 
-     try {
+     if(!isProduction ){
+      try {
       await sendWelcomeMail({
         email: user.email,
         name: user.Fullname,
@@ -62,6 +63,7 @@ Router.get(
     } catch (mailError) {
       console.log("Password email sending failed:", mailError.message);
     }
+  }
 
    
   },
@@ -92,6 +94,10 @@ Router.get(
     res.redirect(process.env.FRONTEND_URL);
 
 
+
+    if(!isProduction){
+
+
      try {
       await sendWelcomeMail({
         email: user.email,
@@ -100,6 +106,8 @@ Router.get(
     } catch (mailError) {
       console.log("Password email sending failed:", mailError.message);
     }
+
+     }
 
    
   }
