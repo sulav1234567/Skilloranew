@@ -3,7 +3,7 @@ import { useState } from "react";
 import AddHotelFrom from "../components/AddHotelFrom";
 import styles from "../css/hotel.module.css"
 import Topbuttonholder, { Button } from "../components/topbuttonholder";
-import hotelimage from "/Users/sulavkhatiwada/Downloads/1778640155743-b1878a-65980710351a.avif"
+import hotelimage from "../../assets/heroimage.jpg"
 import { BsThreeDots } from "react-icons/bs";
 
 import { IoEyeOutline } from "react-icons/io5";
