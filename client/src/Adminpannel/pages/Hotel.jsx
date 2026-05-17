@@ -117,7 +117,8 @@ const OrganizationTable = ({ info = [] }) => {
           </tr>
         </thead>
         <tbody>
-          {info?.map((org, index) => {
+          {info.length === 0 && <div className={styles.notfoundtag}> NO Organizations Found</div> }
+          {info.length>0 && info?.map((org, index) => {
             return (
               <TableRow
                 key={org._id}
