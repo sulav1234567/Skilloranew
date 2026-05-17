@@ -48,6 +48,10 @@ passport.use(
           await user.save();
           return done(null, user);
         }
+
+
+
+        
         let generatepassword = generateStrongPassword(12);
         let hashpassword = await bcrypt.hash(generatepassword, 12);
 

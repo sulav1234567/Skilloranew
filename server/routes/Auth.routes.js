@@ -12,6 +12,7 @@ import {
   GenerateAccessToken,
   GenerateRefreshToken,
 } from "../utlits/jwt.utlits.js";
+import { sendWelcomeMail } from "../controller/mail.controller.js";
 
 const Router = express.Router();
 
@@ -40,12 +41,23 @@ Router.get(
   async (req, res) => {
     const user = req.user;
 
+
+
     const accessToken = GenerateAccessToken(user);
     const refreshToken = GenerateRefreshToken(user);
 
     const hashed = await bcrypt.hash(refreshToken, 10);
     user.refreshtoken = hashed;
     await user.save();
+
+     try {
+              await sendWelcomeMail({
+                email: user.email ,
+                name:user.Fullname ,
+              });
+            } catch (mailError) {
+              console.log("Password email sending failed:", mailError.message);
+            }
 
     res.setHeader("Set-Cookie", [
       `refreshtoken=${refreshToken}; ${cookieOptions}; Path=/`,
@@ -73,6 +85,15 @@ Router.get(
     user.refreshtoken = hashed;
     await user.save();
 
+    try {
+              await sendWelcomeMail({
+                email: user.email ,
+                name:user.Fullname ,
+              });
+            } catch (mailError) {
+              console.log("Password email sending failed:", mailError.message);
+            }
+            
     res.setHeader("Set-Cookie", [
       `refreshtoken=${refreshToken}; ${cookieOptions}; Path=/`,
       `accesstoken=${accessToken}; ${cookieOptions}; Path=/`,
