@@ -10,9 +10,14 @@ let useFormData = () => {
   return useContext(Formdatacontext);
 };
 
-
-export const ToggleRowForm = ({ title,value=false,name="", desc, checked,required=false}) => {
-
+export const ToggleRowForm = ({
+  title,
+  value = false,
+  name = "",
+  desc,
+  checked,
+  required = false,
+}) => {
   const [InputValue, setInputValue] = useState(value);
   let { setData, error } = useFormData();
 
@@ -33,50 +38,45 @@ export const ToggleRowForm = ({ title,value=false,name="", desc, checked,require
         <div className={styles.toggleTitle}>
           {title}
           {required && <FaStarOfLife className={styles.forminputrequiredtag} />}
-          </div>
+        </div>
         <div className={styles.toggleDesc}>{desc}</div>
       </div>
       <input
         type="checkbox"
         className={styles.toggle}
-        checked={checked}
+        checked={InputValue}
         onChange={(e) => setInputValue(e.target.checked)}
         name={name}
-        value={value}
       />
     </div>
   );
 };
 
-export const FormVideoPreview=({url,exitfunct=()=>{}})=>{
+export const FormVideoPreview = ({ url, exitfunct = () => {} }) => {
   let iurl = URL.createObjectURL(url);
-  let [thumbnail,setThumbnail]=useState(null)
+  let [thumbnail, setThumbnail] = useState(null);
 
-  let generateThumbnail=()=>{
-    let canvas = document.createElement("canvas")
-    let video=document.createElement("video");
-    video.src=iurl;
-     let ctx = canvas.getContext("2d")
+  let generateThumbnail = () => {
+    let canvas = document.createElement("canvas");
+    let video = document.createElement("video");
+    video.src = iurl;
+    let ctx = canvas.getContext("2d");
 
-     video.currentTime= 3;
+    video.currentTime = 3;
 
-     video.onseeked=()=>{
-      canvas.width=video.videoWidth;
-      canvas.height=video.videoHeight
-      ctx.drawImage(video,0,0,canvas.width,canvas.height)
+    video.onseeked = () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       const imageUrl = canvas.toDataURL("image/png");
-      setThumbnail(imageUrl)
-     }
+      setThumbnail(imageUrl);
+    };
+  };
 
-  }
-
-  useEffect(()=>{
-    generateThumbnail()
-  },[])
-
-  
-
+  useEffect(() => {
+    generateThumbnail();
+  }, []);
 
   return (
     <div className={styles.formimagepreview}>
@@ -92,8 +92,7 @@ export const FormVideoPreview=({url,exitfunct=()=>{}})=>{
       <img src={thumbnail} alt="thumbnail" />
     </div>
   );
-
-}
+};
 export const FormInput = ({
   type = "text",
   value = "",
@@ -102,15 +101,15 @@ export const FormInput = ({
   required = false,
   name,
   children,
-  readonly=false,
-  onchange=()=>{}
+  readonly = false,
+  onchange = () => {},
 }) => {
   const [InputValue, setInputValue] = useState("");
 
   let { setData, error } = useFormData();
-  useEffect(()=>{
-    setInputValue(value || "")
-  },[value])
+  useEffect(() => {
+    setInputValue(value || "");
+  }, [value]);
   useEffect(() => {
     setData((prev) => ({
       ...prev,
@@ -129,7 +128,7 @@ export const FormInput = ({
       </div>
       <div className={styles.formerror}>{error?.[name]}</div>
       <div className={styles.forminputs}>
-        {type != "select" && type!="textarea" && (
+        {type != "select" && type != "textarea" && (
           <input
             type={type}
             placeholder={placeholder}
@@ -137,7 +136,7 @@ export const FormInput = ({
             name={name}
             readOnly={readonly}
             onChange={(e) => {
-              onchange(e)
+              onchange(e);
               setInputValue(e.target.value);
             }}
           />
@@ -148,25 +147,30 @@ export const FormInput = ({
             value={InputValue}
             readOnly={readonly}
             onChange={(e) => {
-              onchange(e)
+              onchange(e);
               setInputValue(e.target.value);
-              
             }}
           >
             {children}
           </select>
         )}
-        {type=="textarea" && (
-          <textarea name={name} value={InputValue} placeholder={placeholder} readOnly={readonly} onChange={(e)=>{
-            onchange(e)
-            setInputValue(e.target.value);
-            let parentdiv = e.target.parentElement
-            e.target.style.height ="auto"
-            let height = e.target.scrollHeight;
-          
-            parentdiv.style.minHeight = height + "px"
-            e.target.style.height=height + "px"
-          }} ></textarea>
+        {type == "textarea" && (
+          <textarea
+            name={name}
+            value={InputValue}
+            placeholder={placeholder}
+            readOnly={readonly}
+            onChange={(e) => {
+              onchange(e);
+              setInputValue(e.target.value);
+              let parentdiv = e.target.parentElement;
+              e.target.style.height = "auto";
+              let height = e.target.scrollHeight;
+
+              parentdiv.style.minHeight = height + "px";
+              e.target.style.height = height + "px";
+            }}
+          ></textarea>
         )}
       </div>
     </div>
@@ -181,8 +185,8 @@ export const FormRow = ({ children, heading = "" }) => {
     </div>
   );
 };
-export const FormImagePreview = ({ url, exitfunct = () => {} }) => {
-  let iurl = URL.createObjectURL(url);
+export const FormImagePreview = ({ url=null,directurl=null, exitfunct = () => {} }) => {
+  let iurl = url?URL.createObjectURL(url):directurl ; 
   return (
     <div className={styles.formimagepreview}>
       <div
@@ -235,7 +239,6 @@ export const FilePreview = ({ file, onClose }) => {
           <h2>Preview not available</h2>
         </div>
       )}
-
     </div>
   );
 };
@@ -261,11 +264,17 @@ export const FileAttachment = ({ file, onRemove, onClick }) => {
   );
 };
 
-export const FormFileInput = ({ name, accept = "*/*", required = false,value}) => {
+
+
+export const FormFileInput = ({
+  name,
+  accept = "*/*",
+  required = false,
+}) => {
   let [previewstate, setPreviewState] = useState(false);
   let [file, setFile] = useState(null);
   let [filepreview, setFilePreview] = useState(false);
-  let { setData,error } = useFormData();
+  let { setData, error } = useFormData();
   useEffect(() => {
     setData((prev) => ({
       ...prev,
@@ -287,7 +296,6 @@ export const FormFileInput = ({ name, accept = "*/*", required = false,value}) =
             id="fileinput"
             style={{ display: "none" }}
             accept={accept}
-            value={value}
             onChange={(e) => {
               setFile(e.target.files[0]);
               setPreviewState(true);
@@ -295,8 +303,11 @@ export const FormFileInput = ({ name, accept = "*/*", required = false,value}) =
             }}
           />
           <div className={styles.formfileinputheadinganddiscription}>
-            <div className={styles.formfileinputheading}>Upload File
-               {required && <FaStarOfLife className={styles.forminputrequiredtag} />}
+            <div className={styles.formfileinputheading}>
+              Upload File
+              {required && (
+                <FaStarOfLife className={styles.forminputrequiredtag} />
+              )}
             </div>
             <div className={styles.formfileinputheadingdis}>
               upload your image less than 50 mb
@@ -327,27 +338,28 @@ export const FormFileInput = ({ name, accept = "*/*", required = false,value}) =
           }}
         />
       )}
-      
-      {previewstate && file?.type.startsWith("video/") && (
 
+      {previewstate && file?.type.startsWith("video/") && (
         <FormVideoPreview
-         url={file}
+          url={file}
           exitfunct={() => {
             setPreviewState(false);
             setFile(null);
           }}
         />
       )}
-      {previewstate && (file?.type.startsWith("application/")|| file?.type.startsWith("text/")) && (
-        <FileAttachment
-          file={file}
-          onRemove={() => {
-            setPreviewState(false);
-            setFile(null);
-          }}
-          onClick={() => setFilePreview(true)}
-        />
-      )}
+      {previewstate &&
+        (file?.type.startsWith("application/") ||
+          file?.type.startsWith("text/")) && (
+          <FileAttachment
+            file={file}
+            onRemove={() => {
+              setPreviewState(false);
+              setFile(null);
+            }}
+            onClick={() => setFilePreview(true)}
+          />
+        )}
 
       {filepreview && (
         <FilePreview file={file} onClose={() => setFilePreview(false)} />
@@ -356,38 +368,41 @@ export const FormFileInput = ({ name, accept = "*/*", required = false,value}) =
   );
 };
 
-export const BtnLoader=()=>{
-  return<>
-  <div className={styles.loadercontainer}>
-    <div className={styles.loader}></div>
-
-  </div>
-  </>
-}
+export const BtnLoader = () => {
+  return (
+    <>
+      <div className={styles.loadercontainer}>
+        <div className={styles.loader}></div>
+      </div>
+    </>
+  );
+};
 
 const FormContainer = ({
   title,
   subtitle,
   onclose,
   children,
-  getData = async() => {},
+  getData = async () => {},
   error,
-  onsubmit = async() => {},
-  height=95,
-  width=70
+  onsubmit = async () => {},
+  height = 95,
+  width = 70,
 }) => {
   let [data, setData] = useState({});
-  let[loading,setLoading]=useState(false)
-  useEffect(()=>{
-
-    if(Object.keys(data).length>0){
-      getData(data)
+  let [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (Object.keys(data).length > 0) {
+      getData(data);
     }
-  },[data])
+  }, [data]);
   return (
     <Formdatacontext.Provider value={{ data, setData, error }}>
       <div className={styles.Formcontainer}>
-        <div className={styles.formcontentsholder} style={{height:`${height}%`,width:`${width}%`}}>
+        <div
+          className={styles.formcontentsholder}
+          style={{ height: `${height}%`, width: `${width}%` }}
+        >
           <div className={styles.formheader}>
             <div className={styles.formheadingandsubtitleholder}>
               <div className={styles.formheaderheading}>{title}</div>
@@ -409,15 +424,14 @@ const FormContainer = ({
           <div className={styles.formcontentholder}>{children}</div>
           <div className={styles.formfooterorbtnholder}>
             <div
-              className={`${!loading?styles.formsubmitbtnactive:styles.formsubmitbtndeactive} ${styles.formsubmitbtn}`}
-              onClick={async() => {
-                if(!loading){
-                  await onsubmit(data,setLoading,setData);
+              className={`${!loading ? styles.formsubmitbtnactive : styles.formsubmitbtndeactive} ${styles.formsubmitbtn}`}
+              onClick={async () => {
+                if (!loading) {
+                  await onsubmit(data, setLoading, setData);
                 }
               }}
             >
-
-              {loading?<BtnLoader/>:"submit"}
+              {loading ? <BtnLoader /> : "submit"}
             </div>
           </div>
         </div>

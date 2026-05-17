@@ -17,8 +17,8 @@ const transporter = nodemailer.createTransport({
   greetingTimeout: 30000,
   socketTimeout: 30000,
 
-  logger: true,
-  debug: true,
+  // logger: true,
+  // debug: true,
 });
 
 export const verifyMailConnection = async () => {

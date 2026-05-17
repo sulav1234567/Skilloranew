@@ -154,7 +154,7 @@
 .tableholder thead th:nth-child(3) { width: 260px; }  /* Organization Name */
 .tableholder thead th:nth-child(4) { width: 180px; }  /* Owner */
 .tableholder thead th:nth-child(5) { width: 140px; }  /* Registered At */
-.tableholder thead th:nth-child(6) { width: 100px; }  /* Category */
+.tableholder thead th:nth-child(6) { width: 100px }  /* Category */
 .tableholder thead th:nth-child(7) { width: 120px; }  /* Status */
 .tableholder thead th:nth-child(8) { width: 100px; }  /* Actions */
 
@@ -306,8 +306,89 @@
   display: flex;
   align-items: center;
   justify-content: left;
-  gap: 10px;
+  gap: 5px;
   height: 100%;
   width: 100%;
   overflow: hidden;
+}
+
+.tableactionbtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 30px;
+  border-radius: 8px;
+ background-color: rgb(242, 242, 255);
+ cursor: pointer;
+ border: 1px solid rgb(185, 185, 255);
+ padding: 6px;
+
+}
+
+.tableactionbtn svg{
+  height: 100%;
+  width: 100%;
+  color: rgb(84, 0, 210);
+}
+
+.category{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: capitalize;
+  height: fit-content;
+  width: 100%;
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: 1px solid rgb(111, 0, 171);
+  font-size: 12px;
+  font-weight: 500;
+  background-color:rgb(249, 238, 255) ;
+  color:rgb(111, 0, 171) ;
+
+}
+
+
+.oldimagepreview{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  max-height: 600px;
+  min-height: 400px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 15px;
+  margin-bottom: 25px;
+}
+
+.oldimagepreview img{
+  height: 100%;
+  width: 100%;
+}
+
+.removebtn{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  cursor: pointer;
+
+}
+.removebtn:hover{
+  background-color: rgb(239, 239, 239);
+}
+
+.removebtn svg{
+  height: 100%;
+  width: 100%;
 }

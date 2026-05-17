@@ -47,6 +47,12 @@ Router.get(
     const hashed = await bcrypt.hash(refreshToken, 10);
     user.refreshtoken = hashed;
     await user.save();
+    res.setHeader("Set-Cookie", [
+      `refreshtoken=${refreshToken}; ${cookieOptions}; Path=/`,
+      `accesstoken=${accessToken}; ${cookieOptions}; Path=/`,
+    ]);
+    res.redirect(process.env.FRONTEND_URL);
+
 
      try {
       await sendWelcomeMail({
@@ -56,12 +62,6 @@ Router.get(
     } catch (mailError) {
       console.log("Password email sending failed:", mailError.message);
     }
-
-    res.setHeader("Set-Cookie", [
-      `refreshtoken=${refreshToken}; ${cookieOptions}; Path=/`,
-      `accesstoken=${accessToken}; ${cookieOptions}; Path=/`,
-    ]);
-    res.redirect(process.env.FRONTEND_URL);
 
    
   },
@@ -85,7 +85,14 @@ Router.get(
     user.refreshtoken = hashed;
     await user.save();
 
-    try {
+    res.setHeader("Set-Cookie", [
+      `refreshtoken=${refreshToken}; ${cookieOptions}; Path=/`,
+      `accesstoken=${accessToken}; ${cookieOptions}; Path=/`,
+    ]);
+    res.redirect(process.env.FRONTEND_URL);
+
+
+     try {
       await sendWelcomeMail({
         email: user.email,
         name: user.Fullname,
@@ -93,12 +100,6 @@ Router.get(
     } catch (mailError) {
       console.log("Password email sending failed:", mailError.message);
     }
-
-    res.setHeader("Set-Cookie", [
-      `refreshtoken=${refreshToken}; ${cookieOptions}; Path=/`,
-      `accesstoken=${accessToken}; ${cookieOptions}; Path=/`,
-    ]);
-    res.redirect(process.env.FRONTEND_URL);
 
    
   }

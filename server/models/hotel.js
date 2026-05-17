@@ -20,7 +20,7 @@ const hotelSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["hotel", "resort", "guest-house", "homestay", "apartment"],
+      enum: ["hotel", "resort", "guest-house", "homestay", "resturant"],
       default: "hotel",
     },
 
