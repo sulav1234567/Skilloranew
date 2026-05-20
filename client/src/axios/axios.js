@@ -10,11 +10,6 @@ api.interceptors.response.use(
   res => res,
   async (error) => {
     const originalRequest = error.config;
-    console.log("INTERCEPTOR HIT");
-    console.log("STATUS:", error.response?.status);
-    console.log("MESSAGE:", error.response?.data?.message);
-    console.log("RETRY:", originalRequest._retry);
-
     if (
       error.response?.status === 401 &&
       (error.response?.data?.message === "ACCESS_TOKEN_EXPIRED" || error.response?.data?.message==="Unauthorized") &&

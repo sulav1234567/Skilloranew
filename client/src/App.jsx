@@ -12,6 +12,9 @@ import { ProtectedRoute } from "./AuthSystem/components/protectedroute.jsx";
 import Unauthorized from "./commoncomponents/unauthorized.jsx";
 import NotFound404 from "./commoncomponents/pagenotfound.jsx";
 import { useUserInfo } from "./userinfo/userinfo.jsx";
+import HotelOutlet from "./Adminpannel/pages/HotelOutlet.jsx";
+import HoteldetailedviewOutlet from "./Adminpannel/pages/hoteldetailedviewoutlet.jsx";
+import Hoteloverview from "./Adminpannel/pages/hoteloverview.jsx";
 
 
 
@@ -34,7 +37,15 @@ function App() {
           </ProtectedRoute>
           
           }>
-        <Route path="hotels/*" element={<Hotel/>}/>
+        <Route path="hotels/*" element={<HotelOutlet/>}>
+        <Route index element={<Hotel/>}/>
+        <Route path="i/:hotelid/*" element={<HoteldetailedviewOutlet/>} >
+        <Route index element={<Hoteloverview/>}/>
+        <Route path="staffmanagement" element={"Staffmanagement"}/>
+        
+        </Route>
+        </Route>
+
        
 
         </Route>

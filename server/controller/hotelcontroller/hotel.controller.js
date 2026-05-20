@@ -5,6 +5,8 @@ import {
   websiteRegex,
 } from "../../utlits/rejex.utlits.js";
 import Hotel from "../../models/hotel.js";
+import mongoose from "mongoose";
+
 
 
 
@@ -393,3 +395,96 @@ export const CreateHotel =async (req, res) => {
     });
   }
 };
+
+
+export const DeleteHotel = async (req,res)=>{
+  let hotelid = req.params.hotelid
+
+  if(!hotelid){
+    return res.status(400).json({
+      message:"hotel id not found"
+    })
+  }
+
+
+  try {
+
+    let findhotel = await Hotel.findByIdAndDelete(hotelid);
+
+    if(!findhotel){
+       return res.status(400).json({
+      message:"hotel not found"
+    })
+
+    }
+
+
+    deletefile(findhotel.image.filename);
+
+
+    
+   res.status(200).json({
+    message:`${findhotel.name} deleted successfully`
+   })
+  }catch(err){
+  if(err){
+    res.status(200).json({
+    message:err?.message || err?.data.message || "Internal Server Error"
+   })
+  }
+  }
+
+
+
+}
+
+export const SendAllHotels =async (req, res) => {
+  let user = req.user;
+
+  if (!user) {
+     return res.status(404).json({
+      message: "User Not found",
+    });
+  }
+
+  try {
+    let hotels = await Hotel.find({}).sort({createdAt:-1});
+
+    res.status(200).json({
+      message: "Request successful",
+      hotels: hotels,
+    });
+  } catch (err) {
+    if (err) {
+      return res.status(500).json({
+        message: err.message
+      })
+    }
+  }
+}
+
+
+export const SendRequestedHotel = async (req,res)=>{
+  let hotelid = req.params.hotelid;
+ 
+
+  if(!mongoose.Types.ObjectId.isValid(hotelid)){
+    return res.status(400).json({
+      message:"invalid Hotel id "
+    })
+
+  }
+
+  try{
+    let hotel = await Hotel.findById(hotelid);
+    res.status(201).json({
+      hotel:hotel
+    })
+
+  }catch(err){
+ res.status(400).json({
+  message:"Error Finding The Hotel"
+ })
+  }
+
+}

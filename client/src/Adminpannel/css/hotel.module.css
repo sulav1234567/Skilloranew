@@ -151,12 +151,12 @@
 /* ── Fixed column widths ── */
 .tableholder thead th:nth-child(1) { width: 60px;  }  /* S.N */
 .tableholder thead th:nth-child(2) { width: 80px;  }  /* Image */
-.tableholder thead th:nth-child(3) { width: 260px; }  /* Organization Name */
+.tableholder thead th:nth-child(3) { width: 200px; }  /* Organization Name */
 .tableholder thead th:nth-child(4) { width: 180px; }  /* Owner */
 .tableholder thead th:nth-child(5) { width: 140px; }  /* Registered At */
 .tableholder thead th:nth-child(6) { width: 100px }  /* Category */
 .tableholder thead th:nth-child(7) { width: 120px; }  /* Status */
-.tableholder thead th:nth-child(8) { width: 100px; }  /* Actions */
+.tableholder thead th:nth-child(8) { width: 150px; }  /* Actions */
 
 /* ── Body cells ── */
 .tableholder tbody td {
@@ -319,9 +319,9 @@
   height: 30px;
   width: 30px;
   border-radius: 8px;
- background-color: rgb(242, 242, 255);
+ 
  cursor: pointer;
- border: 1px solid rgb(185, 185, 255);
+ 
  padding: 6px;
 
 }
@@ -329,7 +329,31 @@
 .tableactionbtn svg{
   height: 100%;
   width: 100%;
+
+}
+
+.tablenormalaction{
+  background-color: rgb(242, 242, 255);
+  border: 1px solid rgb(185, 185, 255);
+
+}
+.tablenormalaction svg{
   color: rgb(84, 0, 210);
+}
+.tableredaction{
+ background-color: rgb(255, 234, 234);
+  border: 1px solid rgb(255, 0, 0);
+}
+
+.tableredaction:hover{
+   background-color: rgb(255, 225, 225);
+}
+.tableredaction svg{
+   color: rgb(210, 0, 0);
+}
+
+.tablenormalaction:hover{
+   background-color: rgb(218, 218, 255);
 }
 
 .category{

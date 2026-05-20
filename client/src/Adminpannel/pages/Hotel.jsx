@@ -4,12 +4,15 @@ import styles from "../css/hotel.module.css";
 import Topbuttonholder, { Button } from "../components/topbuttonholder";
 import hotelimage from "../../assets/heroimage.jpg";
 import { BsThreeDots } from "react-icons/bs";
+import { MdDeleteOutline } from "react-icons/md";
 
 import { IoEyeOutline } from "react-icons/io5";
 import { MdModeEdit } from "react-icons/md";
 import api from "../../axios/axios";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 import { formatDate } from "../components/dateformatter";
+import { useConfirmationMessageContext } from "../../forms/components/confirmationmessage";
+import { useNavigate } from "react-router";
 
 let FetchDataContext = createContext(null);
 
@@ -41,6 +44,41 @@ const TableRow = ({
   data = {},
 }) => {
   let [editHotelForm, setEditHotelForm] = useState(false);
+  let { setConfirmationMessageData, clearMessage } =
+    useConfirmationMessageContext();
+  let { showMessages } = useGlobalMessageContext();
+  let {fetchData} = useFetchFunction()
+  let navigate = useNavigate()
+
+  let deleteFunction = async () => {
+    setConfirmationMessageData((prev)=>({
+      ...prev,
+      loading:true
+    }))
+  
+
+    if (!data?._id) {
+      return;
+    }
+
+    try {
+      let res = await api.delete(`/hotel/delete/${data?._id}`);
+
+      showMessages(res.data.message, "success");
+      fetchData()
+    } catch (err) {
+      if (err) {
+      
+        showMessages(
+          err.response.message || err.response.data || "Unknown Error",
+          "reject",
+        );
+      }
+    }
+    finally{
+        clearMessage();
+    }
+  };
 
   return (
     <>
@@ -72,6 +110,10 @@ const TableRow = ({
           <div className={styles.tableactionsholder}>
             <div
               className={`${styles.tableactionbtn} ${styles.tablenormalaction}`}
+              onClick={(e)=>{
+                e.stopPropagation()
+                navigate(`/admin/hotels/i/${data?._id}`)
+              }}
             >
               <IoEyeOutline />
             </div>
@@ -83,6 +125,20 @@ const TableRow = ({
               }}
             >
               <MdModeEdit />
+            </div>
+
+            <div
+              className={`${styles.tableactionbtn} ${styles.tableredaction}`}
+              onClick={() => {
+                setConfirmationMessageData({
+                  show: true,
+                  message: `Are You Sure To Delete ${orgname}`,
+                  okFunction: deleteFunction,
+                  loading: false,
+                });
+              }}
+            >
+              <MdDeleteOutline />
             </div>
           </div>
         </td>
@@ -117,23 +173,26 @@ const OrganizationTable = ({ info = [] }) => {
           </tr>
         </thead>
         <tbody>
-          {info.length === 0 && <div className={styles.notfoundtag}> NO Organizations Found</div> }
-          {info.length>0 && info?.map((org, index) => {
-            return (
-              <TableRow
-                key={org._id}
-                sn={index + 1}
-                image={`${import.meta.env.VITE_BASE_URL}/uploads/${org.image.filename}`}
-                orgname={org.name}
-                createdAt={formatDate(org.createdAt)}
-                id={org._id}
-                category={org.category}
-                data={org}
-              />
-            );
-          })}
+          {info.length > 0 &&
+            info?.map((org, index) => {
+              return (
+                <TableRow
+                  key={org._id}
+                  sn={index + 1}
+                  image={`${import.meta.env.VITE_BASE_URL}/uploads/${org.image.filename}`}
+                  orgname={org.name}
+                  createdAt={formatDate(org.createdAt)}
+                  id={org._id}
+                  category={org.category}
+                  data={org}
+                />
+              );
+            })}
         </tbody>
       </table>
+      {info.length === 0 && (
+        <div className={styles.notfoundtag}> NO Organizations Found</div>
+      )}
     </div>
   );
 };
