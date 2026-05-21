@@ -16,6 +16,7 @@
   flex-direction: column;
   height: fit-content;
   width: 100%;
+  gap: 20px;
 }
 
 .hotelimage{
@@ -26,7 +27,6 @@
     width: 100%;
     overflow: hidden;
     border-radius: 15px;
-    margin-bottom: 20px;
 }
 .hotelimage img{
     height: 100%;
@@ -293,4 +293,87 @@
     font-size: 14px;
     font-weight: 500;
      color: rgb(102, 102, 102);
+}
+
+.amenitiesholder{
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    width: 100%;
+    margin-top: 15px;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.amencardholder{
+    display: flex;
+    align-items: center;
+    height: fit-content;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+
+}
+
+.amencard{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 12px;
+    border-radius: 10px;
+    border:1px solid rgb(21, 0, 255);
+    font-size: 12px;
+    font-weight: 600;
+    background-color: rgb(244, 244, 255);
+    color: blue;
+    text-transform: capitalize;
+  
+}
+
+.cardcontactcontent{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    margin-top: 10px;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.contactcard{
+    display: flex;
+    height: fit-content;
+    width: 100%;
+    gap: 10px;
+}
+
+.contactcardicon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 20px;
+    min-width: 20px;
+    padding: 2px;
+}
+
+.contactcardicon svg{
+    height: 100%;
+    width: 100%;
+    color: rgb(136, 0, 220);
+}
+.contactcardvalue{
+    display: flex;
+    text-wrap: wrap;
+    height: fit-content;
+    width: calc(100% - 30px);
+    max-width: calc(100% - 30px);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.mapgoogle{
+    display: flex;
+    height: fit-content;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
 }

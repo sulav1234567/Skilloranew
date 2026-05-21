@@ -6,6 +6,10 @@ import { GoDotFill } from "react-icons/go";
 import { FaStar } from "react-icons/fa";
 import { formatDate } from '../components/dateformatter';
 import { LuCalendarCheck2 } from "react-icons/lu";
+import { FaPhone } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
+import { BsGlobe } from "react-icons/bs";
+import GoogleMap from '../../maps/googlemap';
 
 const SeedStar = (star=0)=>{
     
@@ -69,6 +73,18 @@ const Hoteloverview = () => {
                 <div className={styles.regText}>{formatDate(hotel?.createdAt)}</div>
             </div>
            </div>
+
+           <div className={styles.amenitiesholder}>
+            <div className={styles.infolabel}>Amenities:</div>
+
+            <div className={styles.amencardholder}>
+
+                {hotel?.amenities.map((amen,index)=><div key={index} className={styles.amencard}>
+                    {amen}
+                </div>)}
+                
+            </div>
+           </div>
             <div className={styles.infopointsholder}>
                 <div className={styles.infolabel}>Cancellation Policy:</div>
                <CancellationPolicy policy={hotel?.policies.cancellationPolicy}/>
@@ -97,6 +113,45 @@ const Hoteloverview = () => {
                     <div className={styles.cardbtntext}>Create Owner</div>
                 </div>
 
+            </div>
+
+            <div className={styles.hotelcard}>
+            <div className={styles.cardtitle}>
+                Contact Information:
+            </div>
+
+            <div className={styles.cardcontactcontent}>
+                <div className={styles.contactcard}>
+                    <div className={styles.contactcardicon}>
+                        <FaPhone/>
+                    </div>
+                    <div className={styles.contactcardvalue}>+977-{hotel?.contact.phone}</div>
+                </div>
+
+                <div className={styles.contactcard}>
+                    <div className={styles.contactcardicon}>
+                        <MdEmail/>
+                    </div>
+                    <div className={styles.contactcardvalue}>{hotel?.contact.email}</div>
+                </div>
+
+                <div className={styles.contactcard}>
+                    <div className={styles.contactcardicon}>
+                        <BsGlobe/>
+                    </div>
+                    <div className={styles.contactcardvalue}>{hotel?.contact.website}</div>
+                </div>
+            </div>
+
+            </div>
+
+            <div className={styles.hotelcard}>
+                <div className={styles.cardtitle}>Location:</div>
+
+                <div className={styles.mapgoogle}>
+                    <GoogleMap lat={hotel?.location.x} lng={hotel?.location.y} height='250px' zoom={18} title={hotel?.name}/>
+
+                </div>
             </div>
         </div>
     </div>
