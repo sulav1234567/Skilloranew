@@ -15,6 +15,7 @@ import { useUserInfo } from "./userinfo/userinfo.jsx";
 import HotelOutlet from "./Adminpannel/pages/HotelOutlet.jsx";
 import HoteldetailedviewOutlet from "./Adminpannel/pages/hoteldetailedviewoutlet.jsx";
 import Hoteloverview from "./Adminpannel/pages/hoteloverview.jsx";
+import Hotelroleverification from "./verification/hotelroleverification.jsx";
 
 
 
@@ -49,11 +50,13 @@ function App() {
        
 
         </Route>
+        <Route path="/accept-invitation/:invitationtoken" element={<Hotelroleverification/>}/>
         
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/unauthorized" element={<Unauthorized/>}/>
         <Route path="*" element={<NotFound404/>}/>
+
       </Routes>
       <Globalmessageholder />
     </>
