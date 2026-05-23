@@ -6,6 +6,9 @@ import {
 } from "../../utlits/rejex.utlits.js";
 import Hotel from "../../models/hotel.js";
 import mongoose from "mongoose";
+import HotelRole from "../../models/hotelroles.js";
+import HotelInvite from "../../models/hotelinvitation.js";
+import User from "../../models/user.js";
 
 
 
@@ -477,8 +480,59 @@ export const SendRequestedHotel = async (req,res)=>{
 
   try{
     let hotel = await Hotel.findById(hotelid);
+    if(!hotel){
+      return res.status(400).json({
+        message:"hotel not found"
+      })
+    }
+
+  let ownerRole = await HotelRole.findOne({
+  hotel: hotel._id,
+  role: "owner",
+})
+  .populate({
+    path: "user",
+    select: "Fullname email avatar -_id",
+  })
+  .lean();
+
+let findOwner = null;
+
+if (ownerRole) {
+  findOwner = {
+    ...ownerRole.user,
+    status: "accepted",
+  };
+}
+
+if (!findOwner) {
+  const findInvitation = await HotelInvite.findOne({
+    hotel: hotel._id,
+    role: "owner",
+    status: { $in: ["pending", "expired", "cancelled"] },
+  })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (findInvitation) {
+    const findUser = await User.findOne({
+      email: findInvitation.email,
+    })
+      .select("Fullname email avatar -_id")
+      .lean();
+
+    if (findUser) {
+      findOwner = {
+        ...findUser,
+        status: findInvitation.status,
+      };
+    }
+  }
+}
+
     res.status(201).json({
-      hotel:hotel
+      hotel:hotel,
+      owner:findOwner
     })
 
   }catch(err){

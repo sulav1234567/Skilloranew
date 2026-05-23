@@ -15,124 +15,14 @@ import { useEffect } from "react";
 import api from "../../axios/axios";
 import { useState } from "react";
 import { GrCircleAlert } from "react-icons/gr";
-import { IoIosCheckmarkCircleOutline } from "react-icons/io";;
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { emailRegex } from "../components/regex";
-
-const SearchPlace = () => {
-  const [ownervalue, setOwnerValue] = useState("");
-  const [ownerStat, setOwnerStat] = useState(false);
-  const [isFirst, setIsFirst] = useState(true);
-  const [loading, setLoading] = useState(false);
-
-  const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/;
-
-  const fetchUser = async () => {
-    if (!emailRegex.test(ownervalue)) {
-      setOwnerStat(false);
-      setIsFirst(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const res = await api.post("/user/getuser", {
-        email: ownervalue,
-      });
-
-      setOwnerStat(res?.data?.ok === true);
-      setIsFirst(false);
-
-      console.log(res?.data);
-    } catch (err) {
-      console.log(err?.response);
-      setOwnerStat(false);
-      setIsFirst(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!ownervalue.trim()) {
-      setIsFirst(true);
-      setOwnerStat(false);
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      fetchUser();
-    }, 800);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [ownervalue]);
-
-  return (
-    <div className={styles.searchplace}>
-      <input
-        type="text"
-        value={ownervalue}
-        onChange={(e) => {
-          setOwnerValue(e.target.value);
-        }}
-        placeholder="Enter owner email"
-      />
-
-      {!isFirst && (
-        <div
-          className={`${styles.iconholder} ${
-            ownerStat ? styles.normalicon : styles.redicon
-          }`}
-        >
-          {loading ? (
-            <span className={styles.loader}></span>
-          ) : ownerStat ? (
-            <IoIosCheckmarkCircleOutline />
-          ) : (
-            <GrCircleAlert />
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-
-const SeedStar = (star = 0) => {
-  return Array.from({ length: star }).map((_, ind) => (
-    <div
-      key={ind}
-      className={styles.star}
-      style={{ transform: `translateX(-${10 * ind - 4 * ind}px)` }}
-    >
-      <FaStar />
-    </div>
-  ));
-};
-
-const CancellationPolicy = ({ policy = "" }) => {
-  
-
-  return (
-    <div className={styles.policypointsholder}>
-      {policy?.split("%sp").map((points, index) => {
-        return (
-          <div className={styles.policypoint} key={index}>
-            <div className={styles.policypointicon}>
-              <GoDotFill />
-            </div>
-            <div className={styles.policytext}>{points}</div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 
 const Hoteloverview = () => {
-  let { hotel, FetchHotelData } = useHotelData();
+  let { hotel, FetchHotelData,owner,loading } = useHotelData();
+  let [createOwnerBtn, setCreateOwnerBtn] = useState(false);
+  
   return (
     <>
       <div className={styles.overviewcontainer}>
@@ -206,22 +96,39 @@ const Hoteloverview = () => {
 
           <div className={styles.hotelcard}>
             <div className={styles.cardtitle}>Owner Information</div>
-            <div className={styles.hotelcardcontent}>
-              {!hotel?.owner && (
-                <div className={styles.notfoundcardtext}>
-                  Owner Not Assigned!
-                </div>
-              )}
-            </div>
-             <SearchPlace/>
 
-            <div className={styles.cardbtn}>
-              <div className={styles.cardbtnicon}>
-                <FiPlus />
-              </div>
-              <div className={styles.cardbtntext}>Create Owner</div>
+            {!owner && !loading &&  <>
+            <div className={styles.hotelcardcontent}>
+              {createOwnerBtn && !hotel?.owner && <SearchPlace  oncancel={()=>{
+                setCreateOwnerBtn(false)
+              }}/>}
             </div>
+          {!hotel?.owner && !createOwnerBtn && <OwnerNAComponent onclick={()=>{setCreateOwnerBtn(true)}}/>}
+            
+            
+            </>}
+
+            {owner && !loading && <div className={styles.ownerinfoholder}>
+              <div className={styles.owneravatar}>
+                <img src={owner.avatar} alt="" />
+              </div>
+              <div className={styles.ownerotherinfo}>
+                <div className={styles.ownername}>
+                  {owner.Fullname}
+                </div>
+                <div className={styles.owneremailandstatus}>
+                  <div className={styles.owneremail}>
+                    {owner.email}
+                  </div>
+                  <div className={`${styles.ownerstatus} ${styles[`owner${owner.status}stat`]}`}>
+                    {owner.status}
+                  </div>
+                </div>
+              </div>
+              
+              </div>}
           </div>
+
 
           <div className={styles.hotelcard}>
             <div className={styles.cardtitle}>Contact Information:</div>
@@ -279,6 +186,176 @@ const Hoteloverview = () => {
             </div>
           </div>
         </div>
+      </div>
+    </>
+  );
+};
+
+const SearchPlace = ({oncancel=()=>{}}) => {
+  const [ownervalue, setOwnerValue] = useState("");
+  const [ownerStat, setOwnerStat] = useState(false);
+  const [isFirst, setIsFirst] = useState(true);
+  const [loading, setLoading] = useState(false);
+  let{showMessages}=useGlobalMessageContext()
+  let { hotel, FetchHotelData } = useHotelData();
+
+  const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/;
+
+  const fetchUser = async () => {
+    if (!emailRegex.test(ownervalue)) {
+      setOwnerStat(false);
+      setIsFirst(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await api.post("/user/getuser", {
+        email: ownervalue,
+      });
+
+      setOwnerStat(res?.data?.ok === true);
+      setIsFirst(false);
+
+      console.log(res?.data);
+    } catch (err) {
+      console.log(err?.response);
+      setOwnerStat(false);
+      setIsFirst(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  let SendRequest = async () => {
+  if (!emailRegex.test(ownervalue)) {
+    showMessages("Enter The Valid Email","reject")
+    return;
+  }
+  try {
+    setLoading(true);
+
+    const res = await api.post(`/hotel/invitation/${hotel?._id}`, {
+      email: ownervalue.trim().toLowerCase(),
+      role:"owner",
+    });
+
+
+
+    if (res?.status === 201) {
+      FetchHotelData()
+      showMessages(res.data?.message || "Invitation sent successfully","success");
+
+    }
+  } catch (err) {
+  
+
+    showMessages(
+      err?.response?.data?.message ||
+      "Failed to send invitation","reject"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+  useEffect(() => {
+    if (!ownervalue.trim()) {
+      setIsFirst(true);
+      setOwnerStat(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      fetchUser();
+    }, 800);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [ownervalue]);
+
+  return (
+    <>
+    <div className={styles.searchplace}>
+      <input
+        type="text"
+        value={ownervalue}
+        onChange={(e) => {
+          setOwnerValue(e.target.value);
+        }}
+        placeholder="Enter owner email"
+      />
+
+      {!isFirst && (
+        <div
+          className={`${styles.iconholder} ${
+            ownerStat ? styles.normalicon : styles.redicon
+          }`}
+        >
+          {loading ? (
+            <span className={styles.loader}></span>
+          ) : ownerStat ? (
+            <IoIosCheckmarkCircleOutline />
+          ) : (
+            <GrCircleAlert />
+          )}
+        </div>
+      )}
+    </div>
+    <div className={`${styles.cardbtn2} ${ ownerStat && !loading ?styles.cardbtnfill:styles.cardbtncancel}`} onClick={()=>{
+      !ownerStat ? oncancel():SendRequest()
+    }}>
+     
+     
+       {ownerStat && !loading?"Send Request":"Cancel"}
+      
+
+    </div>
+    </>
+  );
+};
+
+const SeedStar = (star = 0) => {
+  return Array.from({ length: star }).map((_, ind) => (
+    <div
+      key={ind}
+      className={styles.star}
+      style={{ transform: `translateX(-${10 * ind - 4 * ind}px)` }}
+    >
+      <FaStar />
+    </div>
+  ));
+};
+
+const CancellationPolicy = ({ policy = "" }) => {
+  return (
+    <div className={styles.policypointsholder}>
+      {policy?.split("%sp").map((points, index) => {
+        return (
+          <div className={styles.policypoint} key={index}>
+            <div className={styles.policypointicon}>
+              <GoDotFill />
+            </div>
+            <div className={styles.policytext}>{points}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const OwnerNAComponent = ({ onclick = () => {} }) => {
+  return (
+    <>
+      <div className={styles.notfoundcardtext}>Owner Not Assigned!</div>
+
+      <div className={styles.cardbtn} onClick={onclick}>
+        <div className={styles.cardbtnicon}>
+          <FiPlus />
+        </div>
+        <div className={styles.cardbtntext}>Create Owner</div>
       </div>
     </>
   );

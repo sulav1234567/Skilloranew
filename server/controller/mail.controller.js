@@ -1,9 +1,30 @@
-import transporter from "../config/mail.config.js";
+import resend from "../config/mail.config.js";
 
-import { welcomeEmailTemplate,otpEmailTemplate, passwordMailTemplate } from "../temp/emailTemplate.js";
+import {
+  welcomeEmailTemplate,
+  otpEmailTemplate,
+  passwordMailTemplate,
+  roleInvitationEmailTemplate,
+} from "../temp/emailTemplate.js";
 
 const getSender = () => {
-  return `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM}>`;
+  return `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM}>`;
+};
+
+const sendEmail = async ({ to, subject, text, html }) => {
+  const { data, error } = await resend.emails.send({
+    from: getSender(),
+    to,
+    subject,
+    text,
+    html,
+  });
+
+  if (error) {
+    throw new Error(error.message || "Email sending failed");
+  }
+
+  return data;
 };
 
 export const sendWelcomeMail = async ({ email, name }) => {
@@ -11,20 +32,17 @@ export const sendWelcomeMail = async ({ email, name }) => {
     throw new Error("Email is required");
   }
 
-  const mailOptions = {
-    from: getSender(),
+  const data = await sendEmail({
     to: email,
     subject: "Welcome to Skillora",
     text: `Hello ${name || "User"}, welcome to Skillora.`,
     html: welcomeEmailTemplate({ name }),
-  };
-
-  const info = await transporter.sendMail(mailOptions);
+  });
 
   return {
     success: true,
     message: "Welcome email sent successfully",
-    messageId: info.messageId,
+    messageId: data?.id,
   };
 };
 
@@ -33,20 +51,17 @@ export const sendOtpMail = async ({ email, name, otp }) => {
     throw new Error("Email and OTP are required");
   }
 
-  const mailOptions = {
-    from: getSender(),
+  const data = await sendEmail({
     to: email,
     subject: "Your Skillora Verification Code",
     text: `Your Skillora OTP code is ${otp}`,
     html: otpEmailTemplate({ name, otp }),
-  };
-
-  const info = await transporter.sendMail(mailOptions);
+  });
 
   return {
     success: true,
     message: "OTP email sent successfully",
-    messageId: info.messageId,
+    messageId: data?.id,
   };
 };
 
@@ -55,8 +70,7 @@ export const sendCustomMail = async ({ email, subject, message }) => {
     throw new Error("Email, subject, and message are required");
   }
 
-  const mailOptions = {
-    from: getSender(),
+  const data = await sendEmail({
     to: email,
     subject,
     text: message,
@@ -67,14 +81,12 @@ export const sendCustomMail = async ({ email, subject, message }) => {
         <p>Best regards,<br />Skillora Team</p>
       </div>
     `,
-  };
-
-  const info = await transporter.sendMail(mailOptions);
+  });
 
   return {
     success: true,
     message: "Email sent successfully",
-    messageId: info.messageId,
+    messageId: data?.id,
   };
 };
 
@@ -92,8 +104,7 @@ export const sendBulkMail = async ({ users, subject, message }) => {
   for (const user of users) {
     if (!user.email) continue;
 
-    const info = await transporter.sendMail({
-      from: getSender(),
+    const data = await sendEmail({
       to: user.email,
       subject,
       text: `Hello ${user.name || "User"}, ${message}`,
@@ -110,7 +121,7 @@ export const sendBulkMail = async ({ users, subject, message }) => {
     results.push({
       email: user.email,
       status: "sent",
-      messageId: info.messageId,
+      messageId: data?.id,
     });
   }
 
@@ -122,23 +133,70 @@ export const sendBulkMail = async ({ users, subject, message }) => {
   };
 };
 
-
 export const sendPasswordMail = async ({ email, name, password }) => {
   if (!email || !password) {
     throw new Error("Email and password are required");
   }
 
-  const info = await transporter.sendMail({
-    from: getSender(),
+  const data = await sendEmail({
     to: email,
     subject: "Your Skillora Account Password",
     text: `Hello ${name || "User"}, your Skillora password is: ${password}`,
-    html: passwordMailTemplate({name:name,password:password})
+    html: passwordMailTemplate({
+      name,
+      password,
+    }),
   });
 
   return {
     success: true,
     message: "Password email sent successfully",
-    messageId: info.messageId,
+    messageId: data?.id,
+  };
+};
+
+export const sendRoleInvitationMail = async ({
+  email,
+  name,
+  hotelName,
+  role,
+  inviteLink,
+  invitedBy,
+  expiresIn = "24 hours",
+}) => {
+  if (!email || !hotelName || !role || !inviteLink) {
+    throw new Error("Email, hotel name, role, and invite link are required");
+  }
+
+  const data = await sendEmail({
+    to: email,
+    subject: `Invitation to join ${hotelName} on SkillOra`,
+    text: `Hello ${name || "User"},
+
+You have been invited ${invitedBy ? `by ${invitedBy} ` : ""}to join ${hotelName} as ${role}.
+
+Accept your invitation using this link:
+${inviteLink}
+
+This invitation expires in ${expiresIn}.
+
+If you were not expecting this invitation, you can safely ignore this email.
+
+Best regards,
+SkillOra Team`,
+    html: roleInvitationEmailTemplate({
+      name,
+      hotelName,
+      role,
+      inviteLink,
+      invitedBy,
+      expiresIn,
+    }),
+  });
+
+  return {
+    success: true,
+    message: "Role invitation email sent successfully",
+    messageId: data?.id,
   };
 };

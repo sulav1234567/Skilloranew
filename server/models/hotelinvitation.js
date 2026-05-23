@@ -123,7 +123,7 @@ const HotelInviteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-HotelInviteSchema.index({ email: 1, hotel: 1, status: 1 });
+HotelInviteSchema.index({ email: 1, hotel: 1, status: 1,role:1 });
 
 const HotelInvite =
   mongoose.models.HotelInvite ||

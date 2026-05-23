@@ -1,33 +1,51 @@
-import nodemailer from "nodemailer"
-import dns from 'node:dns'
+// import nodemailer from "nodemailer"
+// import dns from 'node:dns'
 
-dns.setDefaultResultOrder("ipv4first");
+// dns.setDefaultResultOrder("ipv4first");
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE === "true",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  family: 4, 
+// const transporter = nodemailer.createTransport({
+//   host: process.env.SMTP_HOST,
+//   port: Number(process.env.SMTP_PORT),
+//   secure: process.env.SMTP_SECURE === "true",
+//   auth: {
+//     user: process.env.SMTP_USER,
+//     pass: process.env.SMTP_PASS,
+//   },
+//   family: 4, 
 
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
+//   connectionTimeout: 30000,
+//   greetingTimeout: 30000,
+//   socketTimeout: 30000,
 
-  // logger: true,
-  // debug: true,
-});
+//   // logger: true,
+//   // debug: true,
+// });
+
+// export const verifyMailConnection = async () => {
+//   try {
+//     await transporter.verify();
+//     console.log("Mail server is ready to send emails");
+//   } catch (error) {
+//     console.error("Mail server connection failed:", error.message);
+//   }
+// };
+
+// export default transporter;
+
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const verifyMailConnection = async () => {
   try {
-    await transporter.verify();
-    console.log("Mail server is ready to send emails");
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is missing");
+    }
+
+    console.log("Resend mail API is ready");
   } catch (error) {
-    console.error("Mail server connection failed:", error.message);
+    console.error("Resend mail configuration failed:", error.message);
   }
 };
 
-export default transporter;
+export default resend;

@@ -347,3 +347,158 @@ export const passwordMailTemplate = ({ name, password }) => wrapper(`
 
   ${footer()}
 `);
+
+export const roleInvitationEmailTemplate = ({
+  name,
+  hotelName,
+  role,
+  inviteLink,
+  invitedBy,
+  expiresIn = "24 hours"
+}) => wrapper(`
+
+  ${header}
+
+  <!-- HERO -->
+  <tr>
+    <td style="background-color:#F8FAFF;padding:38px 32px 34px;
+               text-align:center;border-bottom:1px solid #EEF2FF;">
+      <p style="margin:0 0 16px;display:inline-block;background-color:#EEF2FF;
+                color:#1D4ED8;font-size:10px;font-weight:700;letter-spacing:1px;
+                text-transform:uppercase;padding:5px 14px;border-radius:100px;">
+        Role Invitation
+      </p>
+
+      <h1 style="margin:0 0 10px;color:#111827;font-size:24px;font-weight:800;
+                 letter-spacing:-0.4px;line-height:1.25;">
+        You&rsquo;re invited to join ${hotelName || "a hotel"}
+      </h1>
+
+      <p style="margin:0;color:#6B7280;font-size:14px;line-height:1.65;">
+        You have been invited to access this hotel workspace on SkillOra.
+      </p>
+    </td>
+  </tr>
+
+  <!-- BODY -->
+  <tr>
+    <td style="padding:28px 32px 24px;">
+      <p style="margin:0 0 22px;color:#4B5563;font-size:14px;line-height:1.8;">
+        Hi <strong>${name || "there"}</strong>, 
+        ${invitedBy ? `<strong>${invitedBy}</strong> has invited you` : `you have been invited`} 
+        to join <strong>${hotelName || "this hotel"}</strong> as a 
+        <strong style="color:#1D4ED8;text-transform:capitalize;">${role}</strong>.
+      </p>
+
+      <!-- Invitation Details -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0"
+             style="background-color:#FAFAFA;border:1px solid #F0F0F0;
+                    border-radius:12px;overflow:hidden;margin-bottom:24px;">
+        <tr>
+          <td style="padding:14px 16px;border-bottom:1px solid #F0F0F0;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td style="vertical-align:middle;padding-right:14px;width:36px;">
+                  <div style="width:34px;height:34px;background-color:#EEF2FF;border-radius:8px;text-align:center;line-height:34px;">
+                    <span style="color:#1D4ED8;font-size:16px;font-weight:800;">🏨</span>
+                  </div>
+                </td>
+                <td style="vertical-align:middle;">
+                  <p style="margin:0 0 2px;color:#111827;font-size:13px;font-weight:700;">
+                    Hotel Workspace
+                  </p>
+                  <p style="margin:0;color:#9CA3AF;font-size:12px;">
+                    ${hotelName || "Hotel workspace"}
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:14px 16px;border-bottom:1px solid #F0F0F0;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td style="vertical-align:middle;padding-right:14px;width:36px;">
+                  <div style="width:34px;height:34px;background-color:#EEF2FF;border-radius:8px;text-align:center;line-height:34px;">
+                    <span style="color:#1D4ED8;font-size:16px;font-weight:800;">👤</span>
+                  </div>
+                </td>
+                <td style="vertical-align:middle;">
+                  <p style="margin:0 0 2px;color:#111827;font-size:13px;font-weight:700;">
+                    Assigned Role
+                  </p>
+                  <p style="margin:0;color:#9CA3AF;font-size:12px;text-transform:capitalize;">
+                    ${role}
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:14px 16px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td style="vertical-align:middle;padding-right:14px;width:36px;">
+                  <div style="width:34px;height:34px;background-color:#EEF2FF;border-radius:8px;text-align:center;line-height:34px;">
+                    <span style="color:#1D4ED8;font-size:16px;font-weight:800;">⏱</span>
+                  </div>
+                </td>
+                <td style="vertical-align:middle;">
+                  <p style="margin:0 0 2px;color:#111827;font-size:13px;font-weight:700;">
+                    Invitation Expiry
+                  </p>
+                  <p style="margin:0;color:#9CA3AF;font-size:12px;">
+                    This invitation expires in ${expiresIn}.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+
+      <!-- CTA -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:22px;">
+        <tr>
+          <td align="center">
+            <a href="${inviteLink}"
+               style="display:inline-block;background-color:#1D4ED8;color:#ffffff;
+                      font-size:13px;font-weight:700;text-decoration:none;
+                      padding:12px 30px;border-radius:9px;letter-spacing:0.2px;">
+              Accept Invitation &nbsp;&rarr;
+            </a>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Fallback Link -->
+      <p style="margin:0 0 20px;color:#9CA3AF;font-size:12px;line-height:1.7;text-align:center;">
+        If the button does not work, copy and paste this link into your browser:
+        <br />
+        <a href="${inviteLink}" style="color:#1D4ED8;text-decoration:none;word-break:break-all;">
+          ${inviteLink}
+        </a>
+      </p>
+
+      <!-- Warning -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="background-color:#FFFBEB;border:1px solid #FDE68A;
+                     border-radius:9px;padding:12px 16px;">
+            <p style="margin:0;color:#92400E;font-size:12px;line-height:1.65;">
+              &#9888;&#65039; &nbsp;<strong>Security notice:</strong>
+              Only accept this invitation if you were expecting access to this hotel.
+              If this was not meant for you, you can safely ignore this email.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  ${footer()}
+`);

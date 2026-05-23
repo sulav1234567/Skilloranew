@@ -110,7 +110,7 @@ const HotelRoleSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-HotelRoleSchema.index({ user: 1, hotel: 1 }, { unique: true });
+HotelRoleSchema.index({ user: 1, hotel: 1 ,role:1}, { unique: true });
 
 const HotelRole = mongoose.model("HotelRole", HotelRoleSchema);
 

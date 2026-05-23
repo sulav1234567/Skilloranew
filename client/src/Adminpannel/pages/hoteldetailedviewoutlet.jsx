@@ -25,17 +25,23 @@ const SecondaryNavlink = ({ path = "", end = false, text = "" }) => {
 const HoteldetailedviewOutlet = () => {
   let { hotelid } = useParams();
   let [hotel, sethotel] = useState(null);
+  let [owner,setOwner]=useState(null)
   let { showMessages } = useGlobalMessageContext();
+  let [loading,setLoading]=useState(false)
 
   let FetchHotelData = async () => {
+    
     if (!hotelid || hotelid.length < 16) {
       return showMessages("Hotel Id Not Found", "reject");
     }
 
     try {
+
+      setLoading(true)
       let res = await api.get(`/hotel/gethotel/${hotelid}`);
 
       sethotel(res?.data.hotel);
+      setOwner(res?.data.owner)
     } catch (err) {
       if (err) {
         showMessages(
@@ -44,6 +50,9 @@ const HoteldetailedviewOutlet = () => {
             "internal server error",
         );
       }
+    }
+    finally{
+      setLoading(false)
     }
   };
 
@@ -61,7 +70,7 @@ const HoteldetailedviewOutlet = () => {
 
       <div className={styles.detailedviewcontentholder}>
         <div className={styles.detailedviewcontentholderscroler}>
-        <HotelContext.Provider value={{hotel,FetchHotelData}}>
+        <HotelContext.Provider value={{hotel,FetchHotelData,owner,loading}}>
         <Outlet/>
 
         </HotelContext.Provider>
