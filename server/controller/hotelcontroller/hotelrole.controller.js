@@ -164,3 +164,83 @@ export const SendRoleInvitation = async (req, res) => {
     }
   }
 };
+
+export const VerifyRoleInvitation = async (req,res)=>{
+
+  let {token}=req.body;
+
+  if(!token){
+    return res.status(401).json({
+      message:"Token Unavailable"
+    })
+  }
+  try{
+
+  let hashedtoken = hashInviteToken(token);
+
+  let findExistingInvitation = await HotelInvite.findOne({tokenHash:hashedtoken});
+
+  if(!findExistingInvitation){
+    return res.status(404).json({
+      message:" We could not find this invitation. Please check the link or ask the hotel admin to send a new invitation."
+    })
+  }
+
+  if (new Date(findExistingInvitation.expiresAt).getTime() < Date.now()) {
+  findExistingInvitation.status = "expired";
+  await findExistingInvitation.save();
+
+   return res.status(410).json({
+        message:
+          "This invitation link has expired. Please ask the hotel admin to send a new one.",
+      });
+    
+}
+
+  if (findExistingInvitation.status === "accepted") {
+      return res.status(409).json({
+        message: "This invitation has already been used.",
+      });
+    }
+
+    if (findExistingInvitation.status === "cancelled") {
+      return res.status(403).json({
+        message:
+          "This invitation has been cancelled. Please ask the hotel admin to send a new one.",
+      });
+    }
+
+    let user = await User.findOne({email:findExistingInvitation.email})
+
+    if(!user){
+      return res.status(401).json({
+        message:"User Doesnot Exists. So Try Again!"
+      })
+    }
+
+     let CreateRole = new HotelRole({
+          user: user._id,
+      
+          hotel: findExistingInvitation.hotel,
+      
+          role: findExistingInvitation.role,
+          permissions: findExistingInvitation.permissions,
+     })
+
+     await CreateRole.save()
+
+     findExistingInvitation.status = "accepted"
+     findExistingInvitation.used=true;
+     findExistingInvitation.acceptedBy = user._id;
+     await findExistingInvitation.save();
+
+     res.status(201).json({
+      message:`Dear ${user.Fullname},  Your role invitation has been accepted successfully. You are now connected to the hotel workspace`
+     })
+    }
+    catch(err){
+      res.status(500).json({
+        message:`Verification Failed!, ${err?.data.message || "Internal Server Error"} `
+      })
+    }
+}

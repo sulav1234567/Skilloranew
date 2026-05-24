@@ -110,6 +110,10 @@ const HotelInviteSchema = new mongoose.Schema(
       enum: ["pending", "accepted", "expired", "cancelled"],
       default: "pending",
     },
+    used:{
+      type:Boolean,
+      default:false
+    },
 
     expiresAt: {
       type: Date,
@@ -123,7 +127,7 @@ const HotelInviteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-HotelInviteSchema.index({ email: 1, hotel: 1, status: 1,role:1 });
+HotelInviteSchema.index({tokenHash:1, email: 1, hotel: 1, status: 1,role:1,used:1 });
 
 const HotelInvite =
   mongoose.models.HotelInvite ||

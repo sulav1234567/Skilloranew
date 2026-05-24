@@ -1,20 +1,38 @@
 import styles from "../css/landingpage.module.css"
 import logo from "../../assets/image.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AuthSystem from "../../AuthSystem/pages/AuthSystem";
 import { useUserInfo } from "../../userinfo/userinfo";
 import Usernavigation from "./usernavigation";
 import SkeletonLoader from "../../loader/loaders";
 import { useSearchParams } from "react-router";
 
-const Topnavbar = () => {
 
-  const[searchParams]=useSearchParams()
-  let signin = searchParams.get("login");
-  let signup = searchParams.get("signup");
-  const [AuthForm,setAuthForm]=useState(signin || signup || false)
-   const[type,setType]=useState(signin===true && "signin" || signup === false && "signup" || "signin")
-   const{user,loading}=useUserInfo()
+
+const Topnavbar = ({}) => {
+
+ const [searchParams, setSearchParams] = useSearchParams();
+
+const signin = searchParams.get("login");   
+const signup = searchParams.get("signup");
+
+const [AuthForm, setAuthForm] = useState(false);
+const [type, setType] = useState("signin");
+
+const { user, loading } = useUserInfo();
+
+useEffect(() => {
+  if (signin === "true") {
+    setAuthForm(true);
+    setType("signin");
+  } else if (signup === "true") {
+    setAuthForm(true);
+    setType("signup");
+  } else {
+    setAuthForm(false);
+    setType("signin");
+  }
+}, [signin, signup]);
   return (
     <>
      <div className={styles.topnavbar}>
@@ -37,7 +55,7 @@ const Topnavbar = () => {
            
           </div>
 
-          {AuthForm && <AuthSystem onclose={()=>{setAuthForm(false)}} formtype={type} setformtype={setType}/>}
+          {AuthForm  && !loading && !user && <AuthSystem onclose={()=>{setAuthForm(false)}} formtype={type} setformtype={setType}/>}
           </>
   );
 };
