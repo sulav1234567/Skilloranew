@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import AddHotelFrom, { EditHotelFrom } from "../components/AddHotelFrom";
 import styles from "../css/hotel.module.css";
 import Topbuttonholder, { Button } from "../components/topbuttonholder";
-import hotelimage from "../../assets/heroimage.jpg";
+
 import { BsThreeDots } from "react-icons/bs";
 import { MdDeleteOutline } from "react-icons/md";
 
@@ -13,8 +13,367 @@ import { useGlobalMessageContext } from "../../Globalmessage/components/globalme
 import { formatDate } from "../components/dateformatter";
 import { useConfirmationMessageContext } from "../../forms/components/confirmationmessage";
 import { useNavigate } from "react-router";
+import SkeletonLoader from "../../loader/loaders";
 
 let FetchDataContext = createContext(null);
+
+const TableRowSkeletonLoader = ()=>{
+  return (
+    <>
+
+      <tr>
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "22px",
+        height: "16px",
+        borderRadius: "5px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.imageholder}>
+      <SkeletonLoader
+        style={{
+          width: "100%",
+          height: "100%",
+          borderRadius: "8px",
+        }}
+      />
+    </div>
+  </td>
+
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "140px",
+        height: "16px",
+        borderRadius: "6px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.ownerholder}>
+      <div className={styles.ownerimage}>
+        <SkeletonLoader
+          style={{
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+          }}
+        />
+      </div>
+
+      <SkeletonLoader
+        style={{
+          width: "95px",
+          height: "16px",
+          borderRadius: "6px",
+        }}
+      />
+    </div>
+  </td>
+
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "95px",
+        height: "16px",
+        borderRadius: "6px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.category}>
+      <SkeletonLoader
+        style={{
+          width: "60px",
+          height: "14px",
+          borderRadius: "6px",
+        }}
+      />
+    </div>
+  </td>
+
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "78px",
+        height: "30px",
+        borderRadius: "20px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.tableactionsholder}>
+      <SkeletonLoader
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "8px",
+        }}
+      />
+
+      <SkeletonLoader
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "8px",
+        }}
+      />
+
+      <SkeletonLoader
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "8px",
+        }}
+      />
+    </div>
+  </td>
+</tr>
+
+
+  <tr>
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "22px",
+        height: "16px",
+        borderRadius: "5px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.imageholder}>
+      <SkeletonLoader
+        style={{
+          width: "100%",
+          height: "100%",
+          borderRadius: "8px",
+        }}
+      />
+    </div>
+  </td>
+
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "140px",
+        height: "16px",
+        borderRadius: "6px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.ownerholder}>
+      <div className={styles.ownerimage}>
+        <SkeletonLoader
+          style={{
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+          }}
+        />
+      </div>
+
+      <SkeletonLoader
+        style={{
+          width: "95px",
+          height: "16px",
+          borderRadius: "6px",
+        }}
+      />
+    </div>
+  </td>
+
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "95px",
+        height: "16px",
+        borderRadius: "6px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.category}>
+      <SkeletonLoader
+        style={{
+          width: "60px",
+          height: "14px",
+          borderRadius: "6px",
+        }}
+      />
+    </div>
+  </td>
+
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "78px",
+        height: "30px",
+        borderRadius: "20px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.tableactionsholder}>
+      <SkeletonLoader
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "8px",
+        }}
+      />
+
+      <SkeletonLoader
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "8px",
+        }}
+      />
+
+      <SkeletonLoader
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "8px",
+        }}
+      />
+    </div>
+  </td>
+</tr>
+
+
+  <tr>
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "22px",
+        height: "16px",
+        borderRadius: "5px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.imageholder}>
+      <SkeletonLoader
+        style={{
+          width: "100%",
+          height: "100%",
+          borderRadius: "8px",
+        }}
+      />
+    </div>
+  </td>
+
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "140px",
+        height: "16px",
+        borderRadius: "6px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.ownerholder}>
+      <div className={styles.ownerimage}>
+        <SkeletonLoader
+          style={{
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+          }}
+        />
+      </div>
+
+      <SkeletonLoader
+        style={{
+          width: "95px",
+          height: "16px",
+          borderRadius: "6px",
+        }}
+      />
+    </div>
+  </td>
+
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "95px",
+        height: "16px",
+        borderRadius: "6px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.category}>
+      <SkeletonLoader
+        style={{
+          width: "60px",
+          height: "14px",
+          borderRadius: "6px",
+        }}
+      />
+    </div>
+  </td>
+
+  <td>
+    <SkeletonLoader
+      style={{
+        width: "78px",
+        height: "30px",
+        borderRadius: "20px",
+      }}
+    />
+  </td>
+
+  <td>
+    <div className={styles.tableactionsholder}>
+      <SkeletonLoader
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "8px",
+        }}
+      />
+
+      <SkeletonLoader
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "8px",
+        }}
+      />
+
+      <SkeletonLoader
+        style={{
+          width: "30px",
+          height: "30px",
+          borderRadius: "8px",
+        }}
+      />
+    </div>
+  </td>
+</tr>
+    </>
+  )
+
+}
 
 const OrganizationCard = () => {
   return (
@@ -36,7 +395,8 @@ const OrganizationCard = () => {
 
 const TableRow = ({
   sn = {},
-  image = {},
+  owner = null,
+  image={},
   orgname = {},
   createdAt = {},
   id = {},
@@ -92,10 +452,17 @@ const TableRow = ({
         <td>{orgname}</td>
         <td>
           <div className={styles.ownerholder}>
+            {owner && 
+            <>
             <div className={styles.ownerimage}>
-              <img src={hotelimage} alt="" />
+              <img src={`${owner?.avatar}`} alt="" />
             </div>
-            <div className={styles.Ownername}>Sulav Khatiwada</div>
+            <div className={styles.Ownername}>{owner?.Fullname}</div>
+            </>
+            }
+
+            {!owner && <>N/A</>}
+            
           </div>
         </td>
         <td>{createdAt}</td>
@@ -185,14 +552,19 @@ const OrganizationTable = ({ info = [] }) => {
                   id={org._id}
                   category={org.category}
                   data={org}
+                  owner={org?.owner}
                 />
               );
             })}
+
+             {info.length === 0 && (
+       <>
+     <TableRowSkeletonLoader/>
+       </>
+      )}
         </tbody>
       </table>
-      {info.length === 0 && (
-        <div className={styles.notfoundtag}> NO Organizations Found</div>
-      )}
+     
     </div>
   );
 };

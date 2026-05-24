@@ -451,7 +451,75 @@ export const SendAllHotels =async (req, res) => {
   }
 
   try {
-    let hotels = await Hotel.find({}).sort({createdAt:-1});
+    let hotels = await Hotel.aggregate([
+  {
+    $sort: { createdAt: -1 }
+  },
+  {
+    $lookup: {
+      from: "hotelroles",
+      let: { hotelId: "$_id" },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $and: [
+                { $eq: ["$hotel", "$$hotelId"] },
+                { $eq: ["$role", "owner"] }
+              ]
+            }
+          }
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "owner"
+          }
+        },
+        {
+          $unwind: {
+            path: "$owner",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            role: 1,
+            owner: {
+              _id: "$owner._id",
+              Fullname: "$owner.Fullname",
+              email: "$owner.email",
+              avatar: "$owner.avatar"
+            }
+          }
+        }
+      ],
+      as: "ownerRole"
+    }
+  },
+  {
+    $unwind: {
+      path: "$ownerRole",
+      preserveNullAndEmptyArrays: true
+    }
+  },
+  {
+    $addFields: {
+      owner: "$ownerRole.owner"
+    }
+  },
+  {
+    $project: {
+      ownerRole: 0
+    }
+  }
+]);
+
+console.log(hotels)
+    
 
     res.status(200).json({
       message: "Request successful",
