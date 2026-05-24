@@ -18,6 +18,7 @@ import { GrCircleAlert } from "react-icons/gr";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { emailRegex } from "../components/regex";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
+import HotelOverviewSkeleton from "./skeletonlforHotelOverview";
 
 const Hoteloverview = () => {
   let { hotel, FetchHotelData,owner,loading } = useHotelData();
@@ -25,7 +26,9 @@ const Hoteloverview = () => {
   
   return (
     <>
-      <div className={styles.overviewcontainer}>
+   {(!hotel || loading) && <HotelOverviewSkeleton />}
+
+    {hotel && !loading &&   <div className={styles.overviewcontainer}>
         <div className={styles.containerone}>
           <div className={styles.infoeditbtnholder}>
             <div className={styles.infoeditbtn}>
@@ -186,7 +189,8 @@ const Hoteloverview = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div>}
+    
     </>
   );
 };
