@@ -570,6 +570,8 @@ if (ownerRole) {
   findOwner = {
     ...ownerRole.user,
     status: "accepted",
+    model:"HotelRole",
+    _id:ownerRole._id
   };
 }
 
@@ -593,6 +595,8 @@ if (!findOwner) {
       findOwner = {
         ...findUser,
         status: findInvitation.status,
+        model:"HotelInvite",
+        _id:findInvitation._id
       };
     }
   }

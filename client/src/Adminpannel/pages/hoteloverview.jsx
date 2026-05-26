@@ -1,7 +1,7 @@
 import styles from "../css/hoteloverview.module.css";
 import { useHotelData } from "./hoteldetailedviewoutlet";
 import { FiPlus } from "react-icons/fi";
-import { MdModeEdit } from "react-icons/md";
+import { MdModeEdit, MdOutlineDelete } from "react-icons/md";
 import { GoDotFill } from "react-icons/go";
 import { FaStar } from "react-icons/fa";
 import { formatDate } from "../components/dateformatter";
@@ -19,10 +19,47 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { emailRegex } from "../components/regex";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 import HotelOverviewSkeleton from "./skeletonlforHotelOverview";
+import { useConfirmationMessageContext } from "../../forms/components/confirmationmessage";
 
 const Hoteloverview = () => {
   let { hotel, FetchHotelData,owner,loading } = useHotelData();
   let [createOwnerBtn, setCreateOwnerBtn] = useState(false);
+  let{showMessages}=useGlobalMessageContext()
+  let { setConfirmationMessageData, clearMessage } =
+      useConfirmationMessageContext();
+
+  let DeleteFunction = async()=>{
+
+     setConfirmationMessageData((prev)=>({
+      ...prev,
+      loading:true
+    }))
+
+    if(!owner || !owner.model || !owner._id){
+      showMessages("Data Not Found", "reject")
+      clearMessage();
+
+      return 
+    }
+
+    try{
+      let res = await api.delete(`/hotel/owner/${owner._id}?model=${owner.model}`)
+
+      showMessages(res?.data.message,"success")
+
+    }
+    catch(err){
+      showMessages(err?.response?.data.message,"reject")
+
+    }
+    finally{
+      FetchHotelData();
+       clearMessage();
+    }
+
+  }
+
+  
   
   return (
     <>
@@ -97,8 +134,20 @@ const Hoteloverview = () => {
             />
           </div>
 
-          <div className={styles.hotelcard}>
+          <div className={`${styles.hotelcard} ${styles.hotelrelativecard}`}>
             <div className={styles.cardtitle}>Owner Information</div>
+            {owner && <div className={styles.deletebtnowner}
+             onClick={() => {
+                setConfirmationMessageData({
+                  show: true,
+                  message: `Are You Sure To Delete ${owner?.Fullname}?`,
+                  okFunction: DeleteFunction,
+                  loading: false,
+                });
+              }}>
+              <MdOutlineDelete/>
+            </div>
+}
 
             {!owner && !loading &&  <>
             <div className={styles.hotelcardcontent}>

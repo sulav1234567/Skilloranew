@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Hotel from "../../models/hotel.js";
 import HotelInvite from "../../models/hotelinvitation.js";
 import HotelRole from "../../models/hotelroles.js";
@@ -244,3 +245,51 @@ export const VerifyRoleInvitation = async (req,res)=>{
       })
     }
 }
+
+export const DeleteHotelOwner = async(req,res)=>{
+  let{id}=req.params;
+  let {model} =req.query 
+
+  console.log(id,model)
+
+  if(!id || !model || !mongoose.Types.ObjectId.isValid(id)){
+    return res.status(400).json(
+      {
+        message:"Wrong Parameters"
+      }
+    )
+  }
+
+  try{
+  let models = {
+    HotelInvite,
+    HotelRole,
+    Hotel,
+    User
+  }
+
+  let DeletedOwner = await models[model].findOneAndDelete({
+    _id:id
+  })
+
+  if(!DeletedOwner){
+    return res.status(400).json({
+      message:"Owner Not Found"
+    })
+  }
+
+  res.status(200).json({
+    message:"Owner Successfully Deleted"
+  })
+}
+catch(err){
+  if(err){
+    res.status(500).json({
+      message:err?.data.message || err?.message || "Internal Server Error!"
+    })
+  }
+}
+
+
+
+} 

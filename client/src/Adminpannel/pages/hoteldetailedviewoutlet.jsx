@@ -39,6 +39,7 @@ const HoteldetailedviewOutlet = () => {
 
       setLoading(true)
       let res = await api.get(`/hotel/gethotel/${hotelid}`);
+     
 
       sethotel(res?.data.hotel);
       setOwner(res?.data.owner)
