@@ -273,7 +273,7 @@ export const DeleteHotelOwner = async(req,res)=>{
   })
 
   if(model!="HotelInvite"){
-    await HotelInvite.findOneAndDelete({_id:DeletedOwner._id})
+    await HotelInvite.findOneAndDelete({hotel:DeletedOwner.hotel,role:DeletedOwner.role})
   }
 
   if(!DeletedOwner){
