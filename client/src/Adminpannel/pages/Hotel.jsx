@@ -546,7 +546,7 @@ const OrganizationTable = ({ info = [] }) => {
                 <TableRow
                   key={org._id}
                   sn={index + 1}
-                  image={`${import.meta.env.VITE_BASE_URL}/uploads/${org.image.filename}`}
+                  image={`${org.image.url}`}
                   orgname={org.name}
                   createdAt={formatDate(org.createdAt)}
                   id={org._id}

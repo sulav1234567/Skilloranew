@@ -129,7 +129,7 @@ const Hoteloverview = () => {
         <div className={styles.containertwo}>
           <div className={styles.hotelimage}>
             <img
-              src={`${import.meta.env.VITE_BASE_URL}/uploads/${hotel?.image.filename}`}
+              src={hotel?.image.url}
               alt=""
             />
           </div>

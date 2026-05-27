@@ -1,34 +1,18 @@
 import multer from "multer";
 import path from "path";
-import fs from "fs";
 import crypto from "crypto";
-import { fileURLToPath } from "url";
+import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { s3 } from "./s3.config.js";
 
-
-
-
-const uploadDir = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "uploads",
-);
-
-let uniquestring = (ext) => {
-  return `${Date.now()}-${crypto.randomBytes(3).toString("hex")}-${crypto.randomBytes(6).toString("hex")}${ext}`;
+const uniqueString = (ext) => {
+  return `${Date.now()}-${crypto.randomBytes(3).toString("hex")}-${crypto
+    .randomBytes(6)
+    .toString("hex")}${ext}`;
 };
 
-let storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniquename = uniquestring(path.extname(file.originalname));
-    cb(null, uniquename);
-  },
-});
+// IMPORTANT:
+// For S3, use memoryStorage, not diskStorage.
+const storage = multer.memoryStorage();
 
 let upload = (type, limit) => {
   return multer({
@@ -44,24 +28,53 @@ let upload = (type, limit) => {
         cb(new Error("this file type is not supported"), false);
       }
     },
-    limits: { fileSize: limit || 1000 * 1024 * 1024 },
+    limits: {
+      fileSize: limit || 1000 * 1024 * 1024,
+    },
   });
 };
 
-const deletefile = (filename) => {
-  if (!filename) return;
+const uploadToS3 = async (file, folder = "uploads") => {
+  if (!file) {
+    throw new Error("No file provided");
+  }
 
-  const filePath = path.join( path.dirname(fileURLToPath(import.meta.url)), "../uploads", filename);
+  const ext = path.extname(file.originalname);
+  const fileName = uniqueString(ext);
+  const key = `${folder}/${fileName}`;
+
+  const command = new PutObjectCommand({
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: key,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  });
+
+  await s3.send(command);
+
+  const fileUrl = `${process.env.AWS_PUBLIC_FILE_URL}/${key}`;
+
+  return {
+    fileUrl,
+    fileKey: key,
+  };
+};
+
+const deletefile = async (fileKey) => {
+  if (!fileKey) return;
 
   try {
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-      console.log(`File deleted: ${filePath}`);
-    } else {
-      console.warn(`File not found, skipping deletion: ${filePath}`);
-    }
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: fileKey,
+    });
+
+    await s3.send(command);
+
+    console.log(`File deleted from S3: ${fileKey}`);
   } catch (err) {
-    console.warn(`File not deleted: ${filePath}. Reason: ${err.message}`);
+    console.warn(`File not deleted from S3: ${fileKey}. Reason: ${err.message}`);
   }
 };
-export { upload, deletefile };
+
+export { upload, uploadToS3, deletefile };

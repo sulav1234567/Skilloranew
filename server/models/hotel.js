@@ -56,7 +56,9 @@ const hotelSchema = new mongoose.Schema(
       originalname:String,
       mimetype:String,
       filename:String,
-      size:String
+      size:String,
+      url:String,
+      key:String
 
     },
 

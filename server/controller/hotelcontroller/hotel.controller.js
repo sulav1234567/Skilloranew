@@ -1,4 +1,4 @@
-import { deletefile} from "../../config/multer.config.js";
+import { deletefile, uploadToS3} from "../../config/multer.config.js";
 import {
   emailRegex,
   phoneRegex,
@@ -41,10 +41,18 @@ export const CreateHotel =async (req, res) => {
     } = Data;
 
     let orgimage = req.file;
+    let fileurl=nulll
+    let fileKey = null
+
+    if(orgimage){
+      const UploadImage = await uploadToS3(orgimage,"hotels")
+      fileurl = UploadImage.fileUrl;
+      fileKey = UploadImage.fileKey
+    }
 
     const deleteUploadedFile = () => {
-      if (orgimage && orgimage.filename) {
-        deletefile(orgimage.filename);
+      if (fileKey&&fileurl) {
+        deletefile(fileKey);
       }
     };
 
@@ -149,6 +157,8 @@ export const CreateHotel =async (req, res) => {
         mimetype: orgimage.mimetype,
         filename: orgimage.filename,
         size: orgimage.size,
+        url:fileurl,
+        key:fileKey
       },
       amenities,
       policies: {
@@ -222,10 +232,22 @@ export const CreateHotel =async (req, res) => {
   } = Data;
 
   let orgimage = req.file;
+  let fileKey = null;
+  let fileUrl = null
+
+  if(orgimage){
+      const UploadImage = await uploadToS3(orgimage,"hotels")
+      fileUrl = UploadImage.fileUrl;
+      fileKey = UploadImage.fileKey
+    }
+
+
+
+
 
   const deleteUploadedFile = () => {
-    if (orgimage && orgimage.filename) {
-      deletefile(orgimage.filename);
+    if (fileKey) {
+      deletefile(fileKey);
     }
   };
 
@@ -369,7 +391,7 @@ export const CreateHotel =async (req, res) => {
 
     if (orgimage) {
       if (hotel.image && hotel.image.filename) {
-        deletefile(hotel.image.filename);
+        deletefile(hotel.image.key);
       }
 
       hotel.image = {
@@ -377,6 +399,8 @@ export const CreateHotel =async (req, res) => {
         mimetype: orgimage.mimetype,
         filename: orgimage.filename,
         size: orgimage.size,
+        key:fileKey,
+        url:fileUrl
       };
     }
 
@@ -422,7 +446,7 @@ export const DeleteHotel = async (req,res)=>{
     }
 
 
-    deletefile(findhotel.image.filename);
+    deletefile(findhotel.image.key);
 
 
     
