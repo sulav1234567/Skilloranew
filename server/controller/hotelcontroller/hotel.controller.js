@@ -41,7 +41,7 @@ export const CreateHotel =async (req, res) => {
     } = Data;
 
     let orgimage = req.file;
-    let fileurl=nulll
+    let fileurl=null;
     let fileKey = null
 
     if(orgimage){
@@ -233,7 +233,7 @@ export const CreateHotel =async (req, res) => {
 
   let orgimage = req.file;
   let fileKey = null;
-  let fileUrl = null
+  let fileUrl = null;
 
   if(orgimage){
       const UploadImage = await uploadToS3(orgimage,"hotels")
