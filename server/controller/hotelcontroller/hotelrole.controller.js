@@ -108,9 +108,9 @@ export const SendRoleInvitation = async (req, res) => {
     let findRoleInvitation = await HotelInvite.findOne({
       email: FindExistingUser.email,
       hotel: hotelid,
-      status: { $in: ["pending", "accepted"] },
+      status: { $in: ["pending"] },
     });
-   let findOwnerRoleInvitation = await HotelInvite.findOne({hotel:FindHotel._id,status:{$in:["pending","accepted"]},role:"owner"})
+   let findOwnerRoleInvitation = await HotelInvite.findOne({hotel:FindHotel._id,status:{$in:["pending"]},role:"owner"})
     if (findRoleInvitation || findOwnerRoleInvitation) {
       return res.status(400).json({
         message: "The Invitation is already sent or already accepted ",
@@ -186,7 +186,8 @@ export const VerifyRoleInvitation = async (req,res)=>{
       message:" We could not find this invitation. Please check the link or ask the hotel admin to send a new invitation."
     })
   }
-
+  findExistingInvitation.used=true
+  await findExistingInvitation.save()
   if (new Date(findExistingInvitation.expiresAt).getTime() < Date.now()) {
   findExistingInvitation.status = "expired";
   await findExistingInvitation.save();
@@ -231,8 +232,8 @@ export const VerifyRoleInvitation = async (req,res)=>{
      await CreateRole.save()
 
      findExistingInvitation.status = "accepted"
-     findExistingInvitation.used=true;
      findExistingInvitation.acceptedBy = user._id;
+     findExistingInvitation.acceptedAt = new Date(Date.now())
      await findExistingInvitation.save();
 
      res.status(201).json({
@@ -268,12 +269,19 @@ export const DeleteHotelOwner = async(req,res)=>{
     User
   }
 
-  let DeletedOwner = await models[model].findOneAndDelete({
+  let DeletedOwner = null;
+
+if(model =="HotelInvite"){
+  DeletedOwner = await models[model].findOneAndUpdate({
+    _id:id
+  },{status:"cancelled"})
+
+}
+  if(model!="HotelInvite"){
+     DeletedOwner = await models[model].findOneAndDelete({
     _id:id
   })
-
-  if(model!="HotelInvite"){
-    await HotelInvite.findOneAndDelete({hotel:DeletedOwner.hotel,role:DeletedOwner.role})
+    await HotelInvite.findOneAndUpdate({hotel:DeletedOwner.hotel,role:DeletedOwner.role},{status:"cancelled"})
   }
 
   if(!DeletedOwner){

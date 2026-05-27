@@ -579,7 +579,7 @@ if (!findOwner) {
   const findInvitation = await HotelInvite.findOne({
     hotel: hotel._id,
     role: "owner",
-    status: { $in: ["pending", "expired", "cancelled"] },
+    status: { $in: ["pending"] },
   })
     .sort({ createdAt: -1 })
     .lean();
