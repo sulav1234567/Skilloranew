@@ -623,7 +623,7 @@ export const EditHotelFrom = ({onclose,hoteldata={}}) => {
       </FormRow>
 
       {oldimage && <div className={styles.oldimagepreview} >
-            <img src={`${import.meta.env.VITE_BASE_URL}/uploads/${oldimage.filename}`} alt="" />
+            <img src={oldimage?.url} alt="" />
 
             <div className={styles.removebtn} onClick={()=>{setOldImage(null)}}>
               <RxCross2/>
