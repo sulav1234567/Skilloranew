@@ -16,6 +16,11 @@ import HotelOutlet from "./Adminpannel/pages/HotelOutlet.jsx";
 import HoteldetailedviewOutlet from "./Adminpannel/pages/hoteldetailedviewoutlet.jsx";
 import Hoteloverview from "./Adminpannel/pages/hoteloverview.jsx";
 import Hotelroleverification from "./verification/hotelroleverification.jsx";
+import ServiceModuleOutlet from "./servicemodule/pages/serviceModuleOutlet.jsx";
+import Generalservicesoutlet from "./servicemodule/pages/generalservicesoutlet.jsx";
+import FrontOfficeOutlet from "./servicemodule/pages/frontOffice/frontOfficeOutlet.jsx";
+import Reservation from "./servicemodule/pages/frontOffice/reservation.jsx";
+import ResetPassword from "./resetmyPassword/resetPassword.jsx";
 
 
 
@@ -32,10 +37,11 @@ function App() {
         <Route path="/" element={<Landingpage />} />
         
         <Route path="/admin/*" element={
-          <ProtectedRoute allowedroles={["admin"]}>
+        <ProtectedRoute allowedroles={["admin"]}>
             <Adminpanneloutlet/>
+             </ProtectedRoute>
 
-          </ProtectedRoute>
+         
           
           }>
         <Route path="hotels/*" element={<HotelOutlet/>}>
@@ -50,11 +56,32 @@ function App() {
        
 
         </Route>
+
+        <Route path="/services/:hotelid/*" element=
+
+        
+        {
+          <ProtectedRoute allowedroles={["admin"]}>
+
+        <ServiceModuleOutlet/>
+          </ProtectedRoute>
+      }
+        >
+        <Route index element={<Generalservicesoutlet/>}/>
+        <Route path="frontoffice/*" element={<FrontOfficeOutlet/>}>
+        <Route path="reservation" element={<Reservation/>}/>
+        
+        </Route>
+        </Route>
+        
+
+       
         <Route path="/accept-invitation/:invitationtoken" element={<Hotelroleverification/>}/>
         
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/unauthorized" element={<Unauthorized/>}/>
+        <Route path="/resetmypassword/:token" element={<ResetPassword/>}/>
         <Route path="*" element={<NotFound404/>}/>
 
       </Routes>

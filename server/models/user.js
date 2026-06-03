@@ -23,9 +23,7 @@ const UserSchema = new mongoose.Schema({
     githubid:{type:String},
     password:{
         type:String,
-        required:function () {
-            return !this.googleId&& !this.githubid
-        }
+        required:true
     },
     avatar: {type:String},
     authprovider:{

@@ -15,7 +15,7 @@ let namearray = name.split(" ");
   return initials;
 };
 
-export const NavbarLink = ({ text = "", icon = {}, path = "",end=false }) => {
+export const NavbarLink = ({ text = "", icon = {}, path = "",end=false ,onclick=()=>{}}) => {
   return (
     <NavLink
       to={path}
@@ -23,6 +23,7 @@ export const NavbarLink = ({ text = "", icon = {}, path = "",end=false }) => {
       className={({ isActive }) =>
         isActive ? `${styles.navactive} ${styles.navlink}` : `${styles.navlink}`
       }
+      onClick={onclick}
     >
       <div className={styles.navlinksvg}>{icon}</div>
       <div className={styles.navlinktext}>{text}</div>

@@ -3,9 +3,11 @@ import passport from "passport";
 import bcrypt from "bcryptjs";
 import { upload } from "../config/multer.config.js";
 import {
+  ForgotPassword,
   LoginUser,
   Logout,
   RefreshToken,
+  ResetPassword,
   SignupUser,
 } from "../controller/authcontroller/auth.controller.js";
 import {
@@ -112,5 +114,8 @@ Router.get(
    
   }
 );
+
+Router.post("/forgotpassword",upload("all").none(),ForgotPassword)
+Router.get("/resetpassword/:token",ResetPassword)
 
 export default Router;

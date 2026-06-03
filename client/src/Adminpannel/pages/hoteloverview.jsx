@@ -20,11 +20,13 @@ import { emailRegex } from "../components/regex";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 import HotelOverviewSkeleton from "./skeletonlforHotelOverview";
 import { useConfirmationMessageContext } from "../../forms/components/confirmationmessage";
+import { useNavigate } from "react-router";
 
 const Hoteloverview = () => {
   let { hotel, FetchHotelData,owner,loading } = useHotelData();
   let [createOwnerBtn, setCreateOwnerBtn] = useState(false);
-  let{showMessages}=useGlobalMessageContext()
+  let{showMessages}=useGlobalMessageContext();
+  let navigate = useNavigate()
   let { setConfirmationMessageData, clearMessage } =
       useConfirmationMessageContext();
 
@@ -68,7 +70,10 @@ const Hoteloverview = () => {
     {hotel && !loading &&   <div className={styles.overviewcontainer}>
         <div className={styles.containerone}>
           <div className={styles.infoeditbtnholder}>
-            <div className={styles.infoeditbtn}>
+            <div className={styles.infoeditbtn} onClick={()=>{
+              navigate(`/services/${hotel?._id}`,{replace:true})
+              
+            }}>
               <MdModeEdit />
             </div>
           </div>

@@ -251,11 +251,11 @@ export const passwordMailTemplate = ({ name, password }) => wrapper(`
   <tr>
     <td style="padding:32px 32px 24px;">
       <p style="margin:0 0 6px;color:#1D4ED8;font-size:10px;font-weight:700;
-                letter-spacing:1.2px;text-transform:uppercase;">Account Setup</p>
+                letter-spacing:1.2px;text-transform:uppercase;">Password Reset</p>
       <h1 style="margin:0 0 12px;color:#111827;font-size:22px;font-weight:800;
-                 letter-spacing:-0.3px;line-height:1.25;">Your account is ready</h1>
+                 letter-spacing:-0.3px;line-height:1.25;">Your new password is ready</h1>
       <p style="margin:0 0 24px;color:#4B5563;font-size:14px;line-height:1.8;">
-        Hi <strong>${name || "there"}</strong>, your SkillOra account has been created.
+        Hi <strong>${name || "there"}</strong>,Your Skillors Password Has Been Reseted.
         Use the temporary password below to sign in, then update it immediately
         from your profile settings.
       </p>
@@ -493,6 +493,101 @@ export const roleInvitationEmailTemplate = ({
               &#9888;&#65039; &nbsp;<strong>Security notice:</strong>
               Only accept this invitation if you were expecting access to this hotel.
               If this was not meant for you, you can safely ignore this email.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  ${footer()}
+`);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PASSWORD RESET LINK EMAIL
+// ─────────────────────────────────────────────────────────────────────────────
+export const passwordResetLinkEmailTemplate = ({
+  name,
+  resetLink,
+  expiresIn = "10 minutes",
+}) => wrapper(`
+
+  ${header}
+
+  <!-- HERO -->
+  <tr>
+    <td style="background-color:#F8FAFF;padding:38px 32px 34px;
+               text-align:center;border-bottom:1px solid #EEF2FF;">
+      <p style="margin:0 0 16px;display:inline-block;background-color:#EEF2FF;
+                color:#1D4ED8;font-size:10px;font-weight:700;letter-spacing:1px;
+                text-transform:uppercase;padding:5px 14px;border-radius:100px;">
+        Password Reset
+      </p>
+
+      <h1 style="margin:0 0 10px;color:#111827;font-size:24px;font-weight:800;
+                 letter-spacing:-0.4px;line-height:1.25;">
+        Reset your password
+      </h1>
+
+      <p style="margin:0;color:#6B7280;font-size:14px;line-height:1.65;">
+        We received a request to reset your SkillOra account password.
+      </p>
+    </td>
+  </tr>
+
+  <!-- BODY -->
+  <tr>
+    <td style="padding:28px 32px 24px;">
+      <p style="margin:0 0 22px;color:#4B5563;font-size:14px;line-height:1.8;">
+        Hi <strong>${name || "there"}</strong>, click the button below to create a new password.
+        This password reset link will expire in <strong>${expiresIn}</strong>.
+      </p>
+
+      <!-- CTA -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;">
+        <tr>
+          <td align="center">
+            <a href="${resetLink}"
+               style="display:inline-block;background-color:#1D4ED8;color:#ffffff;
+                      font-size:13px;font-weight:700;text-decoration:none;
+                      padding:12px 30px;border-radius:9px;letter-spacing:0.2px;">
+              Reset Password &nbsp;&rarr;
+            </a>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Fallback Link -->
+      <p style="margin:0 0 22px;color:#9CA3AF;font-size:12px;line-height:1.7;text-align:center;">
+        If the button does not work, copy and paste this link into your browser:
+        <br />
+        <a href="${resetLink}" style="color:#1D4ED8;text-decoration:none;word-break:break-all;">
+          ${resetLink}
+        </a>
+      </p>
+
+      <!-- Info Box -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+        <tr>
+          <td style="background-color:#FAFAFA;border:1px solid #F0F0F0;
+                     border-radius:12px;padding:14px 16px;">
+            <p style="margin:0;color:#4B5563;font-size:12px;line-height:1.7;">
+              After resetting your password, you can sign in again using your new password.
+              For security reasons, this link can only be used once.
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Warning -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="background-color:#FFFBEB;border:1px solid #FDE68A;
+                     border-radius:9px;padding:12px 16px;">
+            <p style="margin:0;color:#92400E;font-size:12px;line-height:1.65;">
+              &#9888;&#65039; &nbsp;<strong>Security notice:</strong>
+              If you did not request a password reset, you can safely ignore this email.
+              Your password will remain unchanged.
             </p>
           </td>
         </tr>

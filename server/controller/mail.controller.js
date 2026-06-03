@@ -5,6 +5,7 @@ import {
   otpEmailTemplate,
   passwordMailTemplate,
   roleInvitationEmailTemplate,
+  passwordResetLinkEmailTemplate,
 } from "../temp/emailTemplate.js";
 
 const getSender = () => {
@@ -197,6 +198,46 @@ SkillOra Team`,
   return {
     success: true,
     message: "Role invitation email sent successfully",
+    messageId: data?.id,
+  };
+};
+
+export const sendPasswordResetLink = async ({
+  email,
+  name,
+  resetLink,
+  expiresIn = "10 minutes",
+}) => {
+  if (!email || !resetLink) {
+    throw new Error("Email and reset link are required");
+  }
+
+  const data = await sendEmail({
+    to: email,
+    subject: "Reset your SkillOra password",
+    text: `Hello ${name || "User"},
+
+We received a request to reset your SkillOra account password.
+
+Reset your password using this link:
+${resetLink}
+
+This password reset link expires in ${expiresIn}.
+
+If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.
+
+Best regards,
+SkillOra Team`,
+    html: passwordResetLinkEmailTemplate({
+      name,
+      resetLink,
+      expiresIn,
+    }),
+  });
+
+  return {
+    success: true,
+    message: "Password reset email sent successfully",
     messageId: data?.id,
   };
 };

@@ -12,6 +12,7 @@ import api from "../../axios/axios";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 import { useUserInfo } from "../../userinfo/userinfo";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { emailRegex } from "../../Adminpannel/components/regex";
 
 let backendurl = import.meta.env.VITE_BASE_URL;
 const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
@@ -116,7 +117,9 @@ const Loginform = ({ setformtype = () => {}, closeform = () => {} }) => {
           <div className={styles.remembermetext}>Remember me</div>
         </div>
 
-        <div className={styles.forgotpassbtn}>Forgot password?</div>
+        <div className={styles.forgotpassbtn} onClick={()=>{
+          setformtype("resetpassword")
+        }}>Forgot password?</div>
       </div>
 
       <div
@@ -299,7 +302,92 @@ let SignupForm = ({ setformtype = () => {}, closeform = () => {} }) => {
     </>
   );
 };
+let ForgotPasswordForm = ({setformtype=()=>{},closeform=()=>{}})=>{
 
+   const [formdata, setFormData] = useState({
+    skilloraemail:"",
+  });
+  const { showMessages } = useGlobalMessageContext();
+  const [errors, setErrors] = useState({});
+  const [btnstate, setBtnState] = useState(false);
+  const [loading, setloading] = useState(false);
+
+  const ForgotPWFunction = async () => {
+    let error = {};
+
+    console.log(formdata)
+
+    if(!formdata.skilloraemail || !emailRegex.test(formdata.skilloraemail)){
+      error = {
+        ["skilloraemail"]:"Invalid Email"
+      }
+    }
+
+    setErrors(error);
+
+    if (Object.entries(error).length === 0) {
+      setloading(true);
+      let formdatainp = new FormData();
+
+      formdatainp.append("email",formdata.skilloraemail)
+
+      try {
+        let res = await api.post("/auth/forgotpassword", formdatainp);
+        showMessages(res?.data.message, "success");
+        closeform();
+      } catch (err) {
+        if (err) {
+          showMessages(err?.response?.data.message, "reject");
+        }
+      } finally {
+        setloading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    let isactive = true;
+    Object.entries(formdata).forEach(([key, value]) => {
+      if (!value || value === "") {
+        isactive = false;
+      }
+    });
+
+    setBtnState(isactive);
+  }, [formdata]);
+  return (
+    <>
+
+      <AuthInputs
+        type="email"
+        placeholder="youremail@gmail.com"
+        label="Email Address :"
+        name="skilloraemail"
+        getdata={setFormData}
+        errors={errors}
+      >
+        <LuMail />
+      </AuthInputs>
+
+
+      <div
+        className={
+          btnstate && !loading ? styles.loginbtnactive : styles.loginbtndeactive
+        }
+        onClick={() => {
+          if (btnstate && !loading) {
+            ForgotPWFunction();
+          }
+        }}
+      >
+        {!loading ? "Reset Password" : <div className={styles.loader}></div>}
+      </div>
+
+      
+    </>
+  )
+
+}
 const AuthSystem = ({
   onclose = () => {},
   formtype = "signin",
@@ -341,15 +429,16 @@ const AuthSystem = ({
           </div>
 
           <div className={styles.welcomeMessage}>
-            {formtype == "signin" ? "Welcome Back" : "Create Account"}
+            {formtype == "signin" && "Welcome Back" }{formtype == "signup" && "Create Account"}
+            {formtype == "resetpassword" && "Reset Password"}
           </div>
 
           <div className={styles.welcomeSubMessage}>
-            {formtype == "signin"
-              ? "Sign in to continue your learning journey"
-              : "Join thousands of learners on Skillora"}
+            {formtype == "signin" && "Sign in to continue your learning journey"}
+             {formtype == "signup" && "Join thousands of learners on Skillora"} 
+             {formtype == "resetpassword" && "Reset your password to continue to your account"}  
           </div>
-
+   {formtype != "resetpassword" && <>
           <div className={styles.authpagebtn}>
             <div className={styles.authpagebtnlogo}>
               <FcGoogle />
@@ -381,6 +470,8 @@ const AuthSystem = ({
           <div className={styles.continuewithdivider}>
             Or continue with email
           </div>
+   
+   </>}
 
           {formtype == "signin" && (
             <Loginform setformtype={setformtype} closeform={onclose} />
@@ -388,6 +479,7 @@ const AuthSystem = ({
           {formtype == "signup" && (
             <SignupForm setformtype={setformtype} closeform={onclose} />
           )}
+          {formtype == "resetpassword" && <ForgotPasswordForm setformtype={setformtype} closeform={onclose}/>}
         </div>
       </div>
     </div>
