@@ -5,10 +5,10 @@ const PricingSection = () => {
   return (
     <div className={styles.pricingsection}>
       <div className={styles.pricingsectionheading}>
-        Simple, Transparent Pricing
+        Simple, Transparent Hotel Pricing
       </div>
       <div className={styles.pricingsectionsubheading}>
-        Choose the perfect plan for your needs. All plans include a 14-day free
+        Choose the perfect plan for your hotel. All plans include a 14-day free
         trial.
       </div>
 
@@ -20,7 +20,7 @@ const PricingSection = () => {
             <div className={styles.pricingsectionpricevalidity}>per month</div>
           </div>
           <div className={styles.pricingsectionpricesubheading}>
-            Perfect for individual educators
+            Perfect for small hotels and lodges
           </div>
 
           <div
@@ -35,7 +35,7 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                Up to 100 students
+                Up to 20 rooms
               </div>
             </div>
 
@@ -44,7 +44,7 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                5 courses
+                Reservation management
               </div>
             </div>
 
@@ -53,7 +53,16 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                Basic analytics
+                Guest profile management
+              </div>
+            </div>
+
+            <div className={styles.pricingsectionpricecategory}>
+              <div className={styles.pricingsectionpricecatrgoryicon}>
+                <FaCheck />
+              </div>
+              <div className={styles.pricingsectionpricecatrgorytext}>
+                Basic reports
               </div>
             </div>
 
@@ -65,15 +74,6 @@ const PricingSection = () => {
                 Email support
               </div>
             </div>
-
-            <div className={styles.pricingsectionpricecategory}>
-              <div className={styles.pricingsectionpricecatrgoryicon}>
-                <FaCheck />
-              </div>
-              <div className={styles.pricingsectionpricecatrgorytext}>
-                Course certificates
-              </div>
-            </div>
           </div>
         </div>
         <div className={`${styles.pricingcard} ${styles.choosen}`}>
@@ -83,7 +83,7 @@ const PricingSection = () => {
             <div className={styles.pricingsectionpricevalidity}>per month</div>
           </div>
           <div className={styles.pricingsectionpricesubheading}>
-            For growing educational businesses
+            For growing hotels and resorts
           </div>
 
           <div
@@ -98,7 +98,7 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                Up to 1,000 students
+                Up to 100 rooms
               </div>
             </div>
 
@@ -107,7 +107,7 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                Unlimited courses
+                Advanced reservation system
               </div>
             </div>
 
@@ -116,41 +116,41 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                Advanced analytics
+                Front office operations
               </div>
             </div>
 
+            <div className={styles.pricingsectionpricecategory}>
+              <div className={styles.pricingsectionpricecatrgoryicon}>
+                <FaCheck />
+              </div>
+              <div className={styles.pricingsectionpricecatrgorytext}>
+                Billing and invoicing
+              </div>
+            </div>
+
+            <div className={styles.pricingsectionpricecategory}>
+              <div className={styles.pricingsectionpricecatrgoryicon}>
+                <FaCheck />
+              </div>
+              <div className={styles.pricingsectionpricecatrgorytext}>
+                Staff roles and permissions
+              </div>
+            </div>
+            <div className={styles.pricingsectionpricecategory}>
+              <div className={styles.pricingsectionpricecatrgoryicon}>
+                <FaCheck />
+              </div>
+              <div className={styles.pricingsectionpricecatrgorytext}>
+                Occupancy and revenue reports
+              </div>
+            </div>
             <div className={styles.pricingsectionpricecategory}>
               <div className={styles.pricingsectionpricecatrgoryicon}>
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
                 Priority support
-              </div>
-            </div>
-
-            <div className={styles.pricingsectionpricecategory}>
-              <div className={styles.pricingsectionpricecatrgoryicon}>
-                <FaCheck />
-              </div>
-              <div className={styles.pricingsectionpricecatrgorytext}>
-                Custom branding
-              </div>
-            </div>
-            <div className={styles.pricingsectionpricecategory}>
-              <div className={styles.pricingsectionpricecatrgoryicon}>
-                <FaCheck />
-              </div>
-              <div className={styles.pricingsectionpricecatrgorytext}>
-                Live video classes
-              </div>
-            </div>
-            <div className={styles.pricingsectionpricecategory}>
-              <div className={styles.pricingsectionpricecatrgoryicon}>
-                <FaCheck />
-              </div>
-              <div className={styles.pricingsectionpricecatrgorytext}>
-                API access
               </div>
             </div>
           </div>
@@ -165,7 +165,7 @@ const PricingSection = () => {
             </div>
           </div>
           <div className={styles.pricingsectionpricesubheading}>
-            For large organizations
+            For large hotels and hotel chains
           </div>
 
           <div
@@ -180,7 +180,7 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                Unlimited students
+                Unlimited rooms
               </div>
             </div>
 
@@ -189,7 +189,7 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                Unlimited courses
+                Multi-property management
               </div>
             </div>
 
@@ -216,7 +216,7 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                White-label solution
+                White-label hotel system
               </div>
             </div>
 
@@ -225,7 +225,7 @@ const PricingSection = () => {
                 <FaCheck />
               </div>
               <div className={styles.pricingsectionpricecatrgorytext}>
-                SSO integration
+                Custom staff permissions
               </div>
             </div>
 

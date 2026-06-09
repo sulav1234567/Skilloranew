@@ -21,6 +21,7 @@ import Generalservicesoutlet from "./servicemodule/pages/generalservicesoutlet.j
 import FrontOfficeOutlet from "./servicemodule/pages/frontOffice/frontOfficeOutlet.jsx";
 import Reservation from "./servicemodule/pages/frontOffice/reservation.jsx";
 import ResetPassword from "./resetmyPassword/resetPassword.jsx";
+import LiquidGlass from "./liquidglass.jsx";
 
 
 
@@ -79,6 +80,7 @@ function App() {
         <Route path="/accept-invitation/:invitationtoken" element={<Hotelroleverification/>}/>
         
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/liquidglass" element={<LiquidGlass />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/unauthorized" element={<Unauthorized/>}/>
         <Route path="/resetmypassword/:token" element={<ResetPassword/>}/>

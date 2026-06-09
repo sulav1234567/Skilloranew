@@ -1,4 +1,3 @@
-
 import styles from "../css/newsletter.module.css";
 import { FaArrowRight } from "react-icons/fa";
 
@@ -10,12 +9,13 @@ const Newsletter = () => {
         {/* LEFT CONTENT */}
         <div className={styles.leftSection}>
           <div className={styles.heading}>
-            Stay Updated with Skillora
+            Stay Updated with Skillora Hotels
           </div>
 
           <div className={styles.subText}>
-            Subscribe to our newsletter and get the latest updates, tips, and
-            insights delivered directly to your inbox.
+            Subscribe to our newsletter and get the latest hotel management
+            tips, feature updates, and business insights delivered directly to
+            your inbox.
           </div>
 
           {/* INPUT + BUTTON */}

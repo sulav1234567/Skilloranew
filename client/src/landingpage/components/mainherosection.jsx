@@ -1,6 +1,6 @@
 
 import styles from "../css/landingpage.module.css";
-import heroimage from "../../assets/heroimage.jpg";
+import heroimage from "../../assets/hotelimage.webp";
 import { GiGraduateCap } from "react-icons/gi";
 const Mainherosection = () => {
   return (
@@ -8,14 +8,14 @@ const Mainherosection = () => {
         <div className={`${styles.herochild} ${styles.heroleft}`}>
             <div className={styles.herolefttag}>
                 <div className={styles.tagglow}></div>
-                <div className={styles.tagtext}>Trusted by 10,000+ educators worldwide</div>
+                <div className={styles.tagtext}>Trusted by hotels, lodges, and resorts</div>
             </div>
           <div className={styles.herochildmaintext}>
-            Transform Your Learning Experience
+            Simplify Your Hotel Management
           </div>
 
           <div className={styles.herochilddiscriptivetext}>
-            Skillora empowers educators and learners with a powerful, intuitive platform that makes online learning engaging, efficient, and accessible for everyone.
+            Skillora helps hotels manage reservations, guests, rooms, payments, and daily operations from one powerful and easy-to-use platform.
           </div>
         <div className={styles.herobtnsholder}>
             <div className={styles.secondarybtn}>Start free trial</div>
@@ -36,11 +36,11 @@ const Mainherosection = () => {
             <div className={styles.herorightagtext}>
                 <div className={styles.herorighttagprimarytext}>
 
-                2500+
+                500+
                 </div>
                 <div className={styles.herorighttagsecondarytext}>
 
-                Expert Instructors
+                Hotel Operations Managed
                 </div>
                 
                 </div>

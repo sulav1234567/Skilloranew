@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router";
 import styles from "../css/footer.module.css";
 import {
@@ -17,10 +16,10 @@ const Footer = () => {
         
         {/* LEFT SECTION */}
         <div className={styles.brandSection}>
-          <div className={styles.brandName}>Skillora</div>
+          <div className={styles.brandName}>Skillora Hotels</div>
           <div className={styles.brandDescription}>
-            Empowering educators and learners worldwide with innovative
-            learning management solutions.
+            Helping hotels, lodges, resorts, and guest houses manage
+            reservations, guests, rooms, billing, and daily operations with ease.
           </div>
 
           <div className={styles.socialIcons}>
@@ -37,10 +36,10 @@ const Footer = () => {
           
           <div className={styles.linkColumn}>
             <div className={styles.columnTitle}>Product</div>
-            <div className={styles.link}>Features</div>
+            <div className={styles.link}>Hotel Features</div>
             <div className={styles.link}>Pricing</div>
             <div className={styles.link}>Security</div>
-            <div className={styles.link}>Roadmap</div>
+            <div className={styles.link}>Integrations</div>
             <div className={styles.link}>API</div>
           </div>
 
@@ -56,8 +55,8 @@ const Footer = () => {
           <div className={styles.linkColumn}>
             <div className={styles.columnTitle}>Resources</div>
             <div className={styles.link}>Help Center</div>
-            <div className={styles.link}>Documentation</div>
-            <div className={styles.link}>Webinars</div>
+            <div className={styles.link}>Setup Guide</div>
+            <div className={styles.link}>Hotel Operations Guide</div>
             <div className={styles.link}>Case Studies</div>
             <div className={styles.link}>Community</div>
           </div>
@@ -72,7 +71,7 @@ const Footer = () => {
               navigate("/terms")
             }}>Terms of Service</div>
             <div className={styles.link}>Cookie Policy</div>
-            <div className={styles.link}>GDPR</div>
+            <div className={styles.link}>Data Protection</div>
             <div className={styles.link}>Accessibility</div>
           </div>
 
@@ -82,13 +81,13 @@ const Footer = () => {
       {/* BOTTOM BAR */}
       <div className={styles.footerBottom}>
         <div className={styles.copyright}>
-          © 2026 Skillora. All rights reserved. Created By Sulav Khatiwada
+          © 2026 Skillora Hotels. All rights reserved. Created By Sulav Khatiwada
         </div>
 
         <div className={styles.bottomLinks}>
-          <div className={styles.bottomLink}>Status</div>
-          <div className={styles.bottomLink}>Changelog</div>
-          <div className={styles.bottomLink}>Partners</div>
+          <div className={styles.bottomLink}>System Status</div>
+          <div className={styles.bottomLink}>Updates</div>
+          <div className={styles.bottomLink}>Hotel Partners</div>
         </div>
       </div>
     </div>

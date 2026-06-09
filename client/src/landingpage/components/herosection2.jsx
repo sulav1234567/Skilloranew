@@ -1,46 +1,38 @@
 
 import styles from "../css/herosection2.module.css"
-import { FiBookOpen } from "react-icons/fi";
-import { GoPeople } from "react-icons/go";
-import { BsGraphUpArrow } from "react-icons/bs";
-import { IoVideocamOutline } from "react-icons/io5";
-import { AiOutlineSafetyCertificate } from "react-icons/ai"
-import { SlBadge } from "react-icons/sl";
+import { FaCalendarCheck, FaUsers, FaChartLine, FaFileInvoiceDollar } from "react-icons/fa";
+import { MdBedroomParent, MdSecurity } from "react-icons/md";
 const cardDetail = [
     {
-        title:"rich course library",
-        subtitle:"Access thousands of courses across various subjects with multimedia content and interactive lessons.",
-        icon:<FiBookOpen/>
-    },
-     {
-        title:"Collaborative Learning",
-        subtitle:"Foster engagement with discussion forums, group projects, and peer-to-peer learning opportunities.",
-        icon:<GoPeople/>
-    },
-     {
-        title:"Advanced Analytics",
-        subtitle:"Track progress with detailed insights, performance metrics, and customizable learning paths.",
-        icon:<BsGraphUpArrow/>
-    },
-
-    {
-        title:"Live Video Classes",
-        subtitle:"Host interactive live sessions with HD video, screen sharing, and real-time collaboration tools.",
-        icon:<IoVideocamOutline/>
+        title:"Smart Reservation Management",
+        subtitle:"Manage bookings, check-ins, check-outs, cancellations, and room availability from one simple dashboard.",
+        icon:<FaCalendarCheck/>
     },
     {
-        title:"Certifications",
-        subtitle:"Issue and manage professional certificates to recognize achievements and skill mastery.",
-        icon:<SlBadge/>
-
+        title:"Guest Profile Management",
+        subtitle:"Store guest details, contact information, stay history, preferences, and documents for faster service.",
+        icon:<FaUsers/>
     },
     {
-        title:"Enterprise Security",
-        subtitle:"Bank-level encryption, SSO integration, and compliance with global data protection standards.",
-        icon:<AiOutlineSafetyCertificate/>
+        title:"Business Analytics",
+        subtitle:"Track occupancy, revenue, reservations, payments, and hotel performance with clear insights.",
+        icon:<FaChartLine/>
     },
-    
-
+    {
+        title:"Room & Front Office Operations",
+        subtitle:"Handle room assignments, housekeeping status, walk-in guests, and daily front office activities smoothly.",
+        icon:<MdBedroomParent/>
+    },
+    {
+        title:"Billing & Invoicing",
+        subtitle:"Create folios, manage payments, generate invoices, and keep guest billing organized and accurate.",
+        icon:<FaFileInvoiceDollar/>
+    },
+    {
+        title:"Secure Hotel Management",
+        subtitle:"Protect hotel, guest, and payment data with secure access control and role-based permissions.",
+        icon:<MdSecurity/>
+    },
 ]
 
 const HeroSection2Card=({detail})=>{
@@ -63,12 +55,12 @@ const Herosection2 = () => {
   return (
    <div className={styles.herosection2}>
     <div className={styles.mainheader}>
-        Everything You Need to Succeed
+        Everything Your Hotel Needs to Operate Smarter
 
     </div>
 
     <div className={styles.secondaryheading}>
-        Powerful features designed to create engaging learning experiences and drive measurable results.
+        Powerful features designed to manage reservations, guests, rooms, billing, and daily hotel operations with ease.
     </div>
 
 

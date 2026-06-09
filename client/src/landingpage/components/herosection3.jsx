@@ -18,8 +18,8 @@ const CardPoint=({text})=>{
 const Herosection3 = () => {
   return (
     <div className={styles.herosection3}>
-        <div className={styles.herosection3heading}>Built for Every Learning Journey</div>
-        <div className={styles.herosection3subheading}>Whether you're an educator, organization, or lifelong learner, Skillora adapts to your needs.</div>
+        <div className={styles.herosection3heading}>Built for Every Hotel Operation</div>
+        <div className={styles.herosection3subheading}>Whether you run a hotel, lodge, resort, or guest house, Skillora adapts to your daily management needs.</div>
 
         <div className={styles.herosection3cardsholder}>
             <div className={styles.herosection3card}>
@@ -27,13 +27,13 @@ const Herosection3 = () => {
                     <img src={image1} alt="" />
                 </div>
 
-                <div className={styles.cardtitle}>For Instructors</div>
+                <div className={styles.cardtitle}>For Front Office Teams</div>
 
                 <div className={styles.cardpointsholder}>
-                   <CardPoint text={"Create and monetize courses effortlessly"}/>
-                   <CardPoint text={"Engage students with interactive content"}/>
-                   <CardPoint text={"Track student progress in real-time"}/>
-                   <CardPoint text={"Build your personal brand"}/>
+                   <CardPoint text={"Manage reservations and walk-in guests easily"}/>
+                   <CardPoint text={"Handle check-ins and check-outs faster"}/>
+                   <CardPoint text={"Assign rooms based on availability"}/>
+                   <CardPoint text={"Access guest details and stay history quickly"}/>
                    
                 </div>
             </div>
@@ -42,13 +42,13 @@ const Herosection3 = () => {
                     <img src={image2} alt="" />
                 </div>
 
-                <div className={styles.cardtitle}>For Organizations</div>
+                <div className={styles.cardtitle}>For Hotel Management</div>
 
                 <div className={styles.cardpointsholder}>
-                   <CardPoint text={"Scale training programs efficiently"}/>
-                   <CardPoint text={"Maintain compliance and certifications"}/>
-                   <CardPoint text={"Integrate with existing tools"}/>
-                   <CardPoint text={"Reduce training costs by 60%"}/>
+                   <CardPoint text={"Track occupancy, revenue, and bookings"}/>
+                   <CardPoint text={"Manage rooms, staff roles, and permissions"}/>
+                   <CardPoint text={"Generate invoices and monitor payments"}/>
+                   <CardPoint text={"Improve daily operations and reduce manual work"}/>
                    
                 </div>
             </div>
