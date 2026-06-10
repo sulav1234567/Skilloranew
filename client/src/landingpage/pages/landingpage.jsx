@@ -11,6 +11,8 @@ const Landingpage = () => {
   
   return (
     <>
+    <div style={{display:"flex",flexDirection:"column",height:"fit-content",width:"100vw",overflow:"hidden"}}>
+
     <Topnavbar/>
     <Mainherosection/>
     <Herosection2/>
@@ -18,6 +20,7 @@ const Landingpage = () => {
     <PricingSection/>
     <Newsletter/>
     <Footer/>
+    </div>
 
     
     </>
