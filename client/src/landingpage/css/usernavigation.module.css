@@ -104,3 +104,39 @@
 .logoutbtn:hover{
    filter: brightness(70%);
 }
+
+@media (min-width:100px) and (max-width:430px) {
+    .dropdownmenu{
+   
+    right: -0px;
+    width: 200px;
+   
+}
+
+.welcomemessage{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: capitalize;
+    margin-bottom: 25px;
+
+}
+
+.dropdownbtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    width: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    
+}
+
+
+}
