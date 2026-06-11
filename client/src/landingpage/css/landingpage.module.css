@@ -371,7 +371,7 @@
   padding-right: 0px;
 }
 .herochildmaintext {
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: transparent;
   background-image: linear-gradient(
     to bottom right,
@@ -384,7 +384,7 @@
 }
 
 .herochilddiscriptivetext {
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   color: rgb(98, 98, 98);
   font-weight: 300;
 
@@ -393,7 +393,7 @@
 .herobtnsholder{
     display: flex;
     gap: 10px;
-    margin-top: 40px;
+    margin-top: 30px;
 }
 
 .herobtnsholder .primarybtn, .herobtnsholder .secondarybtn{
