@@ -14,7 +14,8 @@
   justify-content: space-between;
   gap: 20px;
   padding: 0px 80px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 .topnavbarlogoholder {
   display: flex;
@@ -249,7 +250,8 @@
   justify-content: space-between;
   gap: 20px;
   padding: 0px 20px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 .topnavbarlogoholder {
   display: flex;
