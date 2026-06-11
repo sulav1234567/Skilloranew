@@ -58,7 +58,7 @@ passport.use(
         let generatepassword = generateStrongPassword(12);
         let hashpassword = await bcrypt.hash(generatepassword, 12);
 
-        if(!isproduction){
+       
           try {
            await sendPasswordMail({
               email: email,
@@ -69,7 +69,7 @@ passport.use(
             console.log("Password email sending failed:", mailError.message);
           }
 
-        }
+        
 
 
         user = await User.create({
@@ -157,7 +157,7 @@ passport.use(
         let generatepassword = generateStrongPassword(12);
         let hashpassword = await bcrypt.hash(generatepassword, 12);
 
-        if(!isproduction){
+        
           try {
             await sendPasswordMail({
               email: email,
@@ -167,8 +167,6 @@ passport.use(
           } catch (mailError) {
             console.log("Password email sending failed:", mailError.message);
           }
-
-        }
 
 
         user = await User.create({
@@ -182,6 +180,7 @@ passport.use(
             local: false,
             google: false,
           },
+          password:hashpassword,
           role: "user",
         });
 
