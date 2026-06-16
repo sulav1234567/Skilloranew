@@ -21,6 +21,7 @@ import { useGlobalMessageContext } from "../../Globalmessage/components/globalme
 import HotelOverviewSkeleton from "./skeletonlforHotelOverview";
 import { useConfirmationMessageContext } from "../../forms/components/confirmationmessage";
 import { useNavigate } from "react-router";
+import { FaArrowRight } from "react-icons/fa6";
 
 const Hoteloverview = () => {
   let { hotel, FetchHotelData,owner,loading } = useHotelData();
@@ -70,10 +71,14 @@ const Hoteloverview = () => {
     {hotel && !loading &&   <div className={styles.overviewcontainer}>
         <div className={styles.containerone}>
           <div className={styles.infoeditbtnholder}>
-            <div className={styles.infoeditbtn} onClick={()=>{
-              navigate(`/services/${hotel?._id}`,{replace:true})
+            <div className={styles.servicemodulenavigationbtn} onClick={()=>{
+              navigate(`/services/${hotel?._id}`)
               
             }}>
+              Go to Services
+              <FaArrowRight/>
+            </div>
+            <div className={styles.infoeditbtn} >
               <MdModeEdit />
             </div>
           </div>
