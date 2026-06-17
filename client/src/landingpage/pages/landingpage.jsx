@@ -15,8 +15,8 @@ const Landingpage = () => {
     <div style={{display:"flex",flexDirection:"column",height:"fit-content",width:"100vw",overflowX:"hidden"}}>
 
     <Topnavbar/>
-    <Mainherosection/>
     <InfoSection/>
+    <Mainherosection/>
     <Herosection2/>
     <Herosection3/>
     <PricingSection/>
