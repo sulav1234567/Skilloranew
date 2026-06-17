@@ -85,7 +85,7 @@ const InfoSection = () => {
 
             <div
               className={styles.infoPolicyLink}
-              onClick={() => (window.location.href = "/privacy-policy")}
+              onClick={() => (window.location.href = "/privacy")}
             >
               Privacy Policy
             </div>
