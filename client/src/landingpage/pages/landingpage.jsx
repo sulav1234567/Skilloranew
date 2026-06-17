@@ -2,6 +2,7 @@
 import Footer from "../components/footer";
 import Herosection2 from "../components/herosection2";
 import Herosection3 from "../components/herosection3";
+import InfoSection from "../components/infosection";
 import Mainherosection from "../components/mainherosection";
 import Newsletter from "../components/newslettersection";
 import PricingSection from "../components/pricingSection";
@@ -11,10 +12,11 @@ const Landingpage = () => {
   
   return (
     <>
-    <div style={{display:"flex",flexDirection:"column",height:"fit-content",width:"100vw",overflow:"hidden"}}>
+    <div style={{display:"flex",flexDirection:"column",height:"fit-content",width:"100vw",overflowX:"hidden"}}>
 
     <Topnavbar/>
     <Mainherosection/>
+    <InfoSection/>
     <Herosection2/>
     <Herosection3/>
     <PricingSection/>
