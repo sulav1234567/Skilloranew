@@ -45,7 +45,7 @@ const GuestSchema = new mongoose.Schema(
 
     idType: {
       type: String,
-      enum: ["citizenship", "passport", "license", "national_id", "other"],
+      enum: ["citizenship", "passport", "license", "national_id"],
       default: "citizenship",
     },
 
@@ -64,10 +64,14 @@ const GuestSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    createdBy:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"User"
+    }
   },
   { timestamps: true }
 );
 
-GuestSchema.index({ hotel: 1, phone: 1 });
+GuestSchema.index({ hotel: 1, email:1,phone:1,firstName:1,lastName:1 });
 
 export default mongoose.model("Guest", GuestSchema);
