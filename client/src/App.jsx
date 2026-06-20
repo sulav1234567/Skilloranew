@@ -22,6 +22,8 @@ import FrontOfficeOutlet from "./servicemodule/pages/frontOffice/frontOfficeOutl
 import Reservation from "./servicemodule/pages/frontOffice/reservation.jsx";
 import ResetPassword from "./resetmyPassword/resetPassword.jsx";
 import LiquidGlass from "./liquidglass.jsx";
+import RoomManagementOutlet from "./servicemodule/pages/rooms/roommanagementOutlet.jsx";
+import Roomcategory from "./servicemodule/pages/rooms/Roomcategory.jsx";
 
 
 
@@ -69,8 +71,13 @@ function App() {
       }
         >
         <Route index element={<Generalservicesoutlet/>}/>
+        <Route path="roommanagement/*" element={<RoomManagementOutlet/>}>
+        <Route index element={<Roomcategory/>}/>
+        
+        </Route>
         <Route path="frontoffice/*" element={<FrontOfficeOutlet/>}>
         <Route path="reservation" element={<Reservation/>}/>
+        
         
         </Route>
         </Route>

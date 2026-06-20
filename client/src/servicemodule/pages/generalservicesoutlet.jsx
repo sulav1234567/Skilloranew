@@ -2,13 +2,14 @@ import { FaConciergeBell } from "react-icons/fa";
 import Leftnavbar, { NavbarLink } from "../../leftnavbar/leftnavbar";
 import Maincontainer from "../../maincontainer/maincontainer";
 import { useParams } from "react-router";
+import { MdMeetingRoom } from "react-icons/md"
 
 
 const Generalservicesoutlet = () => {
     let{hotelid}=useParams()
   return (
    <Maincontainer>
-    <Leftnavbar>
+    <Leftnavbar orgname="Services">
          <NavbarLink 
         text="Overview"
         icon={<FaConciergeBell/>}
@@ -20,6 +21,12 @@ const Generalservicesoutlet = () => {
         text="Front Office"
         icon={<FaConciergeBell/>}
         path={`/services/${hotelid}/frontoffice`}
+
+        />
+         <NavbarLink 
+        text="Rooms"
+        icon={<MdMeetingRoom/>}
+        path={`/services/${hotelid}/roommanagement`}
 
         />
     </Leftnavbar>

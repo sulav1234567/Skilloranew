@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import styles from "../css/reservationform.module.css";
 import { RxCross1 } from "react-icons/rx";
-import { useParams } from "react-router";
+import { data, useParams } from "react-router";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 import api from "../../axios/axios";
 import GuestCard from "./guestCard";
@@ -10,7 +10,7 @@ const phoneRegex = /^[0-9]{10}$/;
 const guestTypeEnum = ["normal", "vip", "corporate", "blacklisted"];
 const idTypeEnum = ["citizenship", "passport", "liscense", "national_Id"];
 
-let Input = ({
+export let Input = ({
   type = "text",
   placeholder = "N/A",
   required = false,
@@ -19,52 +19,58 @@ let Input = ({
   Name = "",
   errors = {},
   children,
+  readonly = false,
+  data={},
   setData = () => {},
 }) => {
-  let [inpvalue, setInpValue] = useState({
-    isRequired: required,
-    value: value,
-  });
-  useEffect(() => {
+  const handleChange = (e) => {
     setData((prev) => ({
       ...prev,
-      [Name]: inpvalue,
+      [Name]: {
+        isRequired: required,
+        value: e.target.value,
+      },
     }));
-  }, [inpvalue]);
+  };
+
+  useEffect(()=>{
+    setData((prev)=>({
+      ...prev,
+      [Name]:{
+        isRequired:required,
+        value:value
+      }
+    }))
+
+  },[data])
 
   return (
     <div className={styles.forminputholder}>
       <div className={styles.forminputlabelandreqtag}>
         <div className={styles.formlabel}>{label}</div>
-        <div className={styles.requiredTag}>*</div>
+        {required && <div className={styles.requiredTag}>*</div>}
       </div>
+
       <div className={styles.inperror}>{errors[Name]}</div>
-      {type != "select" && (
+
+      {type !== "select" && (
         <input
+          readOnly={readonly}
           type={type}
           placeholder={placeholder}
           required={required}
-          value={inpvalue.value}
+          value={value ?? ""}
           name={Name}
-          onChange={(e) => {
-            setInpValue((prev) => ({
-              ...prev,
-              value: e.target.value,
-            }));
-          }}
+          onChange={handleChange}
         />
       )}
-      {type == "select" && (
+
+      {type === "select" && (
         <select
           required={required}
-          value={inpvalue.value}
+          value={value??""}
           name={Name}
-          onChange={(e) => {
-            setInpValue((prev) => ({
-              ...prev,
-              value: e.target.value,
-            }));
-          }}
+          onChange={handleChange}
         >
           {children}
         </select>
@@ -149,12 +155,12 @@ const CreateReservationform = () => {
         }
 
         if (res?.status === 404) {
-          setGuest(null)
+          setGuest(null);
           showMessages(res?.data.message, "reject");
         }
       } catch (err) {
         if (err) {
-          setGuest(null)
+          setGuest(null);
           showMessages(err?.response?.data.message, "reject");
         }
       } finally {
@@ -166,14 +172,28 @@ const CreateReservationform = () => {
   };
 
   let CreateGuest = async () => {
-    if(guest) {HandlePageChange("next"); return}
+    if (guest) {
+      HandlePageChange("next");
+      return;
+    }
     setLoading(true);
     if (!hotelid) {
       showMessages("Hotelid not found", "reject");
       return;
     }
     let error = {};
-    let { email, firstname, lastname, contactnumber,nationality,address,idType,idNumber,guestType,note } = formData;
+    let {
+      email,
+      firstname,
+      lastname,
+      contactnumber,
+      nationality,
+      address,
+      idType,
+      idNumber,
+      guestType,
+      note,
+    } = formData;
 
     if ((!email?.value || !emailRegex.test(email.value)) && email.isRequired) {
       error = {
@@ -195,44 +215,42 @@ const CreateReservationform = () => {
       };
     }
 
-    if(!nationality?.value && nationality.isRequired){
+    if (!nationality?.value && nationality.isRequired) {
       error = {
         ...error,
         nationality: "Do not leave this field empty",
       };
-
     }
-    if(!address?.value && address.isRequired){
+    if (!address?.value && address.isRequired) {
       error = {
         ...error,
         address: "Do not leave this field empty",
       };
-
     }
-    if(!idType?.value || !idTypeEnum.includes(idType.value) && idType.isRequired){
-       error = {
+    if (
+      !idType?.value ||
+      (!idTypeEnum.includes(idType.value) && idType.isRequired)
+    ) {
+      error = {
         ...error,
         idType: "Invalid value",
       };
-
-
     }
-    if(!idNumber?.value  && idNumber.isRequired){
-       error = {
+    if (!idNumber?.value && idNumber.isRequired) {
+      error = {
         ...error,
         idNumber: "Do not leave this field empty",
       };
-
-
     }
 
-    if(!guestType?.value || !guestTypeEnum.includes(guestType.value) && guestType.isRequired){
-       error = {
+    if (
+      !guestType?.value ||
+      (!guestTypeEnum.includes(guestType.value) && guestType.isRequired)
+    ) {
+      error = {
         ...error,
         guestType: "Invalid value",
       };
-
-
     }
 
     if (
@@ -262,20 +280,20 @@ const CreateReservationform = () => {
 
         if (res?.status === 201) {
           setGuest(res?.data.guest);
-         showMessages(res?.data.message,"success")
+          showMessages(res?.data.message, "success");
         }
 
         if (res?.status === 404) {
-          setGuest(null)
+          setGuest(null);
           showMessages(res?.data.message, "reject");
         }
 
         if (res?.status === 409) {
-         setGuest(res?.data.guest)
+          setGuest(res?.data.guest);
         }
       } catch (err) {
         if (err) {
-          setGuest(null)
+          setGuest(null);
           showMessages(err?.response?.data.message, "reject");
         }
       } finally {
@@ -286,6 +304,138 @@ const CreateReservationform = () => {
     setLoading(false);
   };
 
+  let ValidateStayInformation =()=>{
+    let error = {}
+    let {checkindate,estimatedcheckintime,checkoutdate,adults,children,noofnights,totalpax}=formData;
+console.log(formData)
+    if(!checkindate.value && checkindate.isRequired){
+      error={
+        ...error,
+        checkindate:"Fill up this required field"
+      }
+
+    }
+    if(!estimatedcheckintime.value && estimatedcheckintime.isRequired){
+       error={
+        ...error,
+        estimatedcheckintime:"Fill up this required field"
+      }
+
+    }
+    if(!checkindate.value && checkoutdate.isRequired){
+      error={
+        ...error,
+        checkoutdate:"Fill up this required field"
+      }
+    }
+
+    if(!adults.value|| isNaN(Number.parseInt(adults.value)) && adults.isRequired){
+      error={
+        ...error,
+        adults:"This must be the number"
+      }
+
+    }
+
+    if(!children.value || isNaN(Number.parseInt(children.value)) && children.isRequired){
+      error={
+        ...error,
+        children:"This must be the number"
+      }
+    }
+
+    if(!totalpax.value || isNaN(Number.parseInt(totalpax.value)) || Number.parseInt(totalpax.value)<=0 && totalpax.isRequired){
+      error = {
+        ...error,
+        totalpax:"Invalid value"
+      }
+    }
+
+
+    if(!noofnights.value || isNaN(Number.parseInt(noofnights.value)) || Number.parseInt(noofnights.value)<=0 && noofnights.isRequired){
+      error={
+        ...error,
+        noofnights:"Invalid Value"
+      }
+    }
+    setErrors(error)
+
+    if(Object.keys(error).length ===0 ){
+      HandlePageChange("next")
+
+      
+    }
+    
+
+  }
+
+  useEffect(() => {
+    const adults = Number(formData.adults?.value || 0);
+    const children = Number(formData.children?.value || 0);
+    const total = adults + children;
+
+    setFormData((prev) => {
+      if (Number(prev.totalpax?.value || 0) === total) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        totalpax: {
+          ...prev.totalpax,
+          value: total,
+        },
+      };
+    });
+  }, [formData.adults?.value, formData.children?.value]);
+  const isValidDate = (value) => {
+  if (!value) return false;
+
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+
+  const date = new Date(year, month - 1, day);
+
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+};
+
+useEffect(() => {
+  const checkInValue = formData.checkindate?.value;
+  const checkOutValue = formData.checkoutdate?.value;
+
+  if (!isValidDate(checkInValue) || !isValidDate(checkOutValue)) {
+    return;
+  }
+
+  const checkInDate = new Date(checkInValue);
+  const checkOutDate = new Date(checkOutValue);
+
+  const diffMs = checkOutDate - checkInDate;
+  const totalNights = diffMs / (1000 * 60 * 60 * 24);
+
+  setFormData((prev) => {
+    if (Number(prev.noofnights?.value || 0) === totalNights) {
+      return prev;
+    }
+
+    return {
+      ...prev,
+      noofnights: {
+        ...prev.noofnights,
+        isRequired: true,
+        value: totalNights > 0 ? totalNights : 0,
+      },
+    };
+  });
+}, [formData.checkindate?.value, formData.checkoutdate?.value]);
   return (
     <div className={styles.reservationformcontainer}>
       <div className={styles.reservationform}>
@@ -296,16 +446,7 @@ const CreateReservationform = () => {
               Fill Up This Form To Create The Reservation
             </div>
           </div>
-          <div
-            className={styles.exitbtn}
-            onClick={() => {
-              if (formLevel < 4) {
-                setFormLevel(formLevel + 1);
-              } else if (formLevel > 0) {
-                setFormLevel(formLevel - 1);
-              }
-            }}
-          >
+          <div className={styles.exitbtn}>
             <RxCross1 />
           </div>
         </div>
@@ -313,7 +454,7 @@ const CreateReservationform = () => {
           <div
             className={styles.progresscolor}
             style={{
-              width: `${(formLevel / 4) * 100}%`,
+              width: `${(formLevel / 6) * 100}%`,
             }}
           ></div>
         </div>
@@ -421,7 +562,9 @@ const CreateReservationform = () => {
                       value={formData?.idType?.value || idTypeEnum[0]}
                     >
                       {idTypeEnum.map((value, ind) => (
-                        <option value={value}>{value.toLocaleUpperCase()}</option>
+                        <option value={value}>
+                          {value.toLocaleUpperCase()}
+                        </option>
                       ))}
                     </Input>
                     <Input
@@ -467,6 +610,97 @@ const CreateReservationform = () => {
               )}
             </div>
           )}
+
+          {formLevel === 3 && (
+            <div className={styles.form}>
+              <div className={styles.formtitleholder}>
+                <div className={styles.formtitleform}>Stay Information</div>
+                <div className={styles.subtitleform}>
+                  Fill up this form to enter the stay information
+                </div>
+              </div>
+
+              <div className={styles.formrow}>
+                <Input
+                  type="date"
+                  placeholder="checkindate"
+                  label="Arrival Date:"
+                  required
+                  Name="checkindate"
+                  setData={setFormData}
+                  errors={errors}
+                  value={formData.checkindate?.value}
+                />
+                <Input
+                  type="time"
+                  placeholder=""
+                  label="Estimated Arrival Time:"
+                  Name="estimatedcheckintime"
+                  setData={setFormData}
+                  required
+                  errors={errors}
+                  value={formData.estimatedcheckintime?.value}
+                />
+                <Input
+                  type="date"
+                  placeholder="checkoutdate"
+                  label="Departure Date:"
+                  required
+                  Name="checkoutdate"
+                  setData={setFormData}
+                  errors={errors}
+                  value={formData.checkoutdate?.value}
+                />
+              </div>
+              <div className={styles.formrow}>
+                <Input
+                  type="text"
+                  placeholder="eg. 6"
+                  label="Adults:"
+                  Name="adults"
+                  setData={setFormData}
+                  required
+                  errors={errors}
+                  value={formData.adults?.value}
+                />
+                <Input
+                  type="text"
+                  placeholder="eg.3"
+                  label="Children:"
+                  Name="children"
+                  setData={setFormData}
+                  required
+                  errors={errors}
+                  value={formData.children?.value}
+                />
+              </div>
+
+              <div className={styles.formrow}>
+                <Input
+                  type="number"
+                  placeholder="eg. 6"
+                  label="No Of Nights"
+                  Name="noofnights"
+                  setData={setFormData}
+                  required
+                  readonly
+                  errors={errors}
+                  value={formData.noofnights?.value || 0}
+                />
+                <Input
+                  type="number"
+                  placeholder="eg.3"
+                  label="Total Pax:"
+                  Name="totalpax"
+                  setData={setFormData}
+                  required
+                  readonly
+                  errors={errors}
+                  value={formData.totalpax?.value || 0}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.bottombuttonsholder}>
@@ -484,8 +718,11 @@ const CreateReservationform = () => {
               if (formLevel == 1 && !loading) {
                 SearchGuest();
               }
-              if(formLevel == 2 && !loading){
-                CreateGuest()
+              if (formLevel == 2 && !loading) {
+                CreateGuest();
+              }
+              if (formLevel == 3 && !loading) {
+                ValidateStayInformation();
               }
             }}
           >

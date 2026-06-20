@@ -1,12 +1,13 @@
 import CreateReservationform from "../../components/reservationforms";
+import "../../css/contentholder.css"
 import styles from "../../css/reservation.module.css"
 const Reservation = () => {
   return (
-    <div className={styles.maincontainer}>
-        <div className={styles.topnavbar}>
+    <div className={"maincontainer"}>
+        <div className={"topnavbar"}>
             
         </div>
-        <div className={styles.contentholder}>
+        <div className={"contentholder"}>
           reservation
         </div>
         <CreateReservationform/>

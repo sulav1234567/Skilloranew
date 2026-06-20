@@ -5,7 +5,7 @@ import { SearchUser } from "../controller/hotelcontroller/hotelrole.controller.j
 const Router = express.Router()
 
 
-Router.post("/getmyinfo",AuthUser,async(req,res)=>{
+Router.post("/getmyinfo",async(req,res)=>{
     let user = req.user
     res.status(200).json({
         user:user
@@ -14,6 +14,6 @@ Router.post("/getmyinfo",AuthUser,async(req,res)=>{
 
 })
 
-Router.post("/getuser",AuthUser,allowRoles("admin"),SearchUser)
+Router.post("/getuser",allowRoles("admin"),SearchUser)
 
 export default Router;

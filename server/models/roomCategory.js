@@ -18,6 +18,7 @@ const RoomCategorySchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
+      default:"N/A"
     },
 
     baseRate: {

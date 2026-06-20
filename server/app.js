@@ -11,6 +11,8 @@ import UserInfoRouter from "./routes/userinfo.routes.js";
 import "./config/passport.config.js";
 import hotelRouter from "./routes/hotel.routes.js";
 import guestRouter from "./routes/guest.routes.js"
+import RoomCategoryRouter from "./routes/Roomcategory.routes.js"
+import { AuthUser } from "./middlewares/authuser.middleware.js";
 
 
 
@@ -35,9 +37,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/auth", AuthRouter);
-app.use("/user", UserInfoRouter);
+app.use("/user",AuthUser, UserInfoRouter);
 app.use("/hotel",hotelRouter)
 app.use("/guest",guestRouter)
+app.use("/roomcategory",RoomCategoryRouter)
 
 
 export default app;
