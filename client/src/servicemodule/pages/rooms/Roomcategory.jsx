@@ -11,6 +11,7 @@ import { TbTag } from "react-icons/tb";
 import { RxPeople } from "react-icons/rx";
 import { FiEdit2 } from "react-icons/fi";
 import { MdOutlineDelete } from "react-icons/md";
+import SkeletonLoader from "../../../loader/loaders";
 
 let ColorAndIcons = {
   Bed:{
@@ -233,6 +234,17 @@ const Roomcategory = () => {
         <CategoryForm  fetch={FetchCategories}/>
 
         <div className={styles.categorycardsholder}>
+          {!roomCategories && <>
+          <SkeletonLoader style={{height:"180px",width:"100%", borderRadius:"15px"}}/>
+          <SkeletonLoader style={{height:"180px",width:"100%", borderRadius:"15px"}}/>
+          <SkeletonLoader style={{height:"180px",width:"100%", borderRadius:"15px"}}/>
+          <SkeletonLoader style={{height:"180px",width:"100%", borderRadius:"15px"}}/>
+          <SkeletonLoader style={{height:"180px",width:"100%", borderRadius:"15px"}}/>
+          <SkeletonLoader style={{height:"180px",width:"100%", borderRadius:"15px"}}/>
+          <SkeletonLoader style={{height:"180px",width:"100%", borderRadius:"15px"}}/>
+          <SkeletonLoader style={{height:"180px",width:"100%", borderRadius:"15px"}}/>
+          <SkeletonLoader style={{height:"180px",width:"100%", borderRadius:"15px"}}/>
+          </>}
           {roomCategories && roomCategories?.map((category)=>{
 
             return (
