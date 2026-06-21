@@ -1,8 +1,9 @@
-import { Outlet, useParams } from "react-router";
+import { Outlet, useParams } from "react-router-dom";
 import Maincontainer from "../../../maincontainer/maincontainer";
 import Leftnavbar, { NavbarLink } from "../../../leftnavbar/leftnavbar";
 import { BiSolidCategory } from "react-icons/bi";
 import { MdMeetingRoom } from "react-icons/md";
+import "../../css/contentholder.css";
 
 
 const RoomManagementOutlet = () => {
@@ -14,7 +15,12 @@ const RoomManagementOutlet = () => {
      <NavbarLink text="Rooms" icon={<MdMeetingRoom/>} path={`/services/${hotelid}/roommanagement/rooms`} end/>
 
     </Leftnavbar>
+     <div className={"maincontainer"}>
+      <div className={"topnavbar"}></div>
+      <div className={"contentholder"}>
     <Outlet/>
+    </div>
+    </div>
    </Maincontainer>
   )
 }

@@ -88,13 +88,22 @@ catch(err){
 }
 
 let EditRoomCategory = async(req,res)=>{
-    let{name,description,baseRate,maxPax,hotelid}=req.body;
+    let{name,description,baseRate,maxPax,hotelid,isActive}=req.body;
     let {roomcategoryid}=req.params;
+    console.log(req.body,roomcategoryid)
     if(!hotelid || !mongoose.Types.ObjectId.isValid(hotelid)){
         return res.status(400).json({
             message:"Invalid hotel id"
         })
     }
+
+    let toBoolean = (val) => {
+      return val === "true";
+    };
+    let isBoolean = (val) => {
+     
+      return val === "true" || val === "false" || val === true || val === false;
+    };
     if(!roomcategoryid || !mongoose.Types.ObjectId.isValid(roomcategoryid)){
         return res.status(400).json({
             message:"Invalid roomcategory id"
@@ -104,7 +113,7 @@ let EditRoomCategory = async(req,res)=>{
     maxPax = Number.parseInt(maxPax)
     try{
 
-    if(!name || !baseRate || !maxPax){
+    if(!name || !baseRate || !maxPax || !isActive || isActive === undefined || isActive === null){
         return res.status(400).json({
             message:"Some data are missing"
         })
@@ -124,9 +133,9 @@ let EditRoomCategory = async(req,res)=>{
     }
 
     let existingCategory = await RoomCategory.findById(roomcategoryid);
-    let currentCategory = await RoomCategory.find({hotel:hotelid,name:name})
+    let duplicateCategory = await RoomCategory.findOne({hotel:hotelid,name:name,_id:{$ne:roomcategoryid}})
 
-    if(currentCategory){
+    if(duplicateCategory){
          return res.status(400).json({
             message:"Roomcategory with thihs name already exists"
         })
@@ -138,20 +147,24 @@ let EditRoomCategory = async(req,res)=>{
             message:"Roomcategory with thihs name doesnot exists"
         })
     }
+     if(!isBoolean(isActive)){
+         return res.status(400).json({
+            message:"Invalid Boolean Value"
+        })
 
-    let editedCategory ={
-        hotel:HotelModel._id,
-        name,
-        description,
-        maxPax,
-        baseRate,
     }
 
-    existingCategory = editedCategory;
-    await existingCategory.save
+  
+    existingCategory.name=name.trim();
+    existingCategory.hotel=HotelModel._id;
+    existingCategory.description=description || "N/A";
+    existingCategory.maxPax=maxPax,
+    existingCategory.baseRate=baseRate;
+    existingCategory.isActive=toBoolean(isActive)
+    await existingCategory.save()
 
-    return res.status(200),json({
-        message:"Room Category Created"
+    return res.status(200).json({
+        message:"Room Category Edited"
     })
 
 
@@ -160,6 +173,7 @@ let EditRoomCategory = async(req,res)=>{
 catch(err){
 
     if(err){
+        console.log(err)
         return res.status(500).json({
             message:err.message || "internal server error"
         })

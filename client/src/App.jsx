@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Route, Routes } from "react-router-dom";
 import Landingpage from "./landingpage/pages/landingpage";
 import Globalmessageholder from "./Globalmessage/components/globalmessagecontainer";
 import { useEffect, useState } from "react";
@@ -24,11 +24,11 @@ import ResetPassword from "./resetmyPassword/resetPassword.jsx";
 import LiquidGlass from "./liquidglass.jsx";
 import RoomManagementOutlet from "./servicemodule/pages/rooms/roommanagementOutlet.jsx";
 import Roomcategory from "./servicemodule/pages/rooms/Roomcategory.jsx";
-
-
+import RoomsOutlet from "./servicemodule/pages/rooms/roomsoutlet.jsx";
+import Rooms from "./servicemodule/pages/rooms/Rooms.jsx";
 
 function App() {
-  let {user}=useUserInfo()
+  let { user } = useUserInfo();
   useEffect(() => {
     let useragent = navigator.userAgent;
     console.log(useragent);
@@ -38,61 +38,55 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Landingpage />} />
-        
-        <Route path="/admin/*" element={
-        <ProtectedRoute allowedroles={["admin"]}>
-            <Adminpanneloutlet/>
-             </ProtectedRoute>
 
-         
-          
-          }>
-        <Route path="hotels/*" element={<HotelOutlet/>}>
-        <Route index element={<Hotel/>}/>
-        <Route path="i/:hotelid/*" element={<HoteldetailedviewOutlet/>} >
-        <Route index element={<Hoteloverview/>}/>
-        <Route path="staffmanagement" element={"Staffmanagement"}/>
-        
-        </Route>
-        </Route>
-
-       
-
-        </Route>
-
-        <Route path="/services/:hotelid/*" element=
-
-        
-        {
-          <ProtectedRoute allowedroles={["admin"]}>
-
-        <ServiceModuleOutlet/>
-          </ProtectedRoute>
-      }
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute allowedroles={["admin"]}>
+              <Adminpanneloutlet />
+            </ProtectedRoute>
+          }
         >
-        <Route index element={<Generalservicesoutlet/>}/>
-        <Route path="roommanagement/*" element={<RoomManagementOutlet/>}>
-        <Route index element={<Roomcategory/>}/>
-        
+          <Route path="hotels/*" element={<HotelOutlet />}>
+            <Route index element={<Hotel />} />
+            <Route path="i/:hotelid/*" element={<HoteldetailedviewOutlet />}>
+              <Route index element={<Hoteloverview />} />
+              <Route path="staffmanagement" element={"Staffmanagement"} />
+            </Route>
+          </Route>
         </Route>
-        <Route path="frontoffice/*" element={<FrontOfficeOutlet/>}>
-        <Route path="reservation" element={<Reservation/>}/>
-        
-        
-        </Route>
-        </Route>
-        
 
-       
-        <Route path="/accept-invitation/:invitationtoken" element={<Hotelroleverification/>}/>
-        
+        <Route
+          path="/services/:hotelid/*"
+          element={
+            <ProtectedRoute allowedroles={["admin"]}>
+              <ServiceModuleOutlet />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Generalservicesoutlet />} />
+          <Route path="roommanagement/*" element={<RoomManagementOutlet />}>
+            <Route index element={<Roomcategory />} />
+            <Route path="rooms/*" element={<RoomsOutlet />}>
+              <Route index element={<Rooms />} />
+            </Route>
+          </Route>
+          <Route path="frontoffice/*" element={<FrontOfficeOutlet />}>
+            <Route path="reservation" element={<Reservation />} />
+          </Route>
+        </Route>
+
+        <Route
+          path="/accept-invitation/:invitationtoken"
+          element={<Hotelroleverification />}
+        />
+
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/liquidglass" element={<LiquidGlass />} />
         <Route path="/terms" element={<Terms />} />
-        <Route path="/unauthorized" element={<Unauthorized/>}/>
-        <Route path="/resetmypassword/:token" element={<ResetPassword/>}/>
-        <Route path="*" element={<NotFound404/>}/>
-
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/resetmypassword/:token" element={<ResetPassword />} />
+        <Route path="*" element={<NotFound404 />} />
       </Routes>
       <Globalmessageholder />
     </>
