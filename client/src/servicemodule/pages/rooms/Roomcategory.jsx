@@ -287,7 +287,7 @@ let CategoryForm = ({ fetch = () => {} }) => {
         <option value="false">False</option>
       </Input>
       <div
-        className={styles.Createbtn}
+        className={`${styles.Createbtn} ${loading?styles.loadingbtn:styles.activebtn}`}
         onClick={() => {
           if (!loading && Object.keys(editData).length == 0) {
             CreateCategory();
@@ -296,11 +296,13 @@ let CategoryForm = ({ fetch = () => {} }) => {
           }
         }}
       >
-        {Object.keys(editData).length > 0 ? "Edit" : "Create"}
+        {loading? <div className={styles.loader}>
+          
+        </div>:Object.keys(editData).length > 0 ? "Edit" : "Create" }
       </div>
 
       <div
-        className={`${styles.cancelbtn} ${loading?styles.loadingbtn:styles.activebtn}`}
+        className={`${styles.cancelbtn}`}
        
         onClick={() => {
           setData({});
@@ -309,9 +311,9 @@ let CategoryForm = ({ fetch = () => {} }) => {
           setchanges(!changes);
         }}
       >
-        {loading?<div className={styles.loader}>
+        
           
-        </div>:"Cancel"}
+        Cancel
       </div>
     </div>
   );
