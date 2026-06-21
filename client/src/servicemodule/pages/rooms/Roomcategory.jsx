@@ -300,7 +300,8 @@ let CategoryForm = ({ fetch = () => {} }) => {
       </div>
 
       <div
-        className={styles.cancelbtn}
+        className={`${styles.cancelbtn} ${loading?styles.loadingbtn:styles.activebtn}`}
+       
         onClick={() => {
           setData({});
           setEditData({});
@@ -308,7 +309,9 @@ let CategoryForm = ({ fetch = () => {} }) => {
           setchanges(!changes);
         }}
       >
-        Cancel
+        {loading?<div className={styles.loader}>
+          
+        </div>:"Cancel"}
       </div>
     </div>
   );
