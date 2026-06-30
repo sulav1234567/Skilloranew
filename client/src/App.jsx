@@ -26,6 +26,10 @@ import RoomManagementOutlet from "./servicemodule/pages/rooms/roommanagementOutl
 import Roomcategory from "./servicemodule/pages/rooms/Roomcategory.jsx";
 import RoomsOutlet from "./servicemodule/pages/rooms/roomsoutlet.jsx";
 import Rooms from "./servicemodule/pages/rooms/Rooms.jsx";
+import CategoryIndividualView from "./servicemodule/pages/rooms/categoryIndividualView.jsx";
+import RoomCategoryOutlet from "./servicemodule/pages/rooms/roomCategoryOutlet.jsx";
+import RoomIndividualView from "./servicemodule/pages/rooms/roomIndividualView.jsx";
+
 
 function App() {
   let { user } = useUserInfo();
@@ -66,10 +70,15 @@ function App() {
         >
           <Route index element={<Generalservicesoutlet />} />
           <Route path="roommanagement/*" element={<RoomManagementOutlet />}>
-            <Route index element={<Roomcategory />} />
+            <Route path="category/*" element={<RoomCategoryOutlet />} >
+            <Route index element={<Roomcategory/>}/>
+             <Route path="i" element={<CategoryIndividualView/>}/>
+            </Route>
             <Route path="rooms/*" element={<RoomsOutlet />}>
               <Route index element={<Rooms />} />
+              <Route path="i" element={<RoomIndividualView/>}/>
             </Route>
+           
           </Route>
           <Route path="frontoffice/*" element={<FrontOfficeOutlet />}>
             <Route path="reservation" element={<Reservation />} />

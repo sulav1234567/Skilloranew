@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
 import Hotel from "../../models/hotel.js"
-import RoomCategory from "../../models/roomCategory.js"
+import RoomCategory, { RoomAmenity } from "../../models/roomCategory.js"
+import Room from "../../models/room.js";
+
 
 let CreateRoomCategory = async(req,res)=>{
-    let{name,description,baseRate,maxPax,isActive}=req.body;
+    let{name,description,baseRate,maxPax,isActive,amenities}=req.body;
     let {hotelid}=req.params;
+    let allowedAmenities = Object.values(RoomAmenity)
     let user = req.user;
     if(!hotelid || !mongoose.Types.ObjectId.isValid(hotelid)){
         return res.status(400).json({
@@ -22,11 +25,12 @@ let CreateRoomCategory = async(req,res)=>{
     maxPax = Number.parseInt(maxPax)
     try{
 
-    if(!name || !baseRate || !maxPax || !isActive){
+    if(!name || !baseRate || !maxPax || !isActive || !amenities || amenities.length===0 || isActive === undefined || isActive === null ){
         return res.status(400).json({
             message:"Some data are missing"
         })
     }
+   
 
     if(isNaN(baseRate) || isNaN(maxPax) || baseRate<=0 || maxPax<=0){
         return res.status(400).json({
@@ -40,6 +44,18 @@ let CreateRoomCategory = async(req,res)=>{
         })
 
     }
+
+    if(
+        !amenities.every((amenity) =>
+  allowedAmenities.includes(amenity))
+
+    ){
+
+        return res.status(400).json({
+            message:"Some invalid amenities are pushed"
+        })
+    }
+    
 
     let HotelModel = await Hotel.findById(hotelid);
     if(!HotelModel){
@@ -63,7 +79,8 @@ let CreateRoomCategory = async(req,res)=>{
         maxPax,
         baseRate,
         createdBy:user._id,
-        isActive:toBoolean(isActive)
+        isActive:toBoolean(isActive),
+        amenities:amenities
 
     })
 
@@ -88,7 +105,8 @@ catch(err){
 }
 
 let EditRoomCategory = async(req,res)=>{
-    let{name,description,baseRate,maxPax,hotelid,isActive}=req.body;
+    let{name,description,baseRate,maxPax,hotelid,isActive,amenities}=req.body;
+    let allowedAmenities=Object.values(RoomAmenity)
     let {roomcategoryid}=req.params;
     console.log(req.body,roomcategoryid)
     if(!hotelid || !mongoose.Types.ObjectId.isValid(hotelid)){
@@ -113,7 +131,7 @@ let EditRoomCategory = async(req,res)=>{
     maxPax = Number.parseInt(maxPax)
     try{
 
-    if(!name || !baseRate || !maxPax || !isActive || isActive === undefined || isActive === null){
+    if(!name || !baseRate || !maxPax || !isActive || isActive === undefined || isActive === null || !amenities || amenities.length===0){
         return res.status(400).json({
             message:"Some data are missing"
         })
@@ -122,6 +140,16 @@ let EditRoomCategory = async(req,res)=>{
     if(isNaN(baseRate) || isNaN(maxPax) || baseRate<=0 || maxPax<=0){
         return res.status(400).json({
             message:"pax or baserate is invalid"
+        })
+    }
+    if(
+        !amenities.every((amenity) =>
+  allowedAmenities.includes(amenity))
+
+    ){
+
+        return res.status(400).json({
+            message:"Some invalid amenities are pushed"
         })
     }
 
@@ -161,6 +189,7 @@ let EditRoomCategory = async(req,res)=>{
     existingCategory.maxPax=maxPax,
     existingCategory.baseRate=baseRate;
     existingCategory.isActive=toBoolean(isActive)
+    existingCategory.amenities=amenities
     await existingCategory.save()
 
     return res.status(200).json({
@@ -192,18 +221,39 @@ let GetSingleRoomCategory = async(req,res)=>{
 
 
     try{
-        let findRoomCategory = await RoomCategory.findById(roomcategoryid);
-        if(!findRoomCategory){
+        let Roomcategory = await RoomCategory.aggregate([
+            {
+                $match:{_id:new mongoose.Types.ObjectId(roomcategoryid)}
+            },
+            {
+                $lookup:{
+                    from:Room.collection.name,
+                    localField:"_id",
+                    foreignField:"category",
+                    as:"rooms"
+                }
+            },
+            
+            {$project:{
+                "rooms.category":0,
+                "rooms.createdAt":0,
+                "rooms.updatedAt":0,
+                "rooms.__v":0,
+            }}
+        ])
+        if(Roomcategory.length===0){
             return res.status(404).json({
                 message:"room category not found"
             })
         }
 
         return res.status(200).json({
-            roomcategory:findRoomCategory
+            roomcategory:Roomcategory[0],
+            
         })
     }catch(err){
          if(err){
+            console.log(err)
         return res.status(500).json({
             message:err.message || "internal server error"
         })
@@ -239,11 +289,18 @@ let GetAllRoomCategory = async(req,res)=>{
     }
     }
 }
+let GetEnumOfCategory = async(req,res)=>{
+    res.status(200).json({
+        enum:Object.values(RoomAmenity)
+    })
+
+}
 
 
 export {
     CreateRoomCategory,
     EditRoomCategory,
     GetAllRoomCategory,
-    GetSingleRoomCategory
+    GetSingleRoomCategory,
+    GetEnumOfCategory
 }

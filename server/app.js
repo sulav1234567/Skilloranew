@@ -13,6 +13,7 @@ import hotelRouter from "./routes/hotel.routes.js";
 import guestRouter from "./routes/guest.routes.js"
 import RoomCategoryRouter from "./routes/Roomcategory.routes.js"
 import { AuthUser } from "./middlewares/authuser.middleware.js";
+import RooomRouter from "./routes/Room.routes.js"
 
 
 
@@ -41,6 +42,7 @@ app.use("/user",AuthUser, UserInfoRouter);
 app.use("/hotel",hotelRouter)
 app.use("/guest",guestRouter)
 app.use("/roomcategory",RoomCategoryRouter)
+app.use("/room",RooomRouter)
 
 
 export default app;

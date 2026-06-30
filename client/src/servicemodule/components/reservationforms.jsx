@@ -20,7 +20,7 @@ export let Input = ({
   errors = {},
   children,
   readonly = false,
-  data={},
+  changes = false,
   setData = () => {},
 }) => {
   const handleChange = (e) => {
@@ -33,16 +33,15 @@ export let Input = ({
     }));
   };
 
-  useEffect(()=>{
-    setData((prev)=>({
+  useEffect(() => {
+    setData((prev) => ({
       ...prev,
-      [Name]:{
-        isRequired:required,
-        value:value
-      }
-    }))
-
-  },[data])
+      [Name]: {
+        isRequired: required,
+        value: value,
+      },
+    }));
+  }, [changes]);
 
   return (
     <div className={styles.forminputholder}>
@@ -68,7 +67,7 @@ export let Input = ({
       {type === "select" && (
         <select
           required={required}
-          value={value??""}
+          value={value ?? ""}
           name={Name}
           onChange={handleChange}
         >
@@ -87,6 +86,7 @@ const CreateReservationform = () => {
   let [guest, setGuest] = useState(null);
   let { hotelid } = useParams();
   let { showMessages } = useGlobalMessageContext();
+  let [availableRooms, setAvailableRooms] = useState(null);
   let btnNames = {
     L1: "Search",
     L2: guest ? "Next" : "Create Guest",
@@ -304,70 +304,84 @@ const CreateReservationform = () => {
     setLoading(false);
   };
 
-  let ValidateStayInformation =()=>{
-    let error = {}
-    let {checkindate,estimatedcheckintime,checkoutdate,adults,children,noofnights,totalpax}=formData;
-console.log(formData)
-    if(!checkindate.value && checkindate.isRequired){
-      error={
-        ...error,
-        checkindate:"Fill up this required field"
-      }
-
-    }
-    if(!estimatedcheckintime.value && estimatedcheckintime.isRequired){
-       error={
-        ...error,
-        estimatedcheckintime:"Fill up this required field"
-      }
-
-    }
-    if(!checkindate.value && checkoutdate.isRequired){
-      error={
-        ...error,
-        checkoutdate:"Fill up this required field"
-      }
-    }
-
-    if(!adults.value|| isNaN(Number.parseInt(adults.value)) && adults.isRequired){
-      error={
-        ...error,
-        adults:"This must be the number"
-      }
-
-    }
-
-    if(!children.value || isNaN(Number.parseInt(children.value)) && children.isRequired){
-      error={
-        ...error,
-        children:"This must be the number"
-      }
-    }
-
-    if(!totalpax.value || isNaN(Number.parseInt(totalpax.value)) || Number.parseInt(totalpax.value)<=0 && totalpax.isRequired){
+  let ValidateStayInformation = () => {
+    let error = {};
+    let {
+      checkindate,
+      estimatedcheckintime,
+      checkoutdate,
+      adults,
+      children,
+      noofnights,
+      totalpax,
+    } = formData;
+    console.log(formData);
+    if (!checkindate.value && checkindate.isRequired) {
       error = {
         ...error,
-        totalpax:"Invalid value"
-      }
+        checkindate: "Fill up this required field",
+      };
     }
-
-
-    if(!noofnights.value || isNaN(Number.parseInt(noofnights.value)) || Number.parseInt(noofnights.value)<=0 && noofnights.isRequired){
-      error={
+    if (!estimatedcheckintime.value && estimatedcheckintime.isRequired) {
+      error = {
         ...error,
-        noofnights:"Invalid Value"
-      }
+        estimatedcheckintime: "Fill up this required field",
+      };
     }
-    setErrors(error)
-
-    if(Object.keys(error).length ===0 ){
-      HandlePageChange("next")
-
-      
+    if (!checkindate.value && checkoutdate.isRequired) {
+      error = {
+        ...error,
+        checkoutdate: "Fill up this required field",
+      };
     }
-    
 
-  }
+    if (
+      !adults.value ||
+      (isNaN(Number.parseInt(adults.value)) && adults.isRequired)
+    ) {
+      error = {
+        ...error,
+        adults: "This must be the number",
+      };
+    }
+
+    if (
+      !children.value ||
+      (isNaN(Number.parseInt(children.value)) && children.isRequired)
+    ) {
+      error = {
+        ...error,
+        children: "This must be the number",
+      };
+    }
+
+    if (
+      !totalpax.value ||
+      isNaN(Number.parseInt(totalpax.value)) ||
+      (Number.parseInt(totalpax.value) <= 0 && totalpax.isRequired)
+    ) {
+      error = {
+        ...error,
+        totalpax: "Invalid value",
+      };
+    }
+
+    if (
+      !noofnights.value ||
+      isNaN(Number.parseInt(noofnights.value)) ||
+      (Number.parseInt(noofnights.value) <= 0 && noofnights.isRequired)
+    ) {
+      error = {
+        ...error,
+        noofnights: "Invalid Value",
+      };
+    }
+    setErrors(error);
+
+    if (Object.keys(error).length === 0) {
+      HandlePageChange("next");
+    }
+  };
 
   useEffect(() => {
     const adults = Number(formData.adults?.value || 0);
@@ -389,53 +403,53 @@ console.log(formData)
     });
   }, [formData.adults?.value, formData.children?.value]);
   const isValidDate = (value) => {
-  if (!value) return false;
+    if (!value) return false;
 
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-  if (!match) return false;
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (!match) return false;
 
-  const year = Number(match[1]);
-  const month = Number(match[2]);
-  const day = Number(match[3]);
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
 
-  const date = new Date(year, month - 1, day);
+    const date = new Date(year, month - 1, day);
 
-  return (
-    date.getFullYear() === year &&
-    date.getMonth() === month - 1 &&
-    date.getDate() === day
-  );
-};
+    return (
+      date.getFullYear() === year &&
+      date.getMonth() === month - 1 &&
+      date.getDate() === day
+    );
+  };
 
-useEffect(() => {
-  const checkInValue = formData.checkindate?.value;
-  const checkOutValue = formData.checkoutdate?.value;
+  useEffect(() => {
+    const checkInValue = formData.checkindate?.value;
+    const checkOutValue = formData.checkoutdate?.value;
 
-  if (!isValidDate(checkInValue) || !isValidDate(checkOutValue)) {
-    return;
-  }
-
-  const checkInDate = new Date(checkInValue);
-  const checkOutDate = new Date(checkOutValue);
-
-  const diffMs = checkOutDate - checkInDate;
-  const totalNights = diffMs / (1000 * 60 * 60 * 24);
-
-  setFormData((prev) => {
-    if (Number(prev.noofnights?.value || 0) === totalNights) {
-      return prev;
+    if (!isValidDate(checkInValue) || !isValidDate(checkOutValue)) {
+      return;
     }
 
-    return {
-      ...prev,
-      noofnights: {
-        ...prev.noofnights,
-        isRequired: true,
-        value: totalNights > 0 ? totalNights : 0,
-      },
-    };
-  });
-}, [formData.checkindate?.value, formData.checkoutdate?.value]);
+    const checkInDate = new Date(checkInValue);
+    const checkOutDate = new Date(checkOutValue);
+
+    const diffMs = checkOutDate - checkInDate;
+    const totalNights = diffMs / (1000 * 60 * 60 * 24);
+
+    setFormData((prev) => {
+      if (Number(prev.noofnights?.value || 0) === totalNights) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        noofnights: {
+          ...prev.noofnights,
+          isRequired: true,
+          value: totalNights > 0 ? totalNights : 0,
+        },
+      };
+    });
+  }, [formData.checkindate?.value, formData.checkoutdate?.value]);
   return (
     <div className={styles.reservationformcontainer}>
       <div className={styles.reservationform}>

@@ -1,0 +1,13 @@
+.formpartitionindicator{
+    display: flex;
+    height: 1px;
+    width: 100%;
+    background-color: rgb(218, 218, 218);
+    margin-bottom: 15px;
+}
+.formrow{
+    display: grid;
+    gap: 25px 10px;
+    grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+    margin-bottom: 30px;
+}

@@ -43,6 +43,7 @@ const RoomSchema = new mongoose.Schema(
         "cleaning",
         "maintenance",
         "blocked",
+        "reserved"
       ],
       default: "available",
       index: true,
@@ -52,10 +53,38 @@ const RoomSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    priceOverride: {
+      type: Number,
+      default: null,
+    },
+    pax: {
+      type: Number,
+      required: true,
+      
+    },
+    description:{
+      type:String
+    },
+    roomSize:{
+      type:Number,
+      default:null
+    }
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    
+  },
 );
+RoomSchema.virtual("effectivePrice").get(function () {
+  if (this.priceOverride !== null) return this.priceOverride;
+  if (this.category && this.category.priceOverride !== null)
+    return this.category.baseRate;
+  return null;
+});
 
 RoomSchema.index({ hotel: 1, roomNumber: 1 }, { unique: true });
 
-export default mongoose.model("Room", RoomSchema);
+let  Room = mongoose.model("Room", RoomSchema);
+export default Room;

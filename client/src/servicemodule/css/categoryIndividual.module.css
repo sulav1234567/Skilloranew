@@ -1,0 +1,279 @@
+.maininfocard{
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    width: 100%;
+    border-radius: 15px;
+    padding: 30px;
+    border: 1px solid rgb(229, 229, 229);
+    background-color: white;
+}
+.roomandiconholder{
+    display: flex;
+    align-items: center;
+    height: fit-content;
+    width: 100%;
+    gap:30px;
+}
+
+.categoryicon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    border-radius: 8px;
+    padding: 13px;
+}
+.categoryicon svg{
+    height: 100%;
+    width: 100%;
+}
+.categorynameandstat{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.categoryname{
+    font-size: 1.5rem;
+    font-weight: 700;
+    
+}
+.status{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 10px;
+    border-radius: 999999px;
+    font-size: 12px;
+    font-weight: 400;
+    background-color: rgb(228, 255, 228);
+    color: green;
+    margin-top: 5px;
+    border: 1px solid rgb(27, 171, 27);
+}
+.categoryinfocardholder{
+    display: grid;
+    height: fit-content;
+    width: 100%;
+    gap: 10px;
+    grid-template-columns:repeat(auto-fill,minmax(230px,1fr)) ;
+    margin-top: 50px;
+}
+.categoryInfoCard{
+    display: flex;
+    flex-direction: column;
+    height: 130px;
+    width: 100%;
+    background-color: rgb(252, 252, 252);
+    border: 1px solid rgb(229, 229, 229);
+    border-radius: 15px;
+    padding: 20px;
+    gap: 8px;
+}
+
+.icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 25px;
+    width: 25px;
+}
+.icon svg{
+    height: 100%;
+    width: 100%;
+}
+
+.name{
+    font-size: 13px;
+    letter-spacing: .025em;
+    font-weight: 400;
+    color: rgb(147, 147, 147);
+    text-transform: uppercase;
+}
+
+.value{
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.descriptionholder{
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    width: 100%;
+    gap: 10px;
+
+}
+.title{
+    font-size: 18px;
+    letter-spacing: 0.05rem;
+    font-weight: 500;
+    color: rgb(145, 145, 145);
+}
+.desvalholder{
+font-size: 16px;
+line-height: 1.5;
+font-weight: 400;
+color: rgb(83, 83, 83);
+}
+.maininfocard2{
+     display: grid;
+    height: fit-content;
+    min-height: 250px;
+    width: 100%;
+    margin-top: 25px;
+    gap: 30px;
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    margin-bottom: 20px;
+
+}
+
+.infocard2{
+    display: flex;
+    flex-direction: column;;
+    width: 100%;
+    padding: 30px;
+     border: 1px solid rgb(229, 229, 229);
+    background-color: white;
+    border-radius: 15px;
+    height: 100%;
+}
+.headingandicon{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 25px;
+    width: 25px;
+
+}
+.icon svg{
+    height: 100%;
+    width: 100%;
+}
+.amencardholder{
+    display: flex;
+    align-self: center;
+    height: fit-content;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 15px 8px;
+}
+.amencard{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: fit-content;
+    padding: 5px 15px;
+    border-radius: 999px;
+    background-color: rgb(245, 247, 255);
+    gap: 5px;
+}
+.amencardicon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15px;
+    width: 15px;
+}
+.amencardicon svg{
+    height: 100%;
+    width: 100%;
+    color: rgb(0, 191, 0);
+}
+.amenval{
+    font-size: 12px;
+    font-weight: 500;
+    color: rgb(85, 85, 85);
+}
+
+.roomcardholder{
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    width: 100%;
+    gap: 10px;
+    
+}
+.roomcardsempty{
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgb(144, 144, 144);
+    height: 100%;
+}
+
+.roomcard{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    height: 60px;
+    width: 100%;
+    background-color: rgb(251, 251, 255);
+    padding: 5px 15px;
+    border-radius: 10px;
+    border: 1px solid rgb(42, 42, 255);
+    cursor: pointer;
+    
+    transition:background-color,transform 0.3s ease-in-out;
+
+}
+.roomcard:hover{
+     background-color: rgb(244, 244, 255);
+     transform: scale(1.03);
+
+}
+.roomname{
+    font-size: 16px;
+    font-weight: 700;
+    color: rgb(102, 53, 234);
+    
+}
+.roompax{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 25px;
+    font-size: 14px;
+    font-weight: 400;
+    padding-left: 15px;
+    border-left: 1px solid rgb(209, 209, 209);
+    color: rgb(132, 132, 132);
+}
+
+.roomstatus{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 15px;
+    border-radius: 9999px;
+    background-color: rgb(240, 255, 240);
+    font-size: 12px;
+    font-weight: 500;
+    color: rgb(0, 175, 0);
+    text-transform: capitalize;
+    border: 1px solid rgb(0, 178, 0);
+    margin-left: 15px;
+}
+.roomstatus::after{
+    content: "";
+    position: absolute;
+    left: -15px;
+    height: 100%;
+    width: 1px;
+    background-color:rgb(209, 209, 209) ;
+}

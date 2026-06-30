@@ -1,7 +1,21 @@
+.wrapper{
+    display: flex;
+    flex-direction: column;
+}
+.mainwrapper{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 15px;
+    background-color: white;
+    padding: 20px 40px; 
+     margin-top: 20px;
+    border: 1px solid rgb(235, 235, 235);
+}
 .roomsheading{
     font-size: 2.3rem;
     font-weight: 600;
-    margin-top: 20px;
+   
 
 }
 .roomssubheading{
@@ -9,4 +23,213 @@
     margin-top: 5px;
     font-weight: 400;
     color: rgb(120, 120, 120);
+}
+
+.Createbtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: fit-content;
+    border-radius: 10px;
+    padding: 5px 40px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+.loadingbtn{
+    background-color: rgb(172, 172, 172);
+}
+.activebtn{
+    background-color: blue;
+    color: white;
+}
+.activebtn:hover{
+    background-color: rgb(0, 0, 183);
+}
+
+
+.categorycardsholder{
+     display: grid;
+    height: fit-content;
+    width: 100%;
+    grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+    gap: 15px;
+    align-items: center;
+    margin-top: 10px;
+    border-radius: 15px;
+    border: 1px solid rgb(235, 235, 235);
+    padding: 40px 30px;
+    background-color: white;
+    margin-bottom: 30px;
+    
+
+}
+
+.categorycard{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    min-height: 180px;
+
+    background-color: rgb(252, 252, 252);
+    border-radius: 15px;
+    padding: 15px;
+    cursor: pointer;
+    border: 1px solid rgb(228, 206, 255);
+    
+}
+.categoryname{
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.categorycardheader{
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: fit-content;
+    width: 100%;
+    overflow: hidden;
+    gap: 15px;
+}
+.categoryicon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgb(233, 233, 255);
+}
+.categoryicon svg{
+    height: 100%;
+    width: 100%;
+    color: blue;
+}
+
+.categoryname{
+    font-size: 1rem;
+    font-weight: 600;
+    display: -webkit-box;
+    width: 100%;
+    overflow: hidden;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    text-transform: capitalize;
+    color: rgb(72, 72, 255);
+
+}
+.categorydescription{
+    display: -webkit-box;
+    width: 100%;
+    height: fit-content;
+    margin-top: 20px;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13px;
+    color: rgb(125, 125, 125);
+    
+}
+.cardfooter{
+    display: flex;
+    height: fit-content;
+    padding: 10px 0px;
+    border-top: 1px solid rgb(206, 206, 206);
+    margin-top: 20px;
+    gap: 10px;
+    justify-content: space-between;
+
+}
+.footerinfoholder{
+    display: flex;
+    align-items: center;
+    height: fit-content;
+    width: fit-content;
+    gap: 2px;
+}
+.iconcategorycard{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    width: 20px;
+    padding: 2px;
+    
+}
+.iconcategorycard svg{
+    height: 100%;
+    width: 100%;
+    color: rgb(121, 121, 121);
+}
+.footercategorycardtext{
+    font-size: 13px;
+    font-weight: 400;
+     color: rgb(121, 121, 121);
+}
+.footerwrapper{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.statustag{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 400;
+    border-radius: 9999px;
+}
+.statustagactive{
+     background-color: rgb(240, 255, 232);
+    color: rgb(52, 150, 0);
+    border: 1px solid rgb(52, 150, 0);
+
+}
+.statustaginactive{
+     background-color: rgb(237, 237, 237);
+    color: rgb(124, 124, 124);
+    border: 1px solid rgb(196, 196, 196);
+
+}
+.actionbtnholdercatcard{
+    display: flex;
+    align-items: center;
+    height: fit-content;
+    width: fit-content;
+    gap: 5px;
+    position: absolute;
+    right: -100px;
+    transition:right 0.3s ease-in-out;
+}
+.categorycard:hover .actionbtnholdercatcard{
+    right:0px;
+
+}
+.actionbtncatcard{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+    width: 22px;
+    background-color: rgb(255, 255, 255);
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 3px;
+    
+}
+.actionbtncatcard:hover{
+    background-color: rgb(239, 239, 239);
+}
+.actionbtncatcard svg{
+    height: 100%;
+    width: 100%;
 }
