@@ -445,6 +445,7 @@ let SearchRoomsForReservation = async (req, res) => {
       message: "Hotel Not Available",
     });
   }
+  console.log(req.body)
 
   if (
     !checkindate ||
