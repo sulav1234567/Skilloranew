@@ -9,6 +9,13 @@ const reservationSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
+    hotel:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Hotel",
+      required: true,
+      index: true,
+
+    },
 
     guest: {
       type: mongoose.Schema.Types.ObjectId,
@@ -79,6 +86,12 @@ const reservationSchema = new mongoose.Schema(
         min: 0,
         default: 0,
       },
+      totalAmount:{
+         type: Number,
+        min: 0,
+        default: 0,
+
+      }
     },
 
     source: {
@@ -109,40 +122,25 @@ reservationSchema.virtual("nights").get(function () {
   const ms = this.checkOut.getTime() - this.checkIn.getTime();
   return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
 });
-reservationSchema.virtual("totalamount").get(function () {
-  if(!this.rooms || this.rooms.length===0){
-    return 0
-  }
-  let totalRate=0;
-  
-  this.rooms.forEach((room)=>{
-    totalRate+=room.effectivePrice||0
-
-  })
-
-  let TotalAmount = totalRate * Number(this.nights || 0)
-
-  return TotalAmount
-});
 
 reservationSchema.virtual("totalGuests").get(function () {
   return (this.adults || 0) + (this.children || 0);
 });
 
-reservationSchema.pre("validate", function (next) {
+reservationSchema.pre("validate", function () {
   if (!this.confirmationCode) {
     const random = Math.random().toString(36).slice(2, 8).toUpperCase();
     this.confirmationCode = `RSV-${random}`;
   }
 
   if (this.checkIn && this.checkOut && this.checkOut <= this.checkIn) {
-    return next(new Error("checkOut must be after checkIn."));
+    return new Error("checkOut must be after checkIn.");
   }
 
-  next();
+
 });
 
-reservationSchema.pre("validate", async function (next) {
+reservationSchema.pre("validate", async function () {
   try {
     await this.populate({
       path: "rooms",
@@ -153,17 +151,17 @@ reservationSchema.pre("validate", async function (next) {
       select: "category",
     });
     
-    let totalamt = Number(this.totalamount || 0);
+    let totalamt = Number(this.totalAmount || 0);
     let remAmt = totalamt - this.payment.amountPaid;
     if (remAmt < 0) {
-      return next(new Error("remaining amount must be greater than 0"));
+      return new Error("remaining amount must be greater than 0");
     }
 
-    this.payment.remainingAmount = remAmt;
+   return  this.payment.remainingAmount = remAmt;
 
-    return next();
+    
   } catch (err) {
-    next(err);
+    return err;
   }
 });
 

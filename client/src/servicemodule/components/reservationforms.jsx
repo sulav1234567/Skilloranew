@@ -13,6 +13,18 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^[0-9]{10}$/;
 const guestTypeEnum = ["normal", "vip", "corporate", "blacklisted"];
 const idTypeEnum = ["citizenship", "passport", "liscense", "national_Id"];
+let statEnum = ["unpaid", "partially_paid", "paid", "refunded"];
+let methodEnum = [
+  "cash",
+  "card",
+  "upi",
+  "bank_transfer",
+  "esewa",
+  "khalti",
+  "other",
+];
+
+let sourceEnum = ["direct", "website", "phone", "walk_in", "ota", "other"];
 
 export let Input = ({
   type = "text",
@@ -82,7 +94,7 @@ export let Input = ({
   );
 };
 
-const CreateReservationform = () => {
+const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
   let [formLevel, setFormLevel] = useState(1);
   let [loading, setLoading] = useState(false);
   let [errors, setErrors] = useState({});
@@ -98,9 +110,16 @@ const CreateReservationform = () => {
     L3: "Next",
     L4: "Select Rooms",
     L5: "Payment Information",
-    L6:"Create Reservation"
+    L6: "Create Reservation",
   };
 
+  let setToDefault = ()=>{
+    setSelectedRooms([])
+    setFormData({});
+    setGuest(null);
+    setFormLevel(1);
+    setAvailableRooms(null)
+  }
   let HandlePageChange = (type) => {
     if ((!type && formLevel < 1) || loading) return;
     if (type === "back" && formLevel > 1) {
@@ -389,7 +408,7 @@ const CreateReservationform = () => {
     if (Object.keys(error).length === 0) {
       let Data = new FormData();
       Data.append("checkindate", checkindate.value);
-      Data.append("checkoutdate", checkoutdate.checkOutValue);
+      Data.append("checkoutdate", checkoutdate.value);
       Data.append("estimatedcheckintime", estimatedcheckintime.value);
       Data.append("adults", adults.value);
       Data.append("children", children.value);
@@ -421,6 +440,190 @@ const CreateReservationform = () => {
       HandlePageChange("next");
     }
   };
+
+  let CreateReservation = async () => {
+    if (loading) return;
+
+    setLoading(true);
+    let errors = {};
+    let {
+      checkindate,
+      checkoutdate,
+      estimatedcheckintime,
+      adults,
+      children,
+      /*level 1 */
+      reservationFee,
+      advanceAmount,
+      status,
+      method,
+      onlineid,
+      source,
+      note,
+      specialrequest,
+    } = formData;
+
+
+    if(!guest){
+      setFormLevel(1)
+      showMessages("Guest not found","reject");
+      setLoading(false)
+      return;
+
+    }
+
+    if (!checkindate || !isValidDate(checkindate.value)) {
+      errors = {
+        ...errors,
+        checkindate: "this date is not valid",
+      };
+    }
+
+    if (!checkindate || !isValidDate(checkoutdate.value)) {
+      errors = {
+        ...errors,
+        checkoutdate: "This is not a valid date",
+      };
+    }
+
+    if (!estimatedcheckintime.value) {
+      errors = {
+        ...errors,
+        estimatedcheckintime: "Please Enter the valid time",
+      };
+    }
+  
+
+    let totalpax = Number(adults.value || 0) + Number(children.value || 0);
+
+    if (!totalpax || totalpax === 0) {
+      errors = {
+        ...errors,
+        adults: "Total pax must be greater than 0",
+        children: "Total pax must be greater than 0",
+      };
+    }
+
+    let noofNights = new Date(checkoutdate.value) - new Date(checkindate.value);
+    if (!noofNights || noofNights === 0) {
+      errors = {
+        ...errors,
+        checkindate: "Invalid difference",
+        checkoutdate: "Invalid Difference",
+      };
+    }
+
+    let isvalidcheckindate = Date.now() - new Date(checkindate.value) < 0;
+    let isvalidcheckoutdate = Date.now() - new Date(checkoutdate.value) < 0;
+
+    if (!isvalidcheckindate) {
+      errors = {
+        ...errors,
+        checkindate: "Invalid checkin date",
+      };
+    }
+
+    if (!isvalidcheckoutdate) {
+      errors = {
+        ...errors,
+        checkindate: "Invalid checkout date",
+      };
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      setFormLevel(3);
+      setLoading(false);
+      return;
+    }
+
+    if(selectedRooms.length===0){
+      setFormLevel(4)
+      showMessages("Select At Least 1 Room","reject");
+      setLoading(false)
+      return;
+    }
+  if(!status || !statEnum.includes(status.value))
+    errors={
+     ...errors,
+     status:"Invalid Status"
+    }
+
+    if(!method || !methodEnum.includes(method.value)){
+      errors={
+        ...errors,
+        method:"Invalid Method"
+      }
+    }
+
+    if(!source || !sourceEnum.includes(source.value)){
+      errors={
+        ...errors,
+        source:"Invalid Source"
+      }
+    }
+
+    if(method.value && method.value!=="cash" && !onlineid.value){
+      errors={
+        ...errors,
+        onlineid:"Online id required"
+      }
+
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      setFormLevel(5);
+      setLoading(false);
+      return;
+    }
+
+
+    if(Object.keys(errors).length===0){
+      let data = new FormData();
+      data.append("guest",guest._id);
+      data.append("checkindate",checkindate.value)
+      data.append("checkoutdate",checkoutdate.value)
+      data.append("estimatedcheckintime",estimatedcheckintime.value)
+      data.append("adults",adults.value)
+      data.append("children",children.value)
+      selectedRooms.forEach((rooms)=>{
+        data.append("rooms",rooms._id)
+      })
+
+      data.append("reservationfee",reservationFee.value);
+      data.append("amountPaid",advanceAmount.value);
+      data.append("status",status.value)
+      data.append("method",method.value)
+      data.append("source",source.value)
+      data.append("onlineid",onlineid.value);
+      data.append("note",note.value);
+      data.append("specialrequest",specialrequest.value)
+
+     try{
+
+      let res=await api.post(`/reservation/create/${hotelid}`,data)
+      if(res.status===201){
+        showMessages(res?.data.message,"success")
+        setToDefault();
+        fetch()
+        onexit()
+      }
+     }catch(err){
+      if(err){
+        showMessages(err?.response?.data.message || "internal server error",'reject')
+      }
+
+     }
+
+    }
+
+    setLoading(false)
+  };
+
+  
+
+
 
   useEffect(() => {
     const adults = Number(formData.adults?.value || 0);
@@ -499,7 +702,10 @@ const CreateReservationform = () => {
               Fill Up This Form To Create The Reservation
             </div>
           </div>
-          <div className={styles.exitbtn}>
+          <div className={styles.exitbtn} onClick={()=>{
+            setToDefault()
+            onexit()
+          }}>
             <RxCross1 />
           </div>
         </div>
@@ -752,7 +958,6 @@ const CreateReservationform = () => {
                   value={formData.totalpax?.value || 0}
                 />
               </div>
-             
             </div>
           )}
           {formLevel === 4 && (
@@ -890,15 +1095,13 @@ const CreateReservationform = () => {
                   value={formData.status?.value}
                 >
                   <option value="">--select One--</option>
-                  {["unpaid", "partially_paid", "paid", "refunded"].map(
-                    (stat, ind) => {
-                      return (
-                        <option value={stat.toLowerCase()} key={ind}>
-                          {stat}
-                        </option>
-                      );
-                    },
-                  )}
+                  {statEnum.map((stat, ind) => {
+                    return (
+                      <option value={stat.toLowerCase()} key={ind}>
+                        {stat}
+                      </option>
+                    );
+                  })}
                 </Input>
 
                 <Input
@@ -912,15 +1115,7 @@ const CreateReservationform = () => {
                   value={formData.method?.value || 0}
                 >
                   <option value="">--select One--</option>
-                  {[
-                    "cash",
-                    "card",
-                    "upi",
-                    "bank_transfer",
-                    "esewa",
-                    "khalti",
-                    "other",
-                  ].map((stat, ind) => {
+                  {methodEnum.map((stat, ind) => {
                     return (
                       <option value={stat.toLowerCase()} key={ind}>
                         {stat}
@@ -929,19 +1124,21 @@ const CreateReservationform = () => {
                   })}
                 </Input>
               </div>
-              
-                <div className={styles.formrow}>
-                  <Input
-                    required={formData.method?.value !== "cash" &&
-  formData.method?.value !== ""}
-                    placeholder="Online Id:"
-                    setData={setFormData}
-                    Name="onlineid"
-                    label="Online Id:"
-                    errors={errors}
-                    value={formData.onlineid?.value}
-                  />
-                   <Input
+
+              <div className={styles.formrow}>
+                <Input
+                  required={
+                    formData.method?.value !== "cash" &&
+                    formData.method?.value !== ""
+                  }
+                  placeholder="Online Id:"
+                  setData={setFormData}
+                  Name="onlineid"
+                  label="Online Id:"
+                  errors={errors}
+                  value={formData.onlineid?.value}
+                />
+                <Input
                   type="select"
                   required
                   placeholder="Source"
@@ -952,9 +1149,7 @@ const CreateReservationform = () => {
                   value={formData.source?.value || 0}
                 >
                   <option value="">--select One--</option>
-                  {[
-                    "direct", "website", "phone", "walk_in", "ota", "other"
-                  ].map((stat, ind) => {
+                  {sourceEnum.map((stat, ind) => {
                     return (
                       <option value={stat.toLowerCase()} key={ind}>
                         {stat}
@@ -962,10 +1157,10 @@ const CreateReservationform = () => {
                     );
                   })}
                 </Input>
-                </div>
+              </div>
 
-                 <div className={styles.formrow}>
-                 <Input
+              <div className={styles.formrow}>
+                <Input
                   placeholder="Note"
                   label="Note:"
                   Name="note"
@@ -973,12 +1168,9 @@ const CreateReservationform = () => {
                   errors={errors}
                   value={formData.note?.value}
                 />
-                
-                
               </div>
               <div className={styles.formrow}>
-                 <Input
-               
+                <Input
                   placeholder="Special Request"
                   label="Special Request:"
                   Name="specialrequest"
@@ -986,14 +1178,10 @@ const CreateReservationform = () => {
                   errors={errors}
                   value={formData.specialrequest?.value}
                 />
-                
               </div>
-
-                
-              
             </div>
           )}
-           {formLevel === 6&& (
+          {formLevel === 6 && (
             <div className={styles.form}>
               <div className={styles.formtitleholder}>
                 <div className={styles.formtitleform}>Final Confirmation:</div>
@@ -1008,27 +1196,22 @@ const CreateReservationform = () => {
                 <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Guest:</div>
                   <div className={styles.billvalue}>
-                    {guest?.firstName.toUpperCase()} {guest?.lastName.toUpperCase()}
+                    {guest?.firstName.toUpperCase()}{" "}
+                    {guest?.lastName.toUpperCase()}
                   </div>
                 </div>
 
                 <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Guest Id:</div>
-                  <div className={styles.billvalue}>
-                    {guest?.idNumber} 
-                  </div>
+                  <div className={styles.billvalue}>{guest?.idNumber}</div>
                 </div>
                 <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Guest email:</div>
-                  <div className={styles.billvalue}>
-                    {guest?.email} 
-                  </div>
+                  <div className={styles.billvalue}>{guest?.email}</div>
                 </div>
-                 <div className={styles.billrow}>
+                <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Guest Contact:</div>
-                  <div className={styles.billvalue}>
-                    {guest?.phone} 
-                  </div>
+                  <div className={styles.billvalue}>{guest?.phone}</div>
                 </div>
                 <div className={styles.divider}></div>
 
@@ -1038,14 +1221,16 @@ const CreateReservationform = () => {
                     {formatDate(formData.checkindate?.value)}
                   </div>
                 </div>
-                 <div className={styles.billrow}>
+                <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Checkout Date:</div>
                   <div className={styles.billvalue}>
                     {formatDate(formData.checkoutdate?.value)}
                   </div>
                 </div>
                 <div className={styles.billrow}>
-                  <div className={styles.billtitle2}>Estimated CheckIn time:</div>
+                  <div className={styles.billtitle2}>
+                    Estimated CheckIn time:
+                  </div>
                   <div className={styles.billvalue}>
                     {formData.estimatedcheckintime?.value}
                   </div>
@@ -1065,55 +1250,47 @@ const CreateReservationform = () => {
                     {formData.children?.value}
                   </div>
                 </div>
-                
-              
 
                 <div className={styles.divider}></div>
                 <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Payment Status:</div>
                   <div className={styles.billvalue}>
-                   {formData.status?.value}
-                  
+                    {formData.status?.value}
                   </div>
                 </div>
 
                 <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Payment Method:</div>
                   <div className={styles.billvalue}>
-                   {formData.method?.value}
-                  
+                    {formData.method?.value}
                   </div>
                 </div>
 
-                 <div className={styles.billrow}>
+                <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Online Id:</div>
                   <div className={styles.billvalue}>
-                   {formData.onlineid?.value || "--"}
-                  
+                    {formData.onlineid?.value || "--"}
                   </div>
                 </div>
 
-                 <div className={styles.billrow}>
+                <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Source:</div>
                   <div className={styles.billvalue}>
-                   {formData.source?.value}
-                  
+                    {formData.source?.value}
                   </div>
                 </div>
 
-                 <div className={styles.billrow}>
+                <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Note:</div>
                   <div className={styles.billvalue}>
-                   {formData.note?.value || "N/A"}
-                  
+                    {formData.note?.value || "N/A"}
                   </div>
                 </div>
 
-                 <div className={styles.billrow}>
+                <div className={styles.billrow}>
                   <div className={styles.billtitle2}>Special Request:</div>
                   <div className={styles.billvalue}>
-                   {formData.specialrequest?.value || "N/A"}
-                  
+                    {formData.specialrequest?.value || "N/A"}
                   </div>
                 </div>
               </div>
@@ -1218,9 +1395,6 @@ const CreateReservationform = () => {
                   </div>
                 </div>
               </div>
-
-              
-              
             </div>
           )}
         </div>
@@ -1249,10 +1423,11 @@ const CreateReservationform = () => {
               if (formLevel == 4 && !loading) {
                 ValidateRoomSelection();
               }
-              if(formLevel==5 && !loading){
-                console.log(formData)
-                console.log(guest)
-                HandlePageChange("next")
+              if (formLevel == 5 && !loading) {
+                HandlePageChange("next");
+              }
+              if (formLevel == 6 && !loading) {
+                CreateReservation();
               }
             }}
           >

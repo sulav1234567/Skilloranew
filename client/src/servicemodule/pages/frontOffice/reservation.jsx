@@ -1,16 +1,330 @@
+import { useState } from "react";
 import CreateReservationform from "../../components/reservationforms";
-import "../../css/contentholder.css"
-import styles from "../../css/reservation.module.css"
+import "../../css/contentholder.css";
+import styles from "../../css/reservation.module.css";
+import { IoAddOutline } from "react-icons/io5";
+import api from "../../../axios/axios";
+import { useParams } from "react-router";
+import { useGlobalMessageContext } from "../../../Globalmessage/components/globalmessage";
+import { useEffect } from "react";
+import { LuCalendarDays } from "react-icons/lu";
+import { IoMdArrowRoundUp } from "react-icons/io";
+import { IoCheckmarkCircleOutline } from "react-icons/io5";
+import { IoMdTime } from "react-icons/io";
+import { FaRegTimesCircle } from "react-icons/fa";
+import { LuBedDouble } from "react-icons/lu";
+import { IoIosArrowRoundForward } from "react-icons/io";
+import { RxPeople } from "react-icons/rx";
+import { formatDate } from "../../../Adminpannel/components/dateformatter";
+import SkeletonLoader from "../../../loader/loaders";
+
+const ReservationCard = ({
+  children,
+  value = "",
+  label = "",
+  backgroundcolor = "",
+}) => {
+  return (
+    <div className={styles.reservationcard}>
+      <div className={styles.svgsholder}>
+        <div
+          className={styles.iconholder}
+          style={{ backgroundColor: backgroundcolor }}
+        >
+          {children}
+        </div>
+
+        <div className={styles.secondiconholder}>
+          <IoMdArrowRoundUp />
+        </div>
+      </div>
+
+      <div className={styles.cardvalue}>{value}</div>
+      <div className={styles.cardname}>{label}</div>
+    </div>
+  );
+};
+
+const TableRow = ({
+  reservation = "",
+  guestname = "",
+  guestemail = "",
+  rooms = [],
+  checkindate="",
+  checkoutdate="",
+  pax="",
+  total="",
+  status="",
+}) => {
+  return (
+    <tr>
+      <td>{reservation}</td>
+      <td>
+        <div className={styles.guestholder}>
+          <div className={styles.guestname}>{guestname}</div>
+          <div className={styles.guestemail}>{guestemail}</div>
+        </div>
+      </td>
+      <td>
+        <div className={styles.roomsholder}>
+          {rooms.map((room, ind) => {
+            return (
+              <div className={styles.rooms} key={ind}>
+                <div className={styles.roomname}>
+                  <div className={styles.roomnamesvg}>
+                    <LuBedDouble />
+                  </div>
+                  Room-{room?.roomNumber}
+                </div>
+                <div className={styles.roomcategory}>
+                  {room?.category?.name}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </td>
+
+      <td>
+        <div className={styles.checkinandcheckout}>
+          <div className={styles.checkindate}>{formatDate(checkindate)}</div>
+          <div className={styles.checkoutdate}>
+            <div className={styles.checkouticon}>
+              <IoIosArrowRoundForward />
+            </div>
+            <div className={styles.checkoutvalue}>{formatDate(checkoutdate)} . {(new Date(checkoutdate) - new Date(checkindate))/(1000*60*60*24)}n</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div className={styles.paxholder}>
+          <div className={styles.paxicon}>
+            <RxPeople />
+          </div>
+          <div className={styles.paxvalue}>{pax}</div>
+        </div>
+      </td>
+      <td>Rs. {total}</td>
+      <td>
+        <div className={styles.status}>{status}</div>
+      </td>
+    </tr>
+  );
+};
+
+let SkeletonLoaderTR=()=>{
+  return(
+    <tr>
+      <td><SkeletonLoader style={{height:"15px",width:"calc(100% - 15px)"}}/></td>
+      <td>
+        <div className={styles.guestholder}>
+          <div className={styles.guestname}><SkeletonLoader style={{height:"15px",width:"calc(100% - 15px)"}}/></div>
+          <div className={styles.guestemail}><SkeletonLoader style={{height:"10px",width:"calc(100% - 15px)"}}/></div>
+        </div>
+      </td>
+      <td>
+        <div className={styles.roomsholder}>
+              <div className={styles.rooms}>
+                <div className={styles.roomname}>
+                  
+                 <SkeletonLoader style={{height:"15px",width:"calc(100% - 15px)"}}/>
+                </div>
+                <div className={styles.roomcategory}>
+                  <SkeletonLoader style={{height:"10px",width:"calc(100% - 15px)"}}/>
+                </div>
+              </div>
+         
+        </div>
+      </td>
+
+      <td>
+        <div className={styles.checkinandcheckout}>
+          <div className={styles.checkindate}><SkeletonLoader style={{height:"15px",width:"calc(100% - 15px)"}}/></div>
+          <div className={styles.checkoutdate}>
+            <SkeletonLoader style={{height:"10px",width:"calc(100% - 15px)"}}/>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div className={styles.paxholder}>
+         <SkeletonLoader style={{height:"20px",width:"40px"}}/>
+        </div>
+      </td>
+      <td><SkeletonLoader style={{height:"15px",width:"calc(100% - 15px)"}}/></td>
+      <td>
+        <SkeletonLoader style={{height:"15px",width:"calc(100% - 15px)",borderRadius:"9999px"}}/>
+      </td>
+    </tr>
+
+  )
+}
 const Reservation = () => {
+  let [reservationForm, setReservationForm] = useState(false);
+  let [reservations, setReservations] = useState(null);
+  let [loading, setLoading] = useState(false);
+  let { showMessages } = useGlobalMessageContext();
+  let { hotelid } = useParams();
+
+  let fetchReservations = async () => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+
+    if (!hotelid) {
+      setLoading(false);
+      showMessages("Hotel id not found", "reject");
+      return;
+    }
+
+    try {
+      let res = await api.get(`/reservation/getallreservations/${hotelid}`);
+
+      if (res.status === 200) {
+        setReservations(res.data.reservations);
+        console.log(res.data.reservations);
+      }
+    } catch (err) {
+      if (err) {
+        showMessages(
+          err.response?.message || "Internal server error",
+          "reject",
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReservations();
+  }, []);
   return (
     <div className={"maincontainer"}>
-        <div className={"topnavbar"}>
-            
+      <div className={"topnavbar"}></div>
+      <div className={"contentholder"}>
+        <div className={styles.reservationcreationdiv}>
+          <div className={styles.headingandsubheading}>
+            <div className={styles.heading}>Reservations</div>
+            <div className={styles.subheading}>
+              Create, edit and manage guest reservations across every room
+              category.
+            </div>
+          </div>
+
+          <div
+            className={styles.reservationcreatebtn}
+            onClick={() => {
+              setReservationForm(true);
+            }}
+          >
+            <div className={styles.btnsvg}>
+              <IoAddOutline />
+            </div>
+
+            <div className={styles.btnsubheading}>Create</div>
+          </div>
         </div>
-        <div className={"contentholder"}>
-          reservation
+        <div className={styles.reservationcardsholder}>
+          <ReservationCard
+            value={reservations ? reservations.length : "0"}
+            label="Total Reservations"
+            backgroundcolor="rgb(243, 245, 255)"
+          >
+            <LuCalendarDays color="rgb(0, 20, 238)" />
+          </ReservationCard>
+          <ReservationCard
+            label="Confirmed"
+            value={
+              reservations
+                ? reservations.filter((rev) => rev.status === "confirmed")
+                    .length
+                : "0"
+            }
+            backgroundcolor="rgb(217, 255, 204)"
+          >
+            <IoCheckmarkCircleOutline color="rgb(14, 121, 4)" />
+          </ReservationCard>
+          <ReservationCard
+            label="Pending"
+            value={
+              reservations
+                ? reservations.filter((rev) => rev.status === "pending").length
+                : "0"
+            }
+            backgroundcolor="rgb(255, 240, 228)"
+          >
+            <IoMdTime color="rgb(241, 109, 0)" />
+          </ReservationCard>
+          <ReservationCard
+            backgroundcolor="rgb(240, 240, 240)"
+            label="Cancelled"
+            value={
+              reservations
+                ? reservations.filter((rev) => rev.status === "cancelled")
+                    .length
+                : "0"
+            }
+          >
+            <FaRegTimesCircle color="rgb(103, 103, 103)" />
+          </ReservationCard>
         </div>
-        <CreateReservationform/>
+
+        <div className={styles.reservationstable}>
+          <table>
+            <thead>
+              <tr>
+                <th>Reservation</th>
+                <th>Guest</th>
+                <th>Rooms</th>
+                <th>Stay</th>
+                <th>Pax</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading && !reservations &&(
+                <>
+                <SkeletonLoaderTR/>
+                <SkeletonLoaderTR/>
+                <SkeletonLoaderTR/>
+                <SkeletonLoaderTR/>
+                </>
+              )}
+             {!loading && reservations && reservations.map((resv,ind)=>{
+              console.log(resv)
+
+              return (
+                <TableRow
+                reservation={resv.confirmationCode}
+                guestname={`${resv.guest.firstName} ${resv.guest.lastName}`}
+                guestemail={resv.guest.email}
+                rooms={resv.rooms}
+                checkindate={resv.checkIn}
+                checkoutdate={resv.checkOut}
+                pax={Number(resv.adults) + Number(resv.children)}
+                total={resv.payment.totalAmount}
+                status={resv.status}
+                
+                />
+
+              )
+             })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {reservationForm && (
+        <CreateReservationform
+          onexit={() => {
+            setReservationForm(false);
+          }}
+          fetch={fetchReservations}
+        />
+      )}
     </div>
   );
 };

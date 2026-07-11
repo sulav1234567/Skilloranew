@@ -74,4 +74,7 @@ const GuestSchema = new mongoose.Schema(
 
 GuestSchema.index({ hotel: 1, email:1,phone:1,firstName:1,lastName:1 });
 
-export default mongoose.model("Guest", GuestSchema);
+
+let Guest= mongoose.model("Guest", GuestSchema);
+
+ export default Guest

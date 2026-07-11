@@ -431,6 +431,7 @@ let SearchRoomsForReservation = async (req, res) => {
     req.body;
   let { hotelid } = req.params;
 
+
   try{
 
   if (!hotelid || !mongoose.Types.ObjectId.isValid(hotelid)) {
@@ -476,12 +477,13 @@ let SearchRoomsForReservation = async (req, res) => {
   }
 
   let conflictingRooms = await Reservation.find({
-    status: { $nin: ["cancelled", "checkedOut"] },
-    checkInDate: { $lt: checkoutdate },
-    checkOutDate: { $gt: checkindate },
-  }).select("room");
+    hotel:hotelid,
+    status: { $nin: ["cancelled", "checkedOut","no_show"] },
+    checkIn: { $lt: new Date(checkoutdate) },
+    checkOut: { $gt: new Date(checkindate) },
+  }).select("rooms");
 
-  let OverlappingRoomsIds = conflictingRooms.map((r) => r.room);
+  let OverlappingRoomsIds = conflictingRooms.flatMap((r) => r.rooms);
 
   let AvailableRooms = await Room.find({
     _id: { $nin: OverlappingRoomsIds },

@@ -33,10 +33,7 @@ import RoomIndividualView from "./servicemodule/pages/rooms/roomIndividualView.j
 
 function App() {
   let { user } = useUserInfo();
-  useEffect(() => {
-    let useragent = navigator.userAgent;
-    console.log(useragent);
-  }, []);
+  
 
   return (
     <>
