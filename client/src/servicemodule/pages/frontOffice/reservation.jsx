@@ -1,10 +1,9 @@
 import { useState } from "react";
 import CreateReservationform from "../../components/reservationforms";
-import "../../css/contentholder.css";
 import styles from "../../css/reservation.module.css";
 import { IoAddOutline } from "react-icons/io5";
 import api from "../../../axios/axios";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useGlobalMessageContext } from "../../../Globalmessage/components/globalmessage";
 import { useEffect } from "react";
 import { LuCalendarDays } from "react-icons/lu";
@@ -17,6 +16,8 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import { RxPeople } from "react-icons/rx";
 import { formatDate } from "../../../Adminpannel/components/dateformatter";
 import SkeletonLoader from "../../../loader/loaders";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { useConfirmationMessageContext } from "../../../forms/components/confirmationmessage";
 
 const ReservationCard = ({
   children,
@@ -55,10 +56,83 @@ const TableRow = ({
   pax="",
   total="",
   status="",
+  id="",
+  activeid="N/A",
+  setactiveid=()=>{},
+  fetch=()=>{}
 }) => {
+  let {showMessages}=useGlobalMessageContext()
+  let {hotelid}=useParams()
+  let [loading,setLoading]=useState(false)
+  let { setConfirmationMessageData, clearMessage } =useConfirmationMessageContext();
+  let navigate=useNavigate()
+
+  let UpdateReservation=async(value)=>{
+
+    if(loading){
+      return;
+    }
+    let trimmedValue= value.trim()
+    const allowedStatuses = ["cancelled", "no_show", "confirmed"];
+    
+    if(!allowedStatuses.includes(trimmedValue)){
+      setactiveid(null)
+      clearMessage()
+      return showMessages("Invalid Action","reject");
+    }
+
+    if(!hotelid){
+      returnsetactiveid(null)
+      clearMessage()
+      return showMessages("Invalid hotelid","reject");
+    }
+
+    if(!id || id!=activeid){
+      returnsetactiveid(null)
+      clearMessage()
+      return showMessages("Forbidden action","reject");
+
+    }
+
+    try{
+      let formData = new FormData()
+      formData.append("reservationid",id);
+      formData.append("status",trimmedValue)
+
+
+      setConfirmationMessageData((prev)=>({
+        ...prev,
+        loading:true
+      }))
+
+      let res = await api.put(`/reservation/updatereservationstatus/${hotelid}`,formData)
+      if(res.status===201){
+       showMessages(res.data?.message,"success");
+
+      }
+      
+
+
+    }
+    catch(err){
+      if(err){
+        showMessages(err?.response?.data.message||"Internal server error","reject")
+      }
+
+    }
+    finally{
+      fetch();
+      clearMessage();
+      setactiveid(null)
+      setLoading(false)
+    }
+  }
   return (
     <tr>
-      <td>{reservation}</td>
+      <td onClick={()=>{
+       navigate(`/services/${hotelid}/frontoffice/reservation/ir/${id}`)
+
+      }}>{reservation}</td>
       <td>
         <div className={styles.guestholder}>
           <div className={styles.guestname}>{guestname}</div>
@@ -106,7 +180,69 @@ const TableRow = ({
       </td>
       <td>Rs. {total}</td>
       <td>
-        <div className={styles.status}>{status}</div>
+        <div className={`${styles.status} ${styles[status]}`}>{status}</div>
+      </td>
+      <td>
+        <div className={styles.actionbtn} onClick={(e)=>{
+          e.stopPropagation()
+          setactiveid(id)
+        }}>
+          <BsThreeDotsVertical/>
+
+          {id == activeid && (
+             <div className={styles.actionbtnholder} onMouseOver={(e)=>{
+              e.stopPropagation()
+             }
+             }
+             onClick={(e)=>{
+              e.stopPropagation()
+             }}
+             >
+            <div className={styles.actionButton} onClick={()=>{
+              setConfirmationMessageData({
+                show:true,
+                message:"Are You Sure To Mark This Reservation As Confirm?",
+                okFunction:()=>{UpdateReservation("confirmed")},
+                loading:false
+              })
+            }}>
+              Mark Confirm
+              
+            </div>
+            <div className={styles.actionButton}
+            onClick={()=>{
+              setConfirmationMessageData({
+                show:true,
+                message:"Are You Sure To Mark This Reservation As no-show?",
+                okFunction:()=>{UpdateReservation("no_show")},
+                loading:false
+              })
+            }}
+            >
+              No Show
+              
+              
+            </div>
+            <div className={`${styles.actionButton} ${styles.cancelbtn}`}
+            onClick={()=>{
+              setConfirmationMessageData({
+                show:true,
+                message:"Are You Sure To Mark This Reservation As Cancelled?",
+                okFunction:()=>{UpdateReservation("cancelled")},
+                loading:false
+              })
+            }}>
+              Cancel
+              
+            </div>
+            
+          </div>
+
+          )}
+         
+          
+          
+        </div>
       </td>
     </tr>
   );
@@ -154,6 +290,11 @@ let SkeletonLoaderTR=()=>{
       <td>
         <SkeletonLoader style={{height:"15px",width:"calc(100% - 15px)",borderRadius:"9999px"}}/>
       </td>
+      <td>
+        <div className={styles.actionsholder}>
+          
+        </div>
+      </td>
     </tr>
 
   )
@@ -164,6 +305,7 @@ const Reservation = () => {
   let [loading, setLoading] = useState(false);
   let { showMessages } = useGlobalMessageContext();
   let { hotelid } = useParams();
+  let [activeid,setActiveId]=useState(null)
 
   let fetchReservations = async () => {
     if (loading) {
@@ -200,9 +342,9 @@ const Reservation = () => {
     fetchReservations();
   }, []);
   return (
-    <div className={"maincontainer"}>
-      <div className={"topnavbar"}></div>
-      <div className={"contentholder"}>
+   
+    <>
+   
         <div className={styles.reservationcreationdiv}>
           <div className={styles.headingandsubheading}>
             <div className={styles.heading}>Reservations</div>
@@ -270,7 +412,9 @@ const Reservation = () => {
           </ReservationCard>
         </div>
 
-        <div className={styles.reservationstable}>
+        <div className={styles.reservationstable} onClick={()=>{
+          setActiveId(null)
+        }}>
           <table>
             <thead>
               <tr>
@@ -294,8 +438,6 @@ const Reservation = () => {
                 </>
               )}
              {!loading && reservations && reservations.map((resv,ind)=>{
-              console.log(resv)
-
               return (
                 <TableRow
                 reservation={resv.confirmationCode}
@@ -307,6 +449,11 @@ const Reservation = () => {
                 pax={Number(resv.adults) + Number(resv.children)}
                 total={resv.payment.totalAmount}
                 status={resv.status}
+                id={resv._id}
+                activeid={activeid}
+                setactiveid={setActiveId}
+                key={resv._id}
+                fetch={fetchReservations}
                 
                 />
 
@@ -315,7 +462,7 @@ const Reservation = () => {
             </tbody>
           </table>
         </div>
-      </div>
+     
 
       {reservationForm && (
         <CreateReservationform
@@ -325,7 +472,8 @@ const Reservation = () => {
           fetch={fetchReservations}
         />
       )}
-    </div>
+       </>
+   
   );
 };
 
