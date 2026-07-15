@@ -339,7 +339,7 @@ const ReservationDetailedView = () => {
   }, []);
   return (
     <>
-      {loading && (<SkeletonReservationDetailpage/>)}
+      {loadingg && (<SkeletonReservationDetailpage/>)}
       {!loading && reservation && (
         <>
           <div className={styles.reservationsummary}>
