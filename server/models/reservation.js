@@ -13,7 +13,6 @@ const reservationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hotel",
       required: true,
-      index: true,
 
     },
 
@@ -21,7 +20,6 @@ const reservationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Guest",
       required: true,
-      index: true,
     },
 
     rooms: [
@@ -58,42 +56,8 @@ const reservationSchema = new mongoose.Schema(
         "no_show",
       ],
       default: "pending",
-      index: true,
+      
     },
-
-    payment: {
-      status: {
-        type: String,
-        enum: ["unpaid", "partially_paid", "paid", "refunded"],
-        default: "unpaid",
-      },
-      method: {
-        type: String,
-        enum: ["cash", "card", "upi", "bank_transfer", "esewa","khalti", "other"],
-      },
-      onlineid: {
-        type: String,
-        required: [
-          function () {
-            return this.payment?.method && this.payment.method !== "cash";
-          },
-          "An online/transaction id is required for non-cash payments.",
-        ],
-      },
-      amountPaid: { type: Number, min: 0, default: 0 },
-      remainingAmount: {
-        type: Number,
-        min: 0,
-        default: 0,
-      },
-      totalAmount:{
-         type: Number,
-        min: 0,
-        default: 0,
-
-      }
-    },
-
     source: {
       type: String,
       enum: ["direct", "website", "phone", "walk_in", "ota", "other"],
@@ -140,31 +104,7 @@ reservationSchema.pre("validate", function () {
 
 });
 
-reservationSchema.pre("validate", async function () {
-  try {
-    await this.populate({
-      path: "rooms",
-      populate: {
-        path: "category",
-        select: "baseRate",
-      },
-      select: "category",
-    });
-    
-    let totalamt = Number(this.totalAmount || 0);
-    let remAmt = totalamt - this.payment.amountPaid;
-    if (remAmt < 0) {
-      return new Error("remaining amount must be greater than 0");
-    }
-
-   return  this.payment.remainingAmount = remAmt;
-
-    
-  } catch (err) {
-    return err;
-  }
-});
-
+reservationSchema.index({hotel:1,guest:1,status:1},{unique:true})
 let Reservation = mongoose.model("Reservation", reservationSchema);
 
 export default Reservation;

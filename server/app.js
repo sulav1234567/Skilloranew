@@ -15,7 +15,7 @@ import RoomCategoryRouter from "./routes/Roomcategory.routes.js"
 import { AuthUser } from "./middlewares/authuser.middleware.js";
 import RooomRouter from "./routes/Room.routes.js"
 import ReservationRouter from "./routes/reservation.routes.js"
-
+import TransactionRouter from "./routes/transaction.routes.js"
 
 
 
@@ -45,6 +45,7 @@ app.use("/guest",guestRouter)
 app.use("/roomcategory",RoomCategoryRouter)
 app.use("/room",RooomRouter)
 app.use("/reservation",ReservationRouter)
+app.use("/transaction",TransactionRouter)
 
 
 export default app;

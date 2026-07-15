@@ -597,3 +597,1941 @@ export const passwordResetLinkEmailTemplate = ({
 
   ${footer()}
 `);
+
+const escapeHtml = (value = "") => {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+};
+
+const formatLabel = (value = "") => {
+  return String(value)
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+};
+
+const formatDate = (
+  value,
+  timeZone = "Asia/Kathmandu",
+) => {
+  if (!value) {
+    return "N/A";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return escapeHtml(value);
+  }
+
+  try {
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      timeZone,
+    }).format(date);
+  } catch {
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(date);
+  }
+};
+
+const formatMoney = (
+  amount = 0,
+  currency = "Rs.",
+) => {
+  const numericAmount = Number(amount);
+
+  const safeAmount = Number.isFinite(numericAmount)
+    ? numericAmount
+    : 0;
+
+  return `${escapeHtml(currency)} ${safeAmount.toLocaleString(
+    "en-IN",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    },
+  )}`;
+};
+
+const calculateNights = ({
+  nights,
+  checkIn,
+  checkOut,
+}) => {
+  const providedNights = Number(nights);
+
+  if (
+    Number.isFinite(providedNights) &&
+    providedNights >= 0
+  ) {
+    return providedNights;
+  }
+
+  const checkInDate = new Date(checkIn);
+  const checkOutDate = new Date(checkOut);
+
+  if (
+    Number.isNaN(checkInDate.getTime()) ||
+    Number.isNaN(checkOutDate.getTime())
+  ) {
+    return 0;
+  }
+
+  const milliseconds =
+    checkOutDate.getTime() -
+    checkInDate.getTime();
+
+  return Math.max(
+    0,
+    Math.ceil(
+      milliseconds /
+        (1000 * 60 * 60 * 24),
+    ),
+  );
+};
+
+const getStatusColors = (status = "pending") => {
+  const statusColors = {
+    pending: {
+      background: "#FFFBEB",
+      color: "#92400E",
+      border: "#FDE68A",
+    },
+
+    confirmed: {
+      background: "#ECFDF5",
+      color: "#047857",
+      border: "#A7F3D0",
+    },
+
+    checked_in: {
+      background: "#EFF6FF",
+      color: "#1D4ED8",
+      border: "#BFDBFE",
+    },
+
+    checked_out: {
+      background: "#F3F4F6",
+      color: "#374151",
+      border: "#D1D5DB",
+    },
+
+    cancelled: {
+      background: "#FEF2F2",
+      color: "#B91C1C",
+      border: "#FECACA",
+    },
+
+    no_show: {
+      background: "#FFF7ED",
+      color: "#C2410C",
+      border: "#FED7AA",
+    },
+  };
+
+  return (
+    statusColors[status] ||
+    statusColors.pending
+  );
+};
+
+
+const getRoomInformation = (
+  room,
+  index,
+) => {
+  if (
+    typeof room === "string" ||
+    typeof room === "number"
+  ) {
+    return {
+      title: `Room ${room}`,
+      description: "",
+      price: null,
+    };
+  }
+
+  const roomNumber =
+    room?.roomNumber ||
+    room?.number ||
+    room?.name ||
+    index + 1;
+
+  const categoryName =
+    room?.categoryName ||
+    room?.category?.name ||
+    room?.roomCategory ||
+    "";
+
+  const roomPrice =
+    room?.effectivePrice ??
+    room?.price ??
+    room?.priceOverride ??
+    null;
+
+  const roomDetails = [
+    categoryName,
+
+    room?.floor !== undefined &&
+    room?.floor !== null
+      ? `Floor ${room.floor}`
+      : "",
+
+    room?.pax
+      ? `Maximum ${room.pax} guests`
+      : "",
+  ].filter(Boolean);
+
+  return {
+    title: `Room ${roomNumber}`,
+    description: roomDetails.join(" · "),
+    price: roomPrice,
+  };
+};
+
+export const reservationConfirmationEmailTemplate =
+  ({
+    guestName,
+    hotelName,
+    confirmationCode,
+    status = "confirmed",
+
+    checkIn,
+    checkOut,
+    estimatedCheckInTime,
+    nights,
+    adults = 1,
+    children = 0,
+    rooms = [],
+
+    paymentStatus = "unpaid",
+    paymentMethod,
+    transactionId,
+    reservationFee = 0,
+    amountPaid = 0,
+    remainingAmount = 0,
+    totalAmount = 0,
+
+    source,
+    specialRequests,
+
+    hotelAddress,
+    hotelPhone,
+    hotelEmail,
+
+    reservationUrl,
+
+    cancellationReason,
+    refundAmount,
+
+    currency = "Rs.",
+    timeZone = "Asia/Kathmandu",
+  }) => {
+    const safeStatus = String(
+      status || "pending",
+    ).toLowerCase();
+
+    const statusColors =
+      getStatusColors(safeStatus);
+
+    const safeRooms = Array.isArray(rooms)
+      ? rooms
+      : [];
+
+    const safeAdults = Math.max(
+      0,
+      Number(adults) || 0,
+    );
+
+    const safeChildren = Math.max(
+      0,
+      Number(children) || 0,
+    );
+
+    const safeTotalAmount = Math.max(
+      0,
+      Number(totalAmount) || 0,
+    );
+
+    const safeAmountPaid = Math.max(
+      0,
+      Number(amountPaid) || 0,
+    );
+
+    const safeRemainingAmount = Math.max(
+      0,
+      Number(remainingAmount) || 0,
+    );
+
+    const safeReservationFee = Math.max(
+      0,
+      Number(reservationFee) || 0,
+    );
+
+    const totalGuests =
+      safeAdults + safeChildren;
+
+    const totalNights = calculateNights({
+      nights,
+      checkIn,
+      checkOut,
+    });
+
+    const hasRemainingAmount =
+      safeRemainingAmount > 0;
+
+    const isConfirmed =
+      safeStatus === "confirmed";
+
+    const isCancelled =
+      safeStatus === "cancelled";
+
+    const roomsHtml =
+      safeRooms.length > 0
+        ? safeRooms
+            .map((room, index) => {
+              const roomInformation =
+                getRoomInformation(
+                  room,
+                  index,
+                );
+
+              return `
+                <tr>
+                  <td
+                    style="
+                      padding:13px 16px;
+                      ${
+                        index <
+                        safeRooms.length - 1
+                          ? "border-bottom:1px solid #F0F0F0;"
+                          : ""
+                      }
+                    "
+                  >
+                    <table
+                      width="100%"
+                      cellpadding="0"
+                      cellspacing="0"
+                      border="0"
+                    >
+                      <tr>
+                        <td>
+                          <p
+                            style="
+                              margin:0 0 3px;
+                              color:#111827;
+                              font-size:13px;
+                              font-weight:700;
+                            "
+                          >
+                            ${escapeHtml(
+                              roomInformation.title,
+                            )}
+                          </p>
+
+                          ${
+                            roomInformation.description
+                              ? `
+                                <p
+                                  style="
+                                    margin:0;
+                                    color:#9CA3AF;
+                                    font-size:12px;
+                                    line-height:1.5;
+                                  "
+                                >
+                                  ${escapeHtml(
+                                    roomInformation.description,
+                                  )}
+                                </p>
+                              `
+                              : ""
+                          }
+                        </td>
+
+                        ${
+                          roomInformation.price !==
+                          null
+                            ? `
+                              <td
+                                align="right"
+                                style="
+                                  vertical-align:middle;
+                                  padding-left:12px;
+                                "
+                              >
+                                <p
+                                  style="
+                                    margin:0;
+                                    color:#111827;
+                                    font-size:12px;
+                                    font-weight:700;
+                                    white-space:nowrap;
+                                  "
+                                >
+                                  ${formatMoney(
+                                    roomInformation.price,
+                                    currency,
+                                  )}
+                                </p>
+
+                                <p
+                                  style="
+                                    margin:3px 0 0;
+                                    color:#9CA3AF;
+                                    font-size:10px;
+                                  "
+                                >
+                                  per night
+                                </p>
+                              </td>
+                            `
+                            : ""
+                        }
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              `;
+            })
+            .join("")
+        : `
+          <tr>
+            <td style="padding:13px 16px;">
+              <p
+                style="
+                  margin:0;
+                  color:#9CA3AF;
+                  font-size:12px;
+                "
+              >
+                Room details will be provided by the hotel.
+              </p>
+            </td>
+          </tr>
+        `;
+
+    return wrapper(`
+      ${header}
+
+      <!-- HERO -->
+      <tr>
+        <td
+          style="
+            background-color:#F8FAFF;
+            padding:38px 32px 34px;
+            text-align:center;
+            border-bottom:1px solid #EEF2FF;
+          "
+        >
+          <p
+            style="
+              margin:0 0 16px;
+              display:inline-block;
+              background-color:${statusColors.background};
+              color:${statusColors.color};
+              border:1px solid ${statusColors.border};
+              font-size:10px;
+              font-weight:700;
+              letter-spacing:1px;
+              text-transform:uppercase;
+              padding:5px 14px;
+              border-radius:100px;
+            "
+          >
+            ${escapeHtml(
+              formatLabel(safeStatus),
+            )}
+          </p>
+
+          <h1
+            style="
+              margin:0 0 10px;
+              color:#111827;
+              font-size:24px;
+              font-weight:800;
+              letter-spacing:-0.4px;
+              line-height:1.25;
+            "
+          >
+            ${
+              isConfirmed
+                ? "Your reservation is confirmed"
+                : isCancelled
+                  ? "Your reservation was cancelled"
+                  : "Your reservation details"
+            }
+          </h1>
+
+          <p
+            style="
+              margin:0;
+              color:#6B7280;
+              font-size:14px;
+              line-height:1.65;
+            "
+          >
+            ${escapeHtml(
+              hotelName ||
+                "Hotel reservation",
+            )}
+
+            <br />
+
+            Confirmation code:
+
+            <strong
+              style="
+                color:#1D4ED8;
+                letter-spacing:0.5px;
+              "
+            >
+              ${escapeHtml(
+                confirmationCode || "N/A",
+              )}
+            </strong>
+          </p>
+        </td>
+      </tr>
+
+      <!-- BODY -->
+      <tr>
+        <td style="padding:28px 32px 24px;">
+          <p
+            style="
+              margin:0 0 22px;
+              color:#4B5563;
+              font-size:14px;
+              line-height:1.8;
+            "
+          >
+            Hi
+
+            <strong>
+              ${escapeHtml(
+                guestName || "Guest",
+              )}
+            </strong>,
+
+            ${
+              isConfirmed
+                ? `
+                  your stay at
+                  <strong>
+                    ${escapeHtml(
+                      hotelName ||
+                        "our hotel",
+                    )}
+                  </strong>
+                  has been confirmed.
+                `
+                : isCancelled
+                  ? `
+                    your reservation at
+                    <strong>
+                      ${escapeHtml(
+                        hotelName ||
+                          "our hotel",
+                      )}
+                    </strong>
+                    has been cancelled.
+                  `
+                  : `
+                    here are the latest details
+                    for your reservation at
+                    <strong>
+                      ${escapeHtml(
+                        hotelName ||
+                          "our hotel",
+                      )}
+                    </strong>.
+                  `
+            }
+
+            Please keep this email for your records.
+          </p>
+
+          <!-- STAY DETAILS -->
+          <p
+            style="
+              margin:0 0 9px;
+              color:#111827;
+              font-size:12px;
+              font-weight:800;
+              letter-spacing:0.8px;
+              text-transform:uppercase;
+            "
+          >
+            Stay Details
+          </p>
+
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              background-color:#FAFAFA;
+              border:1px solid #F0F0F0;
+              border-radius:12px;
+              overflow:hidden;
+              margin-bottom:22px;
+            "
+          >
+            <tr>
+              <td
+                width="50%"
+                style="
+                  padding:14px 16px;
+                  border-right:1px solid #F0F0F0;
+                  border-bottom:1px solid #F0F0F0;
+                "
+              >
+                <p
+                  style="
+                    margin:0 0 4px;
+                    color:#9CA3AF;
+                    font-size:10px;
+                    font-weight:700;
+                    letter-spacing:0.8px;
+                    text-transform:uppercase;
+                  "
+                >
+                  Check-in
+                </p>
+
+                <p
+                  style="
+                    margin:0;
+                    color:#111827;
+                    font-size:13px;
+                    font-weight:700;
+                  "
+                >
+                  ${formatDate(
+                    checkIn,
+                    timeZone,
+                  )}
+                </p>
+
+                ${
+                  estimatedCheckInTime
+                    ? `
+                      <p
+                        style="
+                          margin:4px 0 0;
+                          color:#6B7280;
+                          font-size:11px;
+                        "
+                      >
+                        Estimated time:
+                        ${escapeHtml(
+                          estimatedCheckInTime,
+                        )}
+                      </p>
+                    `
+                    : ""
+                }
+              </td>
+
+              <td
+                width="50%"
+                style="
+                  padding:14px 16px;
+                  border-bottom:1px solid #F0F0F0;
+                "
+              >
+                <p
+                  style="
+                    margin:0 0 4px;
+                    color:#9CA3AF;
+                    font-size:10px;
+                    font-weight:700;
+                    letter-spacing:0.8px;
+                    text-transform:uppercase;
+                  "
+                >
+                  Check-out
+                </p>
+
+                <p
+                  style="
+                    margin:0;
+                    color:#111827;
+                    font-size:13px;
+                    font-weight:700;
+                  "
+                >
+                  ${formatDate(
+                    checkOut,
+                    timeZone,
+                  )}
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                width="50%"
+                style="
+                  padding:14px 16px;
+                  border-right:1px solid #F0F0F0;
+                "
+              >
+                <p
+                  style="
+                    margin:0 0 4px;
+                    color:#9CA3AF;
+                    font-size:10px;
+                    font-weight:700;
+                    letter-spacing:0.8px;
+                    text-transform:uppercase;
+                  "
+                >
+                  Length of stay
+                </p>
+
+                <p
+                  style="
+                    margin:0;
+                    color:#111827;
+                    font-size:13px;
+                    font-weight:700;
+                  "
+                >
+                  ${totalNights}
+
+                  ${
+                    totalNights === 1
+                      ? "night"
+                      : "nights"
+                  }
+                </p>
+              </td>
+
+              <td
+                width="50%"
+                style="padding:14px 16px;"
+              >
+                <p
+                  style="
+                    margin:0 0 4px;
+                    color:#9CA3AF;
+                    font-size:10px;
+                    font-weight:700;
+                    letter-spacing:0.8px;
+                    text-transform:uppercase;
+                  "
+                >
+                  Guests
+                </p>
+
+                <p
+                  style="
+                    margin:0;
+                    color:#111827;
+                    font-size:13px;
+                    font-weight:700;
+                  "
+                >
+                  ${totalGuests}
+
+                  ${
+                    totalGuests === 1
+                      ? "guest"
+                      : "guests"
+                  }
+                </p>
+
+                <p
+                  style="
+                    margin:4px 0 0;
+                    color:#6B7280;
+                    font-size:11px;
+                  "
+                >
+                  ${safeAdults}
+
+                  ${
+                    safeAdults === 1
+                      ? "adult"
+                      : "adults"
+                  }
+
+                  ${
+                    safeChildren > 0
+                      ? `
+                        &middot;
+                        ${safeChildren}
+
+                        ${
+                          safeChildren === 1
+                            ? "child"
+                            : "children"
+                        }
+                      `
+                      : ""
+                  }
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <!-- ROOM DETAILS -->
+          <p
+            style="
+              margin:0 0 9px;
+              color:#111827;
+              font-size:12px;
+              font-weight:800;
+              letter-spacing:0.8px;
+              text-transform:uppercase;
+            "
+          >
+            ${
+              safeRooms.length === 1
+                ? "Room"
+                : "Rooms"
+            }
+          </p>
+
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              background-color:#FAFAFA;
+              border:1px solid #F0F0F0;
+              border-radius:12px;
+              overflow:hidden;
+              margin-bottom:22px;
+            "
+          >
+            ${roomsHtml}
+          </table>
+
+          <!-- BILLING -->
+          <p
+            style="
+              margin:0 0 9px;
+              color:#111827;
+              font-size:12px;
+              font-weight:800;
+              letter-spacing:0.8px;
+              text-transform:uppercase;
+            "
+          >
+            Billing Summary
+          </p>
+
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              border:1px solid #E5E7EB;
+              border-radius:12px;
+              overflow:hidden;
+              margin-bottom:18px;
+            "
+          >
+            <tr>
+              <td
+                style="
+                  padding:12px 16px;
+                  border-bottom:1px solid #F0F0F0;
+                  color:#6B7280;
+                  font-size:12px;
+                "
+              >
+                Total amount
+              </td>
+
+              <td
+                align="right"
+                style="
+                  padding:12px 16px;
+                  border-bottom:1px solid #F0F0F0;
+                  color:#111827;
+                  font-size:13px;
+                  font-weight:700;
+                "
+              >
+                ${formatMoney(
+                  safeTotalAmount,
+                  currency,
+                )}
+              </td>
+            </tr>
+
+            ${
+              safeReservationFee > 0
+                ? `
+                  <tr>
+                    <td
+                      style="
+                        padding:12px 16px;
+                        border-bottom:1px solid #F0F0F0;
+                        color:#6B7280;
+                        font-size:12px;
+                      "
+                    >
+                      Reservation fee
+                    </td>
+
+                    <td
+                      align="right"
+                      style="
+                        padding:12px 16px;
+                        border-bottom:1px solid #F0F0F0;
+                        color:#111827;
+                        font-size:13px;
+                        font-weight:700;
+                      "
+                    >
+                      ${formatMoney(
+                        safeReservationFee,
+                        currency,
+                      )}
+                    </td>
+                  </tr>
+                `
+                : ""
+            }
+
+            <tr>
+              <td
+                style="
+                  padding:12px 16px;
+                  border-bottom:1px solid #F0F0F0;
+                  color:#6B7280;
+                  font-size:12px;
+                "
+              >
+                Amount paid
+              </td>
+
+              <td
+                align="right"
+                style="
+                  padding:12px 16px;
+                  border-bottom:1px solid #F0F0F0;
+                  color:#047857;
+                  font-size:13px;
+                  font-weight:700;
+                "
+              >
+                ${formatMoney(
+                  safeAmountPaid,
+                  currency,
+                )}
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                style="
+                  padding:12px 16px;
+                  background-color:${
+                    hasRemainingAmount
+                      ? "#FFFBEB"
+                      : "#ECFDF5"
+                  };
+                  color:${
+                    hasRemainingAmount
+                      ? "#92400E"
+                      : "#047857"
+                  };
+                  font-size:12px;
+                  font-weight:700;
+                "
+              >
+                ${
+                  hasRemainingAmount
+                    ? "Remaining amount"
+                    : "Balance"
+                }
+              </td>
+
+              <td
+                align="right"
+                style="
+                  padding:12px 16px;
+                  background-color:${
+                    hasRemainingAmount
+                      ? "#FFFBEB"
+                      : "#ECFDF5"
+                  };
+                  color:${
+                    hasRemainingAmount
+                      ? "#92400E"
+                      : "#047857"
+                  };
+                  font-size:14px;
+                  font-weight:800;
+                "
+              >
+                ${formatMoney(
+                  safeRemainingAmount,
+                  currency,
+                )}
+              </td>
+            </tr>
+          </table>
+
+          <!-- PAYMENT DETAILS -->
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              background-color:#FAFAFA;
+              border:1px solid #F0F0F0;
+              border-radius:10px;
+              margin-bottom:20px;
+            "
+          >
+            <tr>
+              <td style="padding:12px 14px;">
+                <p
+                  style="
+                    margin:0;
+                    color:#6B7280;
+                    font-size:12px;
+                    line-height:1.8;
+                  "
+                >
+                  <strong style="color:#374151;">
+                    Payment status:
+                  </strong>
+
+                  ${escapeHtml(
+                    formatLabel(paymentStatus),
+                  )}
+
+                  ${
+                    paymentMethod
+                      ? `
+                        <br />
+
+                        <strong style="color:#374151;">
+                          Payment method:
+                        </strong>
+
+                        ${escapeHtml(
+                          formatLabel(
+                            paymentMethod,
+                          ),
+                        )}
+                      `
+                      : ""
+                  }
+
+                  ${
+                    transactionId
+                      ? `
+                        <br />
+
+                        <strong style="color:#374151;">
+                          Transaction ID:
+                        </strong>
+
+                        ${escapeHtml(
+                          transactionId,
+                        )}
+                      `
+                      : ""
+                  }
+
+                  ${
+                    source
+                      ? `
+                        <br />
+
+                        <strong style="color:#374151;">
+                          Reservation source:
+                        </strong>
+
+                        ${escapeHtml(
+                          formatLabel(source),
+                        )}
+                      `
+                      : ""
+                  }
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          ${
+            hasRemainingAmount
+              ? `
+                <table
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="margin-bottom:20px;"
+                >
+                  <tr>
+                    <td
+                      style="
+                        background-color:#FFFBEB;
+                        border:1px solid #FDE68A;
+                        border-radius:9px;
+                        padding:12px 16px;
+                      "
+                    >
+                      <p
+                        style="
+                          margin:0;
+                          color:#92400E;
+                          font-size:12px;
+                          line-height:1.65;
+                        "
+                      >
+                        <strong>
+                          Payment pending:
+                        </strong>
+
+                        ${formatMoney(
+                          safeRemainingAmount,
+                          currency,
+                        )}
+
+                        remains due. Please contact
+                        the hotel for payment
+                        instructions.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              `
+              : `
+                <table
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="margin-bottom:20px;"
+                >
+                  <tr>
+                    <td
+                      style="
+                        background-color:#ECFDF5;
+                        border:1px solid #A7F3D0;
+                        border-radius:9px;
+                        padding:12px 16px;
+                      "
+                    >
+                      <p
+                        style="
+                          margin:0;
+                          color:#047857;
+                          font-size:12px;
+                          line-height:1.65;
+                        "
+                      >
+                        <strong>
+                          No payment is currently due.
+                        </strong>
+
+                        The recorded reservation
+                        balance is fully settled.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              `
+          }
+
+          ${
+            specialRequests
+              ? `
+                <table
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="
+                    background-color:#FAFAFA;
+                    border:1px solid #F0F0F0;
+                    border-radius:10px;
+                    margin-bottom:20px;
+                  "
+                >
+                  <tr>
+                    <td style="padding:14px 16px;">
+                      <p
+                        style="
+                          margin:0 0 5px;
+                          color:#111827;
+                          font-size:12px;
+                          font-weight:800;
+                        "
+                      >
+                        Special requests
+                      </p>
+
+                      <p
+                        style="
+                          margin:0;
+                          color:#6B7280;
+                          font-size:12px;
+                          line-height:1.7;
+                        "
+                      >
+                        ${escapeHtml(
+                          specialRequests,
+                        )}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              `
+              : ""
+          }
+
+          ${
+            isCancelled &&
+            (cancellationReason ||
+              Number(refundAmount) > 0)
+              ? `
+                <table
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="
+                    background-color:#FEF2F2;
+                    border:1px solid #FECACA;
+                    border-radius:10px;
+                    margin-bottom:20px;
+                  "
+                >
+                  <tr>
+                    <td style="padding:14px 16px;">
+                      <p
+                        style="
+                          margin:0 0 5px;
+                          color:#B91C1C;
+                          font-size:12px;
+                          font-weight:800;
+                        "
+                      >
+                        Cancellation information
+                      </p>
+
+                      <p
+                        style="
+                          margin:0;
+                          color:#7F1D1D;
+                          font-size:12px;
+                          line-height:1.7;
+                        "
+                      >
+                        ${
+                          cancellationReason
+                            ? `
+                              <strong>Reason:</strong>
+                              ${escapeHtml(
+                                cancellationReason,
+                              )}
+                            `
+                            : ""
+                        }
+
+                        ${
+                          cancellationReason &&
+                          Number(refundAmount) > 0
+                            ? "<br />"
+                            : ""
+                        }
+
+                        ${
+                          Number(refundAmount) > 0
+                            ? `
+                              <strong>
+                                Refund amount:
+                              </strong>
+
+                              ${formatMoney(
+                                refundAmount,
+                                currency,
+                              )}
+                            `
+                            : ""
+                        }
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              `
+              : ""
+          }
+
+          ${
+            reservationUrl
+              ? `
+                <table
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="margin-bottom:22px;"
+                >
+                  <tr>
+                    <td align="center">
+                      <a
+                        href="${escapeHtml(
+                          reservationUrl,
+                        )}"
+                        style="
+                          display:inline-block;
+                          background-color:#1D4ED8;
+                          color:#ffffff;
+                          font-size:13px;
+                          font-weight:700;
+                          text-decoration:none;
+                          padding:12px 30px;
+                          border-radius:9px;
+                          letter-spacing:0.2px;
+                        "
+                      >
+                        View Reservation
+                        &nbsp;&rarr;
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              `
+              : ""
+          }
+
+          ${
+            hotelAddress ||
+            hotelPhone ||
+            hotelEmail
+              ? `
+                <table
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                >
+                  <tr>
+                    <td
+                      style="
+                        border-top:1px solid #F0F0F0;
+                        padding-top:18px;
+                      "
+                    >
+                      <p
+                        style="
+                          margin:0 0 5px;
+                          color:#111827;
+                          font-size:12px;
+                          font-weight:800;
+                        "
+                      >
+                        ${escapeHtml(
+                          hotelName ||
+                            "Hotel contact",
+                        )}
+                      </p>
+
+                      <p
+                        style="
+                          margin:0;
+                          color:#9CA3AF;
+                          font-size:11px;
+                          line-height:1.8;
+                        "
+                      >
+                        ${
+                          hotelAddress
+                            ? `
+                              ${escapeHtml(
+                                hotelAddress,
+                              )}
+                              <br />
+                            `
+                            : ""
+                        }
+
+                        ${
+                          hotelPhone
+                            ? `
+                              Phone:
+                              ${escapeHtml(
+                                hotelPhone,
+                              )}
+                              <br />
+                            `
+                            : ""
+                        }
+
+                        ${
+                          hotelEmail
+                            ? `
+                              Email:
+                              ${escapeHtml(
+                                hotelEmail,
+                              )}
+                            `
+                            : ""
+                        }
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              `
+              : ""
+          }
+        </td>
+      </tr>
+
+      ${footer()}
+    `);
+  };
+
+
+  const formatReservationStatus = (status = "") => {
+  return String(status)
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+};
+
+const getReservationStatusTheme = (status = "pending") => {
+  const themes = {
+    pending: {
+      background: "#FFFBEB",
+      color: "#92400E",
+      border: "#FDE68A",
+    },
+
+    confirmed: {
+      background: "#ECFDF5",
+      color: "#047857",
+      border: "#A7F3D0",
+    },
+
+    checked_in: {
+      background: "#EFF6FF",
+      color: "#1D4ED8",
+      border: "#BFDBFE",
+    },
+
+    checked_out: {
+      background: "#F3F4F6",
+      color: "#374151",
+      border: "#D1D5DB",
+    },
+
+    cancelled: {
+      background: "#FEF2F2",
+      color: "#B91C1C",
+      border: "#FECACA",
+    },
+
+    no_show: {
+      background: "#FFF7ED",
+      color: "#C2410C",
+      border: "#FED7AA",
+    },
+  };
+
+  return themes[status] || themes.pending;
+};
+
+export const reservationStatusUpdateEmailTemplate = ({
+  guestName,
+  hotelName,
+  confirmationCode,
+  oldStatus,
+  newStatus,
+  reservationUrl,
+}) => {
+  const normalizedStatus = String(
+    newStatus || "pending",
+  ).toLowerCase();
+
+  const statusTheme =
+    getReservationStatusTheme(normalizedStatus);
+
+  const formattedNewStatus =
+    formatReservationStatus(normalizedStatus);
+
+  const formattedOldStatus = oldStatus
+    ? formatReservationStatus(oldStatus)
+    : null;
+
+  return wrapper(`
+    ${header}
+
+    <!-- HERO -->
+    <tr>
+      <td
+        style="
+          background-color:#F8FAFF;
+          padding:38px 32px 34px;
+          text-align:center;
+          border-bottom:1px solid #EEF2FF;
+        "
+      >
+        <p
+          style="
+            margin:0 0 16px;
+            display:inline-block;
+            background-color:#EEF2FF;
+            color:#1D4ED8;
+            font-size:10px;
+            font-weight:700;
+            letter-spacing:1px;
+            text-transform:uppercase;
+            padding:5px 14px;
+            border-radius:100px;
+          "
+        >
+          Reservation Update
+        </p>
+
+        <h1
+          style="
+            margin:0 0 10px;
+            color:#111827;
+            font-size:24px;
+            font-weight:800;
+            letter-spacing:-0.4px;
+            line-height:1.25;
+          "
+        >
+          Your reservation status changed
+        </h1>
+
+        <p
+          style="
+            margin:0;
+            color:#6B7280;
+            font-size:14px;
+            line-height:1.65;
+          "
+        >
+          ${
+            hotelName
+              ? `${hotelName}<br />`
+              : ""
+          }
+
+          Confirmation code:
+
+          <strong
+            style="
+              color:#1D4ED8;
+              letter-spacing:0.5px;
+            "
+          >
+            ${confirmationCode}
+          </strong>
+        </p>
+      </td>
+    </tr>
+
+    <!-- BODY -->
+    <tr>
+      <td style="padding:28px 32px 24px;">
+        <p
+          style="
+            margin:0 0 22px;
+            color:#4B5563;
+            font-size:14px;
+            line-height:1.8;
+          "
+        >
+          Dear <strong>${guestName || "Guest"}</strong>,
+
+          the status of your reservation with confirmation code
+
+          <strong>${confirmationCode}</strong>
+
+          has been updated.
+        </p>
+
+        <!-- STATUS BOX -->
+        <table
+          width="100%"
+          cellpadding="0"
+          cellspacing="0"
+          border="0"
+          style="
+            margin-bottom:22px;
+            background-color:${statusTheme.background};
+            border:1px solid ${statusTheme.border};
+            border-radius:12px;
+          "
+        >
+          <tr>
+            <td
+              align="center"
+              style="padding:24px 18px;"
+            >
+              <p
+                style="
+                  margin:0 0 8px;
+                  color:#6B7280;
+                  font-size:10px;
+                  font-weight:700;
+                  letter-spacing:1px;
+                  text-transform:uppercase;
+                "
+              >
+                Current Reservation Status
+              </p>
+
+              <p
+                style="
+                  margin:0;
+                  color:${statusTheme.color};
+                  font-size:22px;
+                  font-weight:800;
+                  text-transform:capitalize;
+                "
+              >
+                ${formattedNewStatus}
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        ${
+          formattedOldStatus
+            ? `
+              <!-- STATUS CHANGE -->
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="
+                  background-color:#FAFAFA;
+                  border:1px solid #F0F0F0;
+                  border-radius:12px;
+                  margin-bottom:22px;
+                "
+              >
+                <tr>
+                  <td
+                    width="50%"
+                    style="
+                      padding:14px 16px;
+                      border-right:1px solid #F0F0F0;
+                    "
+                  >
+                    <p
+                      style="
+                        margin:0 0 4px;
+                        color:#9CA3AF;
+                        font-size:10px;
+                        font-weight:700;
+                        text-transform:uppercase;
+                      "
+                    >
+                      Previous status
+                    </p>
+
+                    <p
+                      style="
+                        margin:0;
+                        color:#4B5563;
+                        font-size:13px;
+                        font-weight:700;
+                      "
+                    >
+                      ${formattedOldStatus}
+                    </p>
+                  </td>
+
+                  <td
+                    width="50%"
+                    style="padding:14px 16px;"
+                  >
+                    <p
+                      style="
+                        margin:0 0 4px;
+                        color:#9CA3AF;
+                        font-size:10px;
+                        font-weight:700;
+                        text-transform:uppercase;
+                      "
+                    >
+                      New status
+                    </p>
+
+                    <p
+                      style="
+                        margin:0;
+                        color:${statusTheme.color};
+                        font-size:13px;
+                        font-weight:700;
+                      "
+                    >
+                      ${formattedNewStatus}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            `
+            : ""
+        }
+
+        ${
+          normalizedStatus === "confirmed"
+            ? `
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="margin-bottom:20px;"
+              >
+                <tr>
+                  <td
+                    style="
+                      background-color:#ECFDF5;
+                      border:1px solid #A7F3D0;
+                      border-radius:9px;
+                      padding:12px 16px;
+                    "
+                  >
+                    <p
+                      style="
+                        margin:0;
+                        color:#047857;
+                        font-size:12px;
+                        line-height:1.65;
+                      "
+                    >
+                      <strong>Your reservation is confirmed.</strong>
+                      Please keep your confirmation code ready during check-in.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            `
+            : ""
+        }
+
+        ${
+          normalizedStatus === "checked_in"
+            ? `
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="margin-bottom:20px;"
+              >
+                <tr>
+                  <td
+                    style="
+                      background-color:#EFF6FF;
+                      border:1px solid #BFDBFE;
+                      border-radius:9px;
+                      padding:12px 16px;
+                    "
+                  >
+                    <p
+                      style="
+                        margin:0;
+                        color:#1D4ED8;
+                        font-size:12px;
+                        line-height:1.65;
+                      "
+                    >
+                      <strong>You have been checked in.</strong>
+                      We hope you have a comfortable stay.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            `
+            : ""
+        }
+
+        ${
+          normalizedStatus === "checked_out"
+            ? `
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="margin-bottom:20px;"
+              >
+                <tr>
+                  <td
+                    style="
+                      background-color:#F3F4F6;
+                      border:1px solid #D1D5DB;
+                      border-radius:9px;
+                      padding:12px 16px;
+                    "
+                  >
+                    <p
+                      style="
+                        margin:0;
+                        color:#374151;
+                        font-size:12px;
+                        line-height:1.65;
+                      "
+                    >
+                      <strong>Your stay has been completed.</strong>
+                      Thank you for choosing ${hotelName || "our hotel"}.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            `
+            : ""
+        }
+
+        ${
+          normalizedStatus === "cancelled"
+            ? `
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="margin-bottom:20px;"
+              >
+                <tr>
+                  <td
+                    style="
+                      background-color:#FEF2F2;
+                      border:1px solid #FECACA;
+                      border-radius:9px;
+                      padding:12px 16px;
+                    "
+                  >
+                    <p
+                      style="
+                        margin:0;
+                        color:#B91C1C;
+                        font-size:12px;
+                        line-height:1.65;
+                      "
+                    >
+                      <strong>Your reservation has been cancelled.</strong>
+                      Please contact the hotel if you need more information.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            `
+            : ""
+        }
+
+        ${
+          normalizedStatus === "no_show"
+            ? `
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="margin-bottom:20px;"
+              >
+                <tr>
+                  <td
+                    style="
+                      background-color:#FFF7ED;
+                      border:1px solid #FED7AA;
+                      border-radius:9px;
+                      padding:12px 16px;
+                    "
+                  >
+                    <p
+                      style="
+                        margin:0;
+                        color:#C2410C;
+                        font-size:12px;
+                        line-height:1.65;
+                      "
+                    >
+                      This reservation was marked as
+                      <strong>no show</strong>.
+                      Contact the hotel if you believe this is incorrect.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            `
+            : ""
+        }
+
+        ${
+          reservationUrl
+            ? `
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="margin-bottom:20px;"
+              >
+                <tr>
+                  <td align="center">
+                    <a
+                      href="${reservationUrl}"
+                      style="
+                        display:inline-block;
+                        background-color:#1D4ED8;
+                        color:#ffffff;
+                        font-size:13px;
+                        font-weight:700;
+                        text-decoration:none;
+                        padding:12px 30px;
+                        border-radius:9px;
+                      "
+                    >
+                      View Reservation &nbsp;&rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            `
+            : ""
+        }
+
+        <p
+          style="
+            margin:0;
+            color:#9CA3AF;
+            font-size:12px;
+            line-height:1.7;
+            text-align:center;
+          "
+        >
+          Contact the hotel directly if you have any questions
+          regarding this update.
+        </p>
+      </td>
+    </tr>
+
+    ${footer()}
+  `);
+};

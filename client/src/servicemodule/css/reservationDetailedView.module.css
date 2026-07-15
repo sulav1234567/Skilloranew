@@ -132,11 +132,19 @@
   width: 100%;
   margin-top: 20px;
 }
-.infocard {
+.infocardholder{
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
+  gap: 20px;
+}
+.infocard {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+  min-height: fit-content;
   background-color: white;
   gap: 20px;
   border-radius: 20px;
@@ -224,7 +232,7 @@
 .paymentholder{
     display: flex;
     flex-direction: column;
-    height: 40px;
+    height: fit-content;
     margin-top: 10px;
     width: 100%;
 }
@@ -363,4 +371,149 @@
 .notecontent{
    color: oklch(50% .02 265);
    font-size: .875rem;
+}
+
+/*rsv btn holder*/
+.rsvbtnholder{
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.actionbtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: fit-content;
+  padding: 10px 20px;
+  gap: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+
+}
+.actionbtnicon{
+   display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20;
+
+}
+.actionbtnicon svg{
+   display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+
+}
+.actionbtntext{
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.primaryactionbtn{
+  color: white;
+  background-color: blue;
+  transition: 0.2s ease-in-out;
+}
+.primaryactionbtn:hover{
+   background-color: rgb(0, 0, 218);
+
+
+}
+.inactivebtn{
+  background-color: rgb(239, 239, 239);
+  color: rgb(188, 188, 188);
+  cursor:not-allowed;
+}
+
+.paymentrecords{
+  display: flex;
+  height: fit-content;
+  width: 100%;
+  gap: 15px;
+}
+.paymentrecordsymbol{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+  
+}
+.paymentrecordsymbol svg{
+  height: 100%;
+  width: 100%;
+  color: rgb(208, 59, 0);
+}
+.otherinfo{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.paymentrecordname{
+  font-size: 1rem;
+  font-weight: 600;
+}
+.paymentReason{
+  font-size: 0.825rem;
+  font-weight: 300;
+  margin-bottom: 5px;
+  color: rgb(112, 112, 112);
+}
+.pricedetails{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.amt{
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.statofpayment{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+  width: fit-content;
+  border-radius: 9999px;
+  background-color: rgb(245, 245, 255);
+  font-size: 0.75rem;
+  text-transform: capitalize;
+  padding: 2px 5px;
+  font-weight: 600;
+  color: blue;
+  border: 1px solid blue;
+}
+.inputrow{
+  display: grid;
+  height: fit-content;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit,minmax(50px,1fr));
+  gap: 10px;
+}
+.createtransactionbtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  min-height: 45px;
+  cursor: pointer;
+  border-radius: 8px;
+  width: 100%;
+  background-color: blue;
+  color: white;
+  padding: 10px 15px;
+  font-size: 15px;
+  font-weight: 400;
+  transition: 0.2s ease-in-out;
+}
+.createtransactionbtn:hover{
+  background-color: rgb(0, 0, 199);
+
 }

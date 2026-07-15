@@ -13,17 +13,6 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^[0-9]{10}$/;
 const guestTypeEnum = ["normal", "vip", "corporate", "blacklisted"];
 const idTypeEnum = ["citizenship", "passport", "liscense", "national_Id"];
-let statEnum = ["unpaid", "partially_paid", "paid", "refunded"];
-let methodEnum = [
-  "cash",
-  "card",
-  "upi",
-  "bank_transfer",
-  "esewa",
-  "khalti",
-  "other",
-];
-
 let sourceEnum = ["direct", "website", "phone", "walk_in", "ota", "other"];
 
 export let Input = ({
@@ -414,12 +403,14 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
       Data.append("children", children.value);
 
       try {
+        
         let res = await api.post(
           `/room/getavailableroomsforreservation/${hotelid}`,
           Data,
         );
 
         if (res?.status === 200) {
+          setSelectedRooms([])
           setAvailableRooms(res.data.availableRooms);
           console.log(res.data.availableRooms);
           HandlePageChange("next");
@@ -454,10 +445,6 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
       children,
       /*level 1 */
       reservationFee,
-      advanceAmount,
-      status,
-      method,
-      onlineid,
       source,
       note,
       specialrequest,
@@ -543,19 +530,9 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
       setLoading(false)
       return;
     }
-  if(!status || !statEnum.includes(status.value))
-    errors={
-     ...errors,
-     status:"Invalid Status"
-    }
+ 
 
-    if(!method || !methodEnum.includes(method.value)){
-      errors={
-        ...errors,
-        method:"Invalid Method"
-      }
-    }
-
+   
     if(!source || !sourceEnum.includes(source.value)){
       errors={
         ...errors,
@@ -563,13 +540,7 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
       }
     }
 
-    if(method.value && method.value!=="cash" && !onlineid.value){
-      errors={
-        ...errors,
-        onlineid:"Online id required"
-      }
-
-    }
+   if(!reservationFee || !Number.isInteger(reservationFee))
 
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
@@ -592,11 +563,7 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
       })
 
       data.append("reservationfee",reservationFee.value);
-      data.append("amountPaid",advanceAmount.value);
-      data.append("status",status.value)
-      data.append("method",method.value)
       data.append("source",source.value)
-      data.append("onlineid",onlineid.value);
       data.append("note",note.value);
       data.append("specialrequest",specialrequest.value)
 
@@ -1071,74 +1038,7 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
                   errors={errors}
                   value={formData.reservationFee?.value || 0}
                 />
-
-                <Input
-                  required
-                  placeholder="Advance Amount"
-                  setData={setFormData}
-                  Name="advanceAmount"
-                  label="Advance Amount:"
-                  errors={errors}
-                  value={formData.advanceAmount?.value || 0}
-                />
-              </div>
-
-              <div className={styles.formrow}>
-                <Input
-                  type="select"
-                  required
-                  placeholder="Status"
-                  setData={setFormData}
-                  Name="status"
-                  label="Status:"
-                  errors={errors}
-                  value={formData.status?.value}
-                >
-                  <option value="">--select One--</option>
-                  {statEnum.map((stat, ind) => {
-                    return (
-                      <option value={stat.toLowerCase()} key={ind}>
-                        {stat}
-                      </option>
-                    );
-                  })}
-                </Input>
-
-                <Input
-                  type="select"
-                  required
-                  placeholder="Method"
-                  setData={setFormData}
-                  Name="method"
-                  label="Method:"
-                  errors={errors}
-                  value={formData.method?.value || 0}
-                >
-                  <option value="">--select One--</option>
-                  {methodEnum.map((stat, ind) => {
-                    return (
-                      <option value={stat.toLowerCase()} key={ind}>
-                        {stat}
-                      </option>
-                    );
-                  })}
-                </Input>
-              </div>
-
-              <div className={styles.formrow}>
-                <Input
-                  required={
-                    formData.method?.value !== "cash" &&
-                    formData.method?.value !== ""
-                  }
-                  placeholder="Online Id:"
-                  setData={setFormData}
-                  Name="onlineid"
-                  label="Online Id:"
-                  errors={errors}
-                  value={formData.onlineid?.value}
-                />
-                <Input
+                 <Input
                   type="select"
                   required
                   placeholder="Source"
@@ -1157,7 +1057,12 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
                     );
                   })}
                 </Input>
+
+               
               </div>
+
+            
+
 
               <div className={styles.formrow}>
                 <Input

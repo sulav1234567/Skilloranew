@@ -454,3 +454,29 @@
 .cancelbtn:hover {
   background-color: #ffe5e5;
 }
+
+tfoot{
+  height: 120px;
+  
+}
+
+tfoot tr{
+  height: 100%;
+  width: 100%;
+}
+tfoot tr td{
+  height: 100%;
+  width: 100%;
+  padding: 10px 20px;
+}
+.foottext{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height:100%;
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: rgb(100, 100, 100);
+
+}

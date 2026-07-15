@@ -460,6 +460,22 @@ const Reservation = () => {
               )
              })}
             </tbody>
+            
+            {!loading && Array.isArray(reservations) && reservations.length==0 && (
+              <tfoot>
+              <tr>
+                  <td colSpan={8}>
+                    <div className={styles.foottext}>
+
+                      
+                    Reservations Not Found
+                    </div>
+                    </td>
+              </tr>
+            </tfoot>
+
+            )}
+
           </table>
         </div>
      
