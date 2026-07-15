@@ -23,6 +23,7 @@ import { useConfirmationMessageContext } from "../../../forms/components/confirm
 import { GoDotFill } from "react-icons/go";
 import { MdHistory } from "react-icons/md";
 import { Input } from "../../components/reservationforms";
+import SkeletonReservationDetailpage from "../../components/skeletonpageforreservationindidetail";
 const DetailCard = ({ icon, heading = "", value = "", secondValue = "" }) => {
   return (
     <div className={styles.detailcard}>
@@ -338,7 +339,7 @@ const ReservationDetailedView = () => {
   }, []);
   return (
     <>
-      {loading || (!reservation && <div>loading.......</div>)}
+      {loading && (<SkeletonReservationDetailpage/>)}
       {!loading && reservation && (
         <>
           <div className={styles.reservationsummary}>
