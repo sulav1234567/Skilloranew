@@ -25,7 +25,7 @@ let folioSchema = new mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["open","closed"],
+        enum:["open","closed","transferred"],
         default:"open",
         required:true
     },
@@ -39,7 +39,35 @@ let folioSchema = new mongoose.Schema({
         min:0,
         default:0,
     },
+
+    transferredAmount:{
+        type:Number,
+        min:1,
+        requred:[
+            function(){
+
+                return this.status && this.status==="transferred"
+
+            },
+            "Transferred amount is required"
+        ]
+
+    },
+    transferredTo:{
+         type:mongoose.Schema.Types.ObjectId,
+        requred:[
+            function(){
+
+                return this.status && this.status==="transferred"
+
+            },
+            "Transferred amount is required"
+        ]
+
+
+    }
     
+
     
     
 

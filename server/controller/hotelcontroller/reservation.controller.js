@@ -495,9 +495,6 @@ let GetallReservations = async (req, res) => {
                       $eq: ["$hotel", "$$hotelId"],
                     },
                     {
-                      $eq: ["$status", "open"],
-                    },
-                    {
                       $eq: ["$linkedModelId", "$$reservationId"],
                     },
                     {
@@ -725,6 +722,7 @@ let GetIndividualReservation = async (req, res) => {
                 lastName: 1,
                 email: 1,
                 phone: 1,
+                address:1
               },
             },
           ],
@@ -830,9 +828,7 @@ let GetIndividualReservation = async (req, res) => {
                     {
                       $eq: ["$linkedModel", "Reservation"],
                     },
-                    {
-                      $eq: ["$status", "open"],
-                    },
+                    
                   ],
                 },
               },

@@ -31,6 +31,8 @@ import RoomCategoryOutlet from "./servicemodule/pages/rooms/roomCategoryOutlet.j
 import RoomIndividualView from "./servicemodule/pages/rooms/roomIndividualView.jsx";
 import ReservationOutlet from "./servicemodule/pages/frontOffice/reservationOutlet.jsx";
 import ReservationDetailedView from "./servicemodule/pages/frontOffice/ReservationDetailedView.jsx";
+import CheckInOutlet from "./servicemodule/pages/frontOffice/checkinoutlet.jsx";
+import CheckIn from "./servicemodule/pages/frontOffice/checkin.jsx";
 
 
 function App() {
@@ -83,6 +85,9 @@ function App() {
             <Route path="reservation/*" element={<ReservationOutlet />} >
             <Route index element={<Reservation/>}/>
             <Route path="ir/:reservationid" element={<ReservationDetailedView/>}/>
+            </Route>
+            <Route path="check-in/*" element={<CheckInOutlet/>}>
+            <Route index element={<CheckIn/>}/>
             </Route>
           </Route>
         </Route>

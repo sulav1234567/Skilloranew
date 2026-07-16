@@ -75,7 +75,7 @@ const TransactionForm = ({
 }) => {
   //{ amount, paymentmode, modeid, remarks,guestid,hotelid }
   let [transactionData, setTransactionData] = useState(null);
-  let[changes,setChanges]=useState(false)
+  let [changes, setChanges] = useState(false);
   let [loading, setLoading] = useState(false);
   let { hotelid } = useParams();
   let { showMessages } = useGlobalMessageContext();
@@ -94,80 +94,81 @@ const TransactionForm = ({
   ];
 
   let CreateTransaction = async () => {
-    if(loading){
-      return
+    if (loading) {
+      return;
     }
 
-    if(!guestid||!folioid||!hotelid){
-      showMessages("Ids Are Required")
+    if (!guestid || !folioid || !hotelid) {
+      showMessages("Ids Are Required");
     }
-    setLoading(true)
-    try{
-    let { amount, paymentmode, modeid, remarks } = transactionData;
+    setLoading(true);
+    try {
+      let { amount, paymentmode, modeid, remarks } = transactionData;
 
-    let error = {};
+      let error = {};
 
-    if (!amount.value || Number(amount.value) <= 0) {
-      error = {
-        ...error,
-        amount: "Invalid amount",
-      };
+      if (!amount.value || Number(amount.value) <= 0) {
+        error = {
+          ...error,
+          amount: "Invalid amount",
+        };
+      }
+
+      if (
+        !paymentmode.value ||
+        !modepayment.includes(paymentmode.value.trim())
+      ) {
+        error = {
+          ...error,
+          paymentmode: "Invalid Payment Mode",
+        };
+      }
+
+      if (paymentmode.value != "cash" && !modeid.value) {
+        error = {
+          ...error,
+          modeid: "Mode Id Required",
+        };
+      }
+
+      if (!remarks.value) {
+        error = {
+          ...error,
+          remarks: "Remarks Required",
+        };
+      }
+      if (Object.keys(error).length > 0) {
+        setErrors(error);
+        return;
+      }
+
+      let formData = new FormData();
+      formData.append("amount", amount.value);
+      formData.append("paymentmode", paymentmode.value);
+      formData.append("modeid", modeid.value);
+      formData.append("remarks", remarks.value);
+      formData.append("hotelid", hotelid);
+      formData.append("guestid", guestid);
+      let res = await api.post(`/transaction/create/${folioid}`, formData);
+
+      if (res.status === 201) {
+        showMessages(res.data.message, "success");
+        setTransactionData(null);
+        setChanges(!changes);
+        fetch();
+      }
+    } catch (err) {
+      if (err) {
+        showMessages(
+          err.response?.data.message ||
+            err.response?.message ||
+            "Internal server error",
+          "reject",
+        );
+      }
+    } finally {
+      setLoading(false);
     }
-
-    if (!paymentmode.value || !modepayment.includes(paymentmode.value.trim())) {
-      error = {
-        ...error,
-        paymentmode: "Invalid Payment Mode",
-      };
-    }
-
-    if (paymentmode.value != "cash" && !modeid.value) {
-      error = {
-        ...error,
-        modeid: "Mode Id Required",
-      };
-    }
-
-    if(!remarks.value){
-      error = {
-        ...error,
-        remarks: "Remarks Required",
-      };
-    }
-    if(Object.keys(error).length>0){
-      setErrors(error);
-      return
-    }
-
-    let formData = new FormData()
-    formData.append("amount",amount.value);
-    formData.append("paymentmode",paymentmode.value);
-    formData.append("modeid",modeid.value);
-    formData.append("remarks",remarks.value);
-    formData.append("hotelid",hotelid)
-    formData.append("guestid",guestid)
-    let res = await api.post(`/transaction/create/${folioid}`,formData);
-
-    if(res.status===201){
-      showMessages(res.data.message,"success");
-      setTransactionData(null);
-      setChanges(!changes)
-      fetch()
-    }
-
-
-
-  }
-  catch(err){
-    if(err){
-      showMessages(err.response?.data.message||err.response?.message || "Internal server error","reject");
-
-    }
-
-  }
-  finally{
-    setLoading(false)
-  }
   };
   return (
     <>
@@ -229,9 +230,15 @@ const TransactionForm = ({
         errors={errors}
       />
 
-      <div className={styles.createtransactionbtn} onClick={()=>{
-        CreateTransaction()
-      }}>Create Transaction</div>
+      <div
+        className={`${styles.createtransactionbtn} ${loading?styles.loadingbtn:styles.activebtn}`}
+        onClick={() => {
+          CreateTransaction();
+        }}
+      >
+        {loading ? (<div className={styles.loader}></div>):"Create Transaction"}
+        
+      </div>
     </>
   );
 };
@@ -339,7 +346,7 @@ const ReservationDetailedView = () => {
   }, []);
   return (
     <>
-      {loading && (<SkeletonReservationDetailpage/>)}
+      {loading && <SkeletonReservationDetailpage />}
       {!loading && reservation && (
         <>
           <div className={styles.reservationsummary}>
@@ -657,8 +664,10 @@ const ReservationDetailedView = () => {
                   );
                 })}
               </div>
-
-              <div className={styles.infocard}>
+              {
+                Number(reservation.openFolio.totalAmount)-Number(reservation.openFolio.amountPaid)!=0 &&
+                 (
+                  <div className={styles.infocard}>
                 <div className={styles.infocardhead}>
                   <div className={styles.infoheadicon}>
                     <GrTransaction />
@@ -673,17 +682,67 @@ const ReservationDetailedView = () => {
                   fetch={FetchReservation}
                 />
               </div>
+                )
+              }
 
-               <div className={styles.infocard}>
+              
+
+              <div className={styles.infocard}>
                 <div className={styles.infocardhead}>
                   <div className={styles.infoheadicon}>
                     <MdHistory />
                   </div>
                   <div className={styles.infocardheading}>
-                   Transaction History
+                    Transaction History
                   </div>
                 </div>
-                
+
+                <div className={styles.historycardwrapper}>
+                 {reservation.openFolio.transactions.length==0&&(
+                  <div className={styles.emptymessage}>
+                    No Transactions Available
+                  </div>
+                 )}
+                  {reservation.openFolio.transactions.length>0&&reservation.openFolio.transactions.map(
+                    (transaction, ind) => {
+                      return (
+                        <div className={styles.transactionscard}>
+                          <div className={styles.transactioniddiv}>
+                            <div className={styles.topwrapper}>
+                              {transaction.transactionId}
+                              <div className={styles.successid}>
+                                {transaction.status.slice(0, 7)}
+                              </div>
+                            </div>
+
+                            <div className={styles.transactiondate}>
+                              {transaction.createdAt
+                                ? `${formatDate(transaction.createdAt)}`
+                                : ""}
+                            </div>
+                          </div>
+
+                          <div className={styles.paymenthistry}>
+                            Rs. {transaction.amount}
+                          </div>
+                          <div className={styles.paymentmodeandmodeid}>
+                            <div className={styles.paymentmode}>
+                              {transaction.modeOfPayment}
+                            </div>
+                            <div className={styles.modeid}>
+                              {transaction.paymentModeId}
+                            </div>
+                          </div>
+
+                          <div className={styles.remarks}>
+                            {transaction.remarks}
+                            
+                          </div>
+                        </div>
+                      );
+                    },
+                  )}
+                </div>
               </div>
             </div>
           </div>

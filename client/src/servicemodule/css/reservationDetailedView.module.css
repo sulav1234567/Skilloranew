@@ -503,17 +503,137 @@
   justify-content: center;
   height: 45px;
   min-height: 45px;
-  cursor: pointer;
   border-radius: 8px;
   width: 100%;
-  background-color: blue;
-  color: white;
   padding: 10px 15px;
   font-size: 15px;
   font-weight: 400;
   transition: 0.2s ease-in-out;
 }
-.createtransactionbtn:hover{
+.activebtn
+{
+   background-color: blue;
+  color: white;
+  cursor: pointer;
+}
+.activebtn:hover{
   background-color: rgb(0, 0, 199);
 
+}
+.loadingbtn{
+   background-color: rgb(213, 213, 213);
+  color: rgb(165, 165, 165);
+  cursor: not-allowed;
+
+}
+
+.transactionscard{
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+  gap: 2px;
+  border-bottom: 1px solid rgb(235, 235, 235);
+  padding: 15px 0px;
+}
+.transactionscard:last-child{
+  border-bottom: none;
+
+}
+.transactioniddiv{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+.transactioniddiv{
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: blue;
+  font-weight: 600;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+
+}
+.topwrapper{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.successid{
+  font-size: 0.6rem;
+  text-transform: capitalize;
+  color: green;
+  font-weight: 600;
+}
+.paymenthistry{
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.paymentmodeandmodeid{
+  display: flex;
+  align-items: center;
+  height: fit-content;
+  width: 100%;
+  gap: 10px;
+  text-transform: capitalize;
+  font-size: 0.7rem;
+  margin-top: 2px;
+  font-weight: 500;
+  color: rgb(132, 132, 132);
+}
+.modeid{
+  font-weight: 400;
+
+}
+.transactiondate{
+  font-size: 0.63rem;
+  color: rgb(77, 77, 77);
+}
+.remarks{
+  font-size: 0.76rem;
+  margin-top: 10px;
+  line-height: 1.5;
+  text-transform: capitalize;
+  font-weight: 500;
+  color: rgb(104, 104, 104);
+}
+
+.loader {
+  width: 30px;
+  height: 30px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid #000000;
+  animation:
+    l20-1 0.8s infinite linear alternate,
+    l20-2 1.6s infinite linear;
+}
+@keyframes l20-1{
+   0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
+   12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
+   25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
+   50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+   62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+   75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
+   100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
+}
+@keyframes l20-2{ 
+  0%    {transform:scaleY(1)  rotate(0deg)}
+  49.99%{transform:scaleY(1)  rotate(135deg)}
+  50%   {transform:scaleY(-1) rotate(0deg)}
+  100%  {transform:scaleY(-1) rotate(-135deg)}
+}
+
+.emptymessage{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  width: 100%;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgb(122, 122, 122);
 }

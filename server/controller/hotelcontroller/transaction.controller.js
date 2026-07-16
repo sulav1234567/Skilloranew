@@ -59,7 +59,7 @@ let CreateTransaction = async (req, res) => {
       _id:folioid,
       guest:guestid,
       hotel:hotelid,
-      status:"open"
+      
     })
 
     if(!folioDocument){
@@ -68,7 +68,17 @@ let CreateTransaction = async (req, res) => {
       });
     }
 
+    if(folioDocument.status==="closed"){
+       return res.status(400).json({
+        message: "this folio is closed so cannot make changes in this",
+      });
+    }
     let dueAmount = Number(folioDocument.totalAmount) - Number(folioDocument.amountPaid);
+
+    if(Number(folioDocument.totalAmount) - (Number(folioDocument.amountPaid) + Number(amount))==0){
+      folioDocument.status="closed"
+      await folioDocument.save({session})
+    }
 
      if(Number(amount)<=0 || Number(amount)>dueAmount){
       return res.status(400).json({
@@ -100,6 +110,8 @@ let CreateTransaction = async (req, res) => {
    folioDocument.amountPaid = folioDocument.amountPaid + Number(amount);
 
    await folioDocument.save({session});
+
+  
 
    await session.commitTransaction()
 
