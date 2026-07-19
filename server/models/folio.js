@@ -75,7 +75,7 @@ let folioSchema = new mongoose.Schema({
     timestamps:true
 })
 
-folioSchema.index({guest:1,hotel:1,status:1},{unique:true})
+folioSchema.index({guest:1,hotel:1,status:1,linkedModelId:1,linkedModel:1},{unique:true})
 
 let Folio= mongoose.model("Folio",folioSchema)
 

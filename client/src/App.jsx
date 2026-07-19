@@ -34,6 +34,7 @@ import ReservationDetailedView from "./servicemodule/pages/frontOffice/Reservati
 import CheckInOutlet from "./servicemodule/pages/frontOffice/checkinoutlet.jsx";
 import CheckIn from "./servicemodule/pages/frontOffice/checkin.jsx";
 import UserManagementOutlet from "./Adminpannel/pages/userManagementOutlet.jsx";
+import CheckinProcess from "./servicemodule/pages/frontOffice/checkinprocess.jsx";
 
 
 function App() {
@@ -91,6 +92,7 @@ function App() {
             </Route>
             <Route path="check-in/*" element={<CheckInOutlet/>}>
             <Route index element={<CheckIn/>}/>
+            <Route path="checkinprocess/:reservationid" element={<CheckinProcess/>}/>
             </Route>
           </Route>
         </Route>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useGlobalMessageContext } from "../../../Globalmessage/components/globalmessage";
 import api from "../../../axios/axios";
-import styles from "../../css/reservationDetailedView.module.css";
+import styles from "../../css/checkindetailview.module.css";
 import { formatDate } from "../../../Adminpannel/components/dateformatter";
 import { LuClock5, LuPhone } from "react-icons/lu";
 import { MdOutlineSource } from "react-icons/md";
@@ -22,227 +22,17 @@ import { GrTransaction } from "react-icons/gr";
 import { useConfirmationMessageContext } from "../../../forms/components/confirmationmessage";
 import { GoDotFill } from "react-icons/go";
 import { MdHistory } from "react-icons/md";
-import { Input } from "../../components/reservationforms";
+import { FaPeopleRoof } from "react-icons/fa6";
 import SkeletonReservationDetailpage from "../../components/skeletonpageforreservationindidetail";
-const DetailCard = ({ icon, heading = "", value = "", secondValue = "" }) => {
-  return (
-    <div className={styles.detailcard}>
-      <div className={styles.detailcardheader}>
-        <div className={styles.detailcardicon}>{icon}</div>
-        <div className={styles.dcheading}>{heading}</div>
-      </div>
-      <div className={styles.dcvalue}>{value}</div>
-      <div className={styles.dctime}>{secondValue}</div>
-    </div>
-  );
-};
+import {
+  DetailCard,
+  ContactCard,
+  TransactionForm,
+  ActionBtn,
+  GuestCard,
+} from "../../components/checkinprocess.components";
 
-const ContactCard = ({ icon, name = "", value = "" }) => {
-  return (
-    <div className={styles.contactcard}>
-      <div className={styles.contactcardicon}>{icon}</div>
-
-      <div className={styles.contactcardinfo}>
-        <div className={styles.contactcardname}>{name}</div>
-
-        <div className={styles.contactcardvalue}>{value}</div>
-      </div>
-    </div>
-  );
-};
-
-const ActionBtn = ({
-  icon,
-  value = "",
-  onclick = () => {},
-  classname = "",
-}) => {
-  return (
-    <div
-      className={`${styles.actionbtn} ${styles[classname]}`}
-      onClick={onclick}
-    >
-      <div className={styles.actionbtnicon}>{icon}</div>
-
-      <div className={styles.actionbtntext}>{value}</div>
-    </div>
-  );
-};
-const TransactionForm = ({
-  guestid = null,
-  folioid = null,
-  fetch = () => {},
-}) => {
-  //{ amount, paymentmode, modeid, remarks,guestid,hotelid }
-  let [transactionData, setTransactionData] = useState(null);
-  let [changes, setChanges] = useState(false);
-  let [loading, setLoading] = useState(false);
-  let { hotelid } = useParams();
-  let { showMessages } = useGlobalMessageContext();
-  let [errors, setErrors] = useState({});
-  let { setConfirmationMessageData, clearMessage } =
-    useConfirmationMessageContext();
-
-  let modepayment = [
-    "cash",
-    "esewa",
-    "bank",
-    "fonepay",
-    "card",
-    "khalti",
-    "upi",
-  ];
-
-  let CreateTransaction = async () => {
-    if (loading) {
-      return;
-    }
-
-    if (!guestid || !folioid || !hotelid) {
-      showMessages("Ids Are Required");
-    }
-    setLoading(true);
-    try {
-      let { amount, paymentmode, modeid, remarks } = transactionData;
-
-      let error = {};
-
-      if (!amount.value || Number(amount.value) <= 0) {
-        error = {
-          ...error,
-          amount: "Invalid amount",
-        };
-      }
-
-      if (
-        !paymentmode.value ||
-        !modepayment.includes(paymentmode.value.trim())
-      ) {
-        error = {
-          ...error,
-          paymentmode: "Invalid Payment Mode",
-        };
-      }
-
-      if (paymentmode.value != "cash" && !modeid.value) {
-        error = {
-          ...error,
-          modeid: "Mode Id Required",
-        };
-      }
-
-      if (!remarks.value) {
-        error = {
-          ...error,
-          remarks: "Remarks Required",
-        };
-      }
-      if (Object.keys(error).length > 0) {
-        setErrors(error);
-        return;
-      }
-
-      let formData = new FormData();
-      formData.append("amount", amount.value);
-      formData.append("paymentmode", paymentmode.value);
-      formData.append("modeid", modeid.value);
-      formData.append("remarks", remarks.value);
-      formData.append("hotelid", hotelid);
-      formData.append("guestid", guestid);
-      let res = await api.post(`/transaction/create/${folioid}`, formData);
-
-      if (res.status === 201) {
-        showMessages(res.data.message, "success");
-        setTransactionData(null);
-        setChanges(!changes);
-        fetch();
-      }
-    } catch (err) {
-      if (err) {
-        showMessages(
-          err.response?.data.message ||
-            err.response?.message ||
-            "Internal server error",
-          "reject",
-        );
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-  return (
-    <>
-      <Input
-        label="Amount:"
-        required
-        placeholder="0.00"
-        setData={setTransactionData}
-        value={transactionData?.amount?.value}
-        Name="amount"
-        changes={changes}
-        type="number"
-        errors={errors}
-      />
-
-      <div className={styles.inputrow}>
-        <Input
-          label="Payment Mode:"
-          required
-          placeholder="0.00"
-          setData={setTransactionData}
-          value={transactionData?.paymentmode?.value}
-          type="select"
-          Name="paymentmode"
-          changes={changes}
-          errors={errors}
-        >
-          <option value="">---select one--</option>
-          {modepayment.map((pm, ind) => {
-            return (
-              <option value={pm.trim()} key={ind}>
-                {pm.trim().toUpperCase()}
-              </option>
-            );
-          })}
-        </Input>
-        <Input
-          label="Mode Id:"
-          required={
-            transactionData && transactionData.paymentmode.value != "cash"
-          }
-          placeholder="98xxxxxxxxxx"
-          setData={setTransactionData}
-          value={transactionData?.modeid?.value}
-          Name="modeid"
-          changes={changes}
-          errors={errors}
-        />
-      </div>
-
-      <Input
-        label="Remarks:"
-        required
-        placeholder="This payment is for the reservation"
-        setData={setTransactionData}
-        value={transactionData?.remarks?.value}
-        Name="remarks"
-        changes={changes}
-        errors={errors}
-      />
-
-      <div
-        className={`${styles.createtransactionbtn} ${loading?styles.loadingbtn:styles.activebtn}`}
-        onClick={() => {
-          CreateTransaction();
-        }}
-      >
-        {loading ? (<div className={styles.loader}></div>):"Create Transaction"}
-        
-      </div>
-    </>
-  );
-};
-const ReservationDetailedView = () => {
+const CheckinProcess = () => {
   let [reservation, setReservation] = useState(null);
   let [loading, setLoading] = useState(false);
   let { hotelid, reservationid } = useParams();
@@ -250,6 +40,8 @@ const ReservationDetailedView = () => {
   let { showMessages } = useGlobalMessageContext();
   let { setConfirmationMessageData, clearMessage } =
     useConfirmationMessageContext();
+
+  let [otherGuestsLength, setOtherGuestLength] = useState(0);
 
   let UpdateReservation = async (value) => {
     if (loading) {
@@ -329,10 +121,7 @@ const ReservationDetailedView = () => {
         );
         setTimeout(() => {
           return navigate(-1, { replace: true });
-          
         }, 500);
-
-        
       }
     } finally {
       setLoading(false);
@@ -537,6 +326,25 @@ const ReservationDetailedView = () => {
                   />
                 </div>
               </div>
+              <div className={styles.infocard}>
+                <div className={styles.infocardhead}>
+                  <div className={styles.infoheadicon}>
+                    <FaPeopleRoof />
+                  </div>
+                  <div className={styles.infocardheading}>
+                    Staying Guests Information{" "}
+                  </div>
+                </div>
+                <GuestCard
+                  guest={reservation.guest}
+                  isprimary
+                  guestType="Primary Guest:"
+                />
+
+                <div className={styles.addGuestBtnholder}>
+                  <div className={styles.addGuestBtn}>Add Guest</div>
+                </div>
+              </div>
 
               <div className={styles.infocard}>
                 <div className={styles.infocardhead}>
@@ -662,28 +470,25 @@ const ReservationDetailedView = () => {
                   );
                 })}
               </div>
-              {
-                Number(reservation.openFolio.totalAmount)-Number(reservation.openFolio.amountPaid)!=0 &&
-                 (
-                  <div className={styles.infocard}>
-                <div className={styles.infocardhead}>
-                  <div className={styles.infoheadicon}>
-                    <GrTransaction />
+              {Number(reservation.openFolio.totalAmount) -
+                Number(reservation.openFolio.amountPaid) !=
+                0 && (
+                <div className={styles.infocard}>
+                  <div className={styles.infocardhead}>
+                    <div className={styles.infoheadicon}>
+                      <GrTransaction />
+                    </div>
+                    <div className={styles.infocardheading}>
+                      Create Transaction
+                    </div>
                   </div>
-                  <div className={styles.infocardheading}>
-                    Create Transaction
-                  </div>
+                  <TransactionForm
+                    guestid={reservation.guest._id}
+                    folioid={reservation.openFolio._id}
+                    fetch={FetchReservation}
+                  />
                 </div>
-                <TransactionForm
-                  guestid={reservation.guest._id}
-                  folioid={reservation.openFolio._id}
-                  fetch={FetchReservation}
-                />
-              </div>
-                )
-              }
-
-              
+              )}
 
               <div className={styles.infocard}>
                 <div className={styles.infocardhead}>
@@ -696,50 +501,50 @@ const ReservationDetailedView = () => {
                 </div>
 
                 <div className={styles.historycardwrapper}>
-                 {reservation.openFolio.transactions.length==0&&(
-                  <div className={styles.emptymessage}>
-                    No Transactions Available
-                  </div>
-                 )}
-                  {reservation.openFolio.transactions.length>0&&reservation.openFolio.transactions.map(
-                    (transaction, ind) => {
-                      return (
-                        <div className={styles.transactionscard}>
-                          <div className={styles.transactioniddiv}>
-                            <div className={styles.topwrapper}>
-                              {transaction.transactionId}
-                              <div className={styles.successid}>
-                                {transaction.status.slice(0, 7)}
+                  {reservation.openFolio.transactions.length == 0 && (
+                    <div className={styles.emptymessage}>
+                      No Transactions Available
+                    </div>
+                  )}
+                  {reservation.openFolio.transactions.length > 0 &&
+                    reservation.openFolio.transactions.map(
+                      (transaction, ind) => {
+                        return (
+                          <div className={styles.transactionscard}>
+                            <div className={styles.transactioniddiv}>
+                              <div className={styles.topwrapper}>
+                                {transaction.transactionId}
+                                <div className={styles.successid}>
+                                  {transaction.status.slice(0, 7)}
+                                </div>
+                              </div>
+
+                              <div className={styles.transactiondate}>
+                                {transaction.createdAt
+                                  ? `${formatDate(transaction.createdAt)}`
+                                  : ""}
                               </div>
                             </div>
 
-                            <div className={styles.transactiondate}>
-                              {transaction.createdAt
-                                ? `${formatDate(transaction.createdAt)}`
-                                : ""}
+                            <div className={styles.paymenthistry}>
+                              Rs. {transaction.amount}
                             </div>
-                          </div>
+                            <div className={styles.paymentmodeandmodeid}>
+                              <div className={styles.paymentmode}>
+                                {transaction.modeOfPayment}
+                              </div>
+                              <div className={styles.modeid}>
+                                {transaction.paymentModeId}
+                              </div>
+                            </div>
 
-                          <div className={styles.paymenthistry}>
-                            Rs. {transaction.amount}
-                          </div>
-                          <div className={styles.paymentmodeandmodeid}>
-                            <div className={styles.paymentmode}>
-                              {transaction.modeOfPayment}
-                            </div>
-                            <div className={styles.modeid}>
-                              {transaction.paymentModeId}
+                            <div className={styles.remarks}>
+                              {transaction.remarks}
                             </div>
                           </div>
-
-                          <div className={styles.remarks}>
-                            {transaction.remarks}
-                            
-                          </div>
-                        </div>
-                      );
-                    },
-                  )}
+                        );
+                      },
+                    )}
                 </div>
               </div>
             </div>
@@ -750,4 +555,4 @@ const ReservationDetailedView = () => {
   );
 };
 
-export default ReservationDetailedView;
+export default CheckinProcess;

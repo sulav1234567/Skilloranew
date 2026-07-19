@@ -313,7 +313,9 @@ let CreateReservation = async (req, res) => {
       reservation,
     });
   } catch (err) {
-    await session.abortTransaction();
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
     console.log(err);
 
     return res.status(500).json({
@@ -552,6 +554,7 @@ let GetallReservations = async (req, res) => {
 };
 
 let SetReservationStatus = async (req, res) => {
+  let session = await mongoose.startSession();
   try {
     let { hotelid } = req.params;
     let { status, reservationid } = req.body;
@@ -587,7 +590,7 @@ let SetReservationStatus = async (req, res) => {
       });
     }
 
-    
+    await session.startTransaction();
 
     let findReservation = await Reservation.findOne({
       _id: reservationid,
@@ -595,25 +598,44 @@ let SetReservationStatus = async (req, res) => {
       status: {
         $nin: ["cancelled", "no_show", "checked_in", "checked_out"],
       },
-    }).populate([
-      {
-        path: "guest",
-      },
-      {
-        path: "hotel",
-      },
-    ]);
+    })
+      .populate([
+        {
+          path: "guest",
+        },
+        {
+          path: "hotel",
+        },
+      ])
+      .session(session);
 
     if (!findReservation) {
       return res.status(400).json({
         message: "Reservation not found",
       });
     }
+
+    let folio = await Folio.findOne({
+      guest: findReservation.guest,
+      hotel: hotelid,
+      status: "open",
+      linkedModelId: findReservation._id,
+      linkedModel: "Reservation",
+    }).session(session);
+
+    if (
+      (status.trim() == "no_show" || status.trim() == "cancelled") &&
+      folio &&
+      folio.status == "open"
+    ) {
+      folio.status = "closed";
+      await folio.save({ session });
+    }
     //comparing the dates
     let oldstatus = findReservation.status;
 
     findReservation.status = status.trim().toLowerCase();
-    await findReservation.save();
+    await findReservation.save({ session });
 
     let emailData = await sendReservationStatusUpdateMail({
       email: findReservation.guest.email,
@@ -624,16 +646,22 @@ let SetReservationStatus = async (req, res) => {
       newStatus: findReservation.status,
     });
 
+    await session.commitTransaction();
     return res.status(201).json({
       message: "Reservation Updated",
     });
   } catch (err) {
     console.log(err);
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
     if (err) {
       return res.status(500).json({
         message: err.message || err.data.message || "Internal server error",
       });
     }
+  } finally {
+    await session.endSession();
   }
 };
 
@@ -724,7 +752,7 @@ let GetIndividualReservation = async (req, res) => {
                 lastName: 1,
                 email: 1,
                 phone: 1,
-                address:1
+                address: 1,
               },
             },
           ],
@@ -830,7 +858,6 @@ let GetIndividualReservation = async (req, res) => {
                     {
                       $eq: ["$linkedModel", "Reservation"],
                     },
-                    
                   ],
                 },
               },
@@ -850,17 +877,17 @@ let GetIndividualReservation = async (req, res) => {
                     },
                   },
                   {
-                    $project:{
-                      _id:0,
-                      amount:1,
-                      modeOfPayment:1,
-                      paymentModeId:1,
-                      transactionId:1,
-                      status:1,
-                      remarks:1,
-                      createdAt:1
-                    }
-                  }
+                    $project: {
+                      _id: 0,
+                      amount: 1,
+                      modeOfPayment: 1,
+                      paymentModeId: 1,
+                      transactionId: 1,
+                      status: 1,
+                      remarks: 1,
+                      createdAt: 1,
+                    },
+                  },
                 ],
                 as: "transactions",
               },

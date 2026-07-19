@@ -1,6 +1,6 @@
 // ─── Shared Pieces ────────────────────────────────────────────────────────────
 
-const LOGO_URL = "https://skillsoora.com/image.svg"
+const LOGO_URL = "https://skillsoora.com/skillsoora.svg"
 
 const header = `
 <tr>
