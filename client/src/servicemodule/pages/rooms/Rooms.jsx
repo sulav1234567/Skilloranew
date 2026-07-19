@@ -32,7 +32,7 @@ const Rooms = () => {
     let categoryData = {};
     setLoading(true);
     try {
-      let res = await api.get(`/roomcategory/getall/${hotelid}`, {
+      let res = await api.get(`/roomcategory/getallnames/${hotelid}`, {
         signal: controller.signal,
       });
 

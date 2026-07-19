@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CreateReservationform from "../../components/reservationforms";
-import styles from "../../css/reservation.module.css";
+import styles from "../../css/checkin.module.css";
 import { IoAddOutline } from "react-icons/io5";
 import api from "../../../axios/axios";
 import { useNavigate, useParams } from "react-router";
@@ -8,7 +8,6 @@ import { useGlobalMessageContext } from "../../../Globalmessage/components/globa
 import { useEffect } from "react";
 import { LuCalendarDays } from "react-icons/lu";
 import { IoMdArrowRoundUp } from "react-icons/io";
-import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { IoMdTime } from "react-icons/io";
 import { FaRegTimesCircle } from "react-icons/fa";
 import { LuBedDouble } from "react-icons/lu";
@@ -17,6 +16,7 @@ import { RxPeople } from "react-icons/rx";
 import { formatDate } from "../../../Adminpannel/components/dateformatter";
 import SkeletonLoader from "../../../loader/loaders";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { TbPlaneArrival } from "react-icons/tb";
 import { useConfirmationMessageContext } from "../../../forms/components/confirmationmessage";
 
 const CheckInCard = ({
@@ -57,8 +57,7 @@ const TableRow = ({
   total="",
   status="",
   id="",
-  activeid="N/A",
-  setactiveid=()=>{},
+ 
   fetch=()=>{}
 }) => {
   let {showMessages}=useGlobalMessageContext()
@@ -67,66 +66,7 @@ const TableRow = ({
   let { setConfirmationMessageData, clearMessage } =useConfirmationMessageContext();
   let navigate=useNavigate()
 
-  let UpdateReservation=async(value)=>{
-
-    if(loading){
-      return;
-    }
-    let trimmedValue= value.trim()
-    const allowedStatuses = ["cancelled", "no_show", "confirmed"];
-    
-    if(!allowedStatuses.includes(trimmedValue)){
-      setactiveid(null)
-      clearMessage()
-      return showMessages("Invalid Action","reject");
-    }
-
-    if(!hotelid){
-      returnsetactiveid(null)
-      clearMessage()
-      return showMessages("Invalid hotelid","reject");
-    }
-
-    if(!id || id!=activeid){
-      returnsetactiveid(null)
-      clearMessage()
-      return showMessages("Forbidden action","reject");
-
-    }
-
-    try{
-      let formData = new FormData()
-      formData.append("reservationid",id);
-      formData.append("status",trimmedValue)
-
-
-      setConfirmationMessageData((prev)=>({
-        ...prev,
-        loading:true
-      }))
-
-      let res = await api.put(`/reservation/updatereservationstatus/${hotelid}`,formData)
-      if(res.status===201){
-       showMessages(res.data?.message,"success");
-
-      }
-      
-
-
-    }
-    catch(err){
-      if(err){
-        showMessages(err?.response?.data.message||"Internal server error","reject")
-      }
-
-    }
-    finally{
-      fetch();
-      clearMessage();
-      setactiveid(null)
-      setLoading(false)
-    }
-  }
+ 
   return (
     <tr>
       <td onClick={()=>{
@@ -185,61 +125,12 @@ const TableRow = ({
       <td>
         <div className={styles.actionbtn} onClick={(e)=>{
           e.stopPropagation()
-          setactiveid(id)
-        }}>
-          <BsThreeDotsVertical/>
-
-          {id == activeid && (
-             <div className={styles.actionbtnholder} onMouseOver={(e)=>{
-              e.stopPropagation()
-             }
-             }
-             onClick={(e)=>{
-              e.stopPropagation()
-             }}
-             >
-            <div className={styles.actionButton} onClick={()=>{
-              setConfirmationMessageData({
-                show:true,
-                message:"Are You Sure To Mark This Reservation As Confirm?",
-                okFunction:()=>{UpdateReservation("confirmed")},
-                loading:false
-              })
-            }}>
-              Mark Confirm
-              
-            </div>
-            <div className={styles.actionButton}
-            onClick={()=>{
-              setConfirmationMessageData({
-                show:true,
-                message:"Are You Sure To Mark This Reservation As no-show?",
-                okFunction:()=>{UpdateReservation("no_show")},
-                loading:false
-              })
-            }}
-            >
-              No Show
-              
-              
-            </div>
-            <div className={`${styles.actionButton} ${styles.cancelbtn}`}
-            onClick={()=>{
-              setConfirmationMessageData({
-                show:true,
-                message:"Are You Sure To Mark This Reservation As Cancelled?",
-                okFunction:()=>{UpdateReservation("cancelled")},
-                loading:false
-              })
-            }}>
-              Cancel
-              
-            </div>
-            
-          </div>
-
-          )}
+          navigate(`/services/${hotelid}/frontoffice/check-in/checkinprocess/${id}`)
          
+        }}>
+          Check In
+
+        
           
           
         </div>
@@ -305,7 +196,7 @@ const CheckIn= () => {
   let [loading, setLoading] = useState(false);
   let { showMessages } = useGlobalMessageContext();
   let { hotelid } = useParams();
-  let [activeid,setActiveId]=useState(null)
+ 
 
   let fetchReservations = async () => {
     if (loading) {
@@ -320,11 +211,12 @@ const CheckIn= () => {
     }
 
     try {
-      let res = await api.get(`/reservation/getallreservations/${hotelid}`);
+      let res = await api.get(`/checkin/getalleligiblereservations/${hotelid}`);
 
       if (res.status === 200) {
-        setReservations(res.data.reservations);
-        console.log(res.data.reservations);
+        setReservations(res.data.eligibleReservations);
+       
+    
       }
     } catch (err) {
       if (err) {
@@ -375,16 +267,25 @@ const CheckIn= () => {
             <LuCalendarDays color="rgb(0, 20, 238)" />
           </CheckInCard>
           <CheckInCard
-            label="Confirmed"
+            label="Today's Arrival"
             value={
               reservations
-                ? reservations.filter((rev) => rev.status === "confirmed")
+                ? reservations.filter((rev) => {
+                  let resvDate=new Date(rev.checkIn);
+                  let todaydate= new Date(Date.now())
+                  
+
+                  return (
+                    resvDate.getDate()===todaydate.getDate()&&resvDate.getMonth()===todaydate.getMonth()&&resvDate.getDay()===todaydate.getDay()
+                  )
+                }
+                )
                     .length
                 : "0"
             }
             backgroundcolor="rgb(217, 255, 204)"
           >
-            <IoCheckmarkCircleOutline color="rgb(14, 121, 4)" />
+            <TbPlaneArrival color="rgb(14, 121, 4)" />
           </CheckInCard>
           <CheckInCard
             label="Pending"
@@ -422,7 +323,7 @@ const CheckIn= () => {
                 <th>Rooms</th>
                 <th>Stay</th>
                 <th>Pax</th>
-                <th>Total</th>
+                <th>Due</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
@@ -446,11 +347,9 @@ const CheckIn= () => {
                 checkindate={resv.checkIn}
                 checkoutdate={resv.checkOut}
                 pax={Number(resv.adults) + Number(resv.children)}
-                total={resv.payment.totalAmount}
+                total={resv.payment.dueAmount}
                 status={resv.status}
                 id={resv._id}
-                activeid={activeid}
-                setactiveid={setActiveId}
                 key={resv._id}
                 fetch={fetchReservations}
                 

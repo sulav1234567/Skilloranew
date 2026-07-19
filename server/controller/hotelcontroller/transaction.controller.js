@@ -54,7 +54,7 @@ let CreateTransaction = async (req, res) => {
 
     }
 
-    session.startTransaction();
+    session.startTransaction()
     let folioDocument = await Folio.findOne({
       _id:folioid,
       guest:guestid,

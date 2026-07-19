@@ -271,7 +271,9 @@ let GetAllRoomCategory = async(req,res)=>{
 
 
     try{
-        let findRoomCategory = await RoomCategory.find({hotel:hotelid}).sort({_id:-1});
+        let findRoomCategory = await RoomCategory.find({
+            hotel:hotelid,
+        }).sort({_id:-1});
         if(!findRoomCategory){
             return res.status(404).json({
                 message:"room category not found"
@@ -296,11 +298,44 @@ let GetEnumOfCategory = async(req,res)=>{
 
 }
 
+let GetAllRoomCategoryNames = async(req,res)=>{
+    let{hotelid}=req.params;
+     if(!hotelid || !mongoose.Types.ObjectId.isValid(hotelid)){
+        return res.status(400).json({
+            message:"invalid hotel id "
+        })
+    }
+
+
+    try{
+        let findRoomCategory = await RoomCategory.find({
+            hotel:hotelid,
+            isActive:true
+        }).sort({_id:-1}).select("_id name baseRate maxPax");
+        if(!findRoomCategory){
+            return res.status(404).json({
+                message:"room category not found"
+            })
+        }
+
+        return res.status(200).json({
+            roomcategory:findRoomCategory
+        })
+    }catch(err){
+         if(err){
+        return res.status(500).json({
+            message:err.message || "internal server error"
+        })
+    }
+    }
+}
+
 
 export {
     CreateRoomCategory,
     EditRoomCategory,
     GetAllRoomCategory,
     GetSingleRoomCategory,
-    GetEnumOfCategory
+    GetEnumOfCategory,
+    GetAllRoomCategoryNames
 }

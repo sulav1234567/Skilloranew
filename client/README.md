@@ -56,3 +56,36 @@ front office --->       [ manages checkins and checkouts and customer details];
 2. location of the hotel
 3. owner of the hotel ----> User
 4. hotel login details ----> 
+
+
+
+
+User----->{roles:["admin","user"]};
+  |\
+  | \___(user)____
+  a               \
+  d                \
+  m                 \
+  i                  \
+  n                   \
+  |                    \
+  |                     \
+  |                      \
+ ____________              \
+|            |              v
+|Create Hotel|
+|____________|
+  |          
+  |
+  |
+  v
+(hotel),(hotel),(hotel)
+  | \             
+  |. \
+  |.  \__________________________
+  |                              |
+  v                              |
+ ____________              
+|            |               
+|Reservations|
+|____________|

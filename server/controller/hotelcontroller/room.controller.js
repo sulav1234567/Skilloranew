@@ -5,6 +5,7 @@ import RoomCategory from "../../models/roomCategory.js";
 import Room from "../../models/room.js";
 import Reservation from "../../models/reservation.js";
 
+
 let CreateRoom = async (req, res) => {
   try {
     let user = req.user;
@@ -43,7 +44,7 @@ let CreateRoom = async (req, res) => {
 
     //data validation
 
-    let amenEnum = RoomAmenity;
+   
     let RoomStatEnum = Room.schema.path("status").enumValues;
     const isBoolean = (val) => {
       if (val === null || val === undefined) {
@@ -164,6 +165,7 @@ let CreateRoom = async (req, res) => {
       message: "Room Created Successfully",
     });
   } catch (err) {
+    console.log(err)
     if (err) {
       return res.status(500).json({
         message: err.message || "Internal server Error",
@@ -390,6 +392,8 @@ let GetAllRooms = async (req, res) => {
     let Rooms = await Room.find({ hotel: hotelObject._id }).populate({
       path: "category",
       select: "baseRate",
+    }).sort({
+      roomNumber:1
     });
 
     return res.status(200).json({

@@ -33,6 +33,7 @@ import ReservationOutlet from "./servicemodule/pages/frontOffice/reservationOutl
 import ReservationDetailedView from "./servicemodule/pages/frontOffice/ReservationDetailedView.jsx";
 import CheckInOutlet from "./servicemodule/pages/frontOffice/checkinoutlet.jsx";
 import CheckIn from "./servicemodule/pages/frontOffice/checkin.jsx";
+import UserManagementOutlet from "./Adminpannel/pages/userManagementOutlet.jsx";
 
 
 function App() {
@@ -58,6 +59,8 @@ function App() {
               <Route index element={<Hoteloverview />} />
               <Route path="staffmanagement" element={"Staffmanagement"} />
             </Route>
+          </Route>
+          <Route path="usermanagement/*"element={<UserManagementOutlet/>}>
           </Route>
         </Route>
 

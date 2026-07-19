@@ -587,6 +587,8 @@ let SetReservationStatus = async (req, res) => {
       });
     }
 
+    
+
     let findReservation = await Reservation.findOne({
       _id: reservationid,
       hotel: hotelid,
@@ -607,7 +609,7 @@ let SetReservationStatus = async (req, res) => {
         message: "Reservation not found",
       });
     }
-
+    //comparing the dates
     let oldstatus = findReservation.status;
 
     findReservation.status = status.trim().toLowerCase();

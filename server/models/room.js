@@ -78,8 +78,8 @@ const RoomSchema = new mongoose.Schema(
   },
 );
 RoomSchema.virtual("effectivePrice").get(function () {
-  if (this.priceOverride !== null) return this.priceOverride;
-  if (this.category && this.category.priceOverride !== null)
+  if (this.priceOverride !== null && this.priceOverride!==0) return this.priceOverride;
+  if (this.category && this.category.baseRate !== null)
     return this.category.baseRate;
   return null;
 });
