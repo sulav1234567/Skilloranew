@@ -735,7 +735,7 @@ let GetIndividualReservation = async (req, res) => {
         $lookup: {
           from: "guests",
           let: {
-            guestid: "$guest",
+            guestid: "$guestId",
           },
           pipeline: [
             {
@@ -743,6 +743,38 @@ let GetIndividualReservation = async (req, res) => {
                 $expr: {
                   $eq: ["$_id", "$$guestid"],
                 },
+              },
+            },
+
+            {
+              $lookup: {
+                from: "files",
+                let: {
+                  guestID: "$$guestid",
+                  hotelID: "$hotel",
+                },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $and: [
+                          { $eq: ["$linkedDocumentid", "$$guestID"] },
+                          { $eq: ["$linkedModel", "Guest"] },
+                          { $eq: ["$hotel", "$$hotelID"] },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    $project: {
+                      key: 0,
+                      Url: 0,
+                      linkedDocumentid: 0,
+                      linkedModel: 0,
+                    },
+                  },
+                ],
+                as: "documents",
               },
             },
             {
@@ -753,6 +785,7 @@ let GetIndividualReservation = async (req, res) => {
                 email: 1,
                 phone: 1,
                 address: 1,
+                documents: 1,
               },
             },
           ],

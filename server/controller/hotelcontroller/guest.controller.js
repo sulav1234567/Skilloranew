@@ -8,6 +8,8 @@ let SearchGuest = async (req, res) => {
   let { firstName, lastName, phonenumber, email } = req.body;
   let hotelId = req.params.hotelid;
 
+  console.log(req.body,hotelId)
+
   if (!mongoose.Types.ObjectId.isValid(hotelId)) {
     return res.status(400).json({
       message: "Hotel id is not valid.",
@@ -19,7 +21,7 @@ let SearchGuest = async (req, res) => {
   phonenumber = phonenumber.trim();
   email = email.trim().toLowerCase();
 
-   if (!firstName || !lastName || !phonenumber || !email) {
+  if (!firstName || !lastName || !phonenumber || !email) {
     return res.status(400).json({
       message: "Some values are missing",
     });
@@ -43,25 +45,61 @@ let SearchGuest = async (req, res) => {
     });
   }
 
-
-   try {
-    let GuestModel = await Guest.findOne({
-      hotel: hotelId,
+  try {
+    let GuestModel = await Guest.aggregate([
+      {
+    $match: {
+      hotel:new mongoose.Types.ObjectId(hotelId),
       $or: [
         { email: email },
         { phone: phonenumber },
       ],
-    });
-    if (!GuestModel) {
+    },
+  },
+
+      {
+        $lookup:{
+          from:"files",
+          let:{
+            guestID:"$_id",
+            hotelID:"$hotel"
+          },
+          pipeline:[
+            {
+              $match:{
+                $expr:{
+                  $and:[
+                    {$eq:["$linkedDocumentid","$$guestID"]},
+                    {$eq:["$linkedModel","Guest"]},
+                    {$eq:["$hotel","$$hotelID"]}
+                  ]
+                }
+              }
+            },{
+              $project:{
+                key:0,
+                Url:0,
+                linkedDocumentid:0,
+                linkedModel:0
+              }
+            }
+
+          ],
+          as:"documents"
+        }
+      }
+    ]);
+    console.log(GuestModel)
+
+   
+    if (GuestModel.length==0) {
       return res.status(404).json({
         message: "Guest not found",
       });
     }
 
-   
-
     return res.status(200).json({
-      guest:GuestModel
+      guest: GuestModel[0],
     });
   } catch (err) {
     if (err) {
@@ -70,10 +108,6 @@ let SearchGuest = async (req, res) => {
       });
     }
   }
-
-
-
-
 };
 
 let CreateGuest = async (req, res) => {
@@ -117,7 +151,17 @@ let CreateGuest = async (req, res) => {
     });
   }
 
-  if (!firstName || !lastName || !phonenumber || !email || !address || !nationality || !idType || !idNumber || !guestType) {
+  if (
+    !firstName ||
+    !lastName ||
+    !phonenumber ||
+    !email ||
+    !address ||
+    !nationality ||
+    !idType ||
+    !idNumber ||
+    !guestType
+  ) {
     return res.status(400).json({
       message: "Some values are missing",
     });
@@ -176,8 +220,7 @@ let CreateGuest = async (req, res) => {
     if (GuestModel) {
       return res.status(409).json({
         message: "Guest with this info already exists",
-        guest:GuestModel
-
+        guest: GuestModel,
       });
     }
 
@@ -192,7 +235,7 @@ let CreateGuest = async (req, res) => {
       idType,
       idNumber,
       guestType,
-      notes:note,
+      notes: note,
       createdBy: user._id,
     });
 
@@ -200,7 +243,7 @@ let CreateGuest = async (req, res) => {
 
     return res.status(201).json({
       message: "Guest Created Successfully",
-      guest:newGuestModel
+      guest: newGuestModel,
     });
   } catch (err) {
     if (err) {
@@ -211,4 +254,4 @@ let CreateGuest = async (req, res) => {
   }
 };
 
-export { CreateGuest,SearchGuest };
+export { CreateGuest, SearchGuest };

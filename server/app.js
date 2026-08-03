@@ -17,6 +17,7 @@ import RooomRouter from "./routes/Room.routes.js"
 import ReservationRouter from "./routes/reservation.routes.js"
 import TransactionRouter from "./routes/transaction.routes.js"
 import CheckinRouter from "./routes/checkin.routes.js";
+import ImageServingRouter from "./routes/ImageServing.routes.js";
 
 
 
@@ -48,6 +49,7 @@ app.use("/room",RooomRouter)
 app.use("/reservation",ReservationRouter)
 app.use("/transaction",TransactionRouter)
 app.use("/checkin",CheckinRouter)
+app.use("/stream",ImageServingRouter)
 
 
 export default app;

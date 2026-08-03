@@ -20,7 +20,7 @@ let folioSchema = new mongoose.Schema({
     linkedModel:{
         type:String,
         required:true,
-        enum:["Reservation"],
+        enum:["Reservation","CheckIn"],
         default:"Reservation"
     },
     status:{
@@ -53,19 +53,35 @@ let folioSchema = new mongoose.Schema({
         ]
 
     },
-    transferredTo:{
-         type:mongoose.Schema.Types.ObjectId,
+     transferredToModel:{
+         type:String,
+         enum:["Reservation","CheckIn"],
         requred:[
             function(){
 
                 return this.status && this.status==="transferred"
 
             },
-            "Transferred amount is required"
+            "Transferred model"
         ]
 
 
-    }
+    },
+    transferredTo:{
+         type:mongoose.Schema.Types.ObjectId,
+         refPath:"transferredToModel",
+        requred:[
+            function(){
+
+                return this.status && this.status==="transferred"
+
+            },
+            "Transferred to id is required"
+        ]
+
+
+    },
+    
     
 
     
@@ -75,7 +91,12 @@ let folioSchema = new mongoose.Schema({
     timestamps:true
 })
 
-folioSchema.index({guest:1,hotel:1,status:1,linkedModelId:1,linkedModel:1},{unique:true})
+folioSchema.index({guest:1,hotel:1,status:1,linkedModelId:1,linkedModel:1},{
+    unique: true,
+    partialFilterExpression: {
+      status: "open",
+    },
+  })
 
 let Folio= mongoose.model("Folio",folioSchema)
 

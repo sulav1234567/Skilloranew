@@ -406,6 +406,11 @@
   color: rgb(255, 132, 0);
 
 }
+.checked_in {
+  background-color: rgba(215, 255, 209, 0.71);
+  border: 1px solid rgb(0, 202, 0);
+  color: rgb(0, 197, 0);
+}
 .actionbtn {
   display: flex;
   align-items: center;

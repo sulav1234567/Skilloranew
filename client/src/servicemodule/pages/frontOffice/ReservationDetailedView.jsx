@@ -12,7 +12,7 @@ import { LuBedDouble } from "react-icons/lu";
 import { RxPeople } from "react-icons/rx";
 import { BiWallet } from "react-icons/bi";
 import { NameInitials } from "../../../leftnavbar/leftnavbar";
-import { IoLocationOutline, IoMailOutline } from "react-icons/io5";
+import { IoDocumentsOutline, IoLocationOutline, IoMailOutline } from "react-icons/io5";
 import { TbNotebook } from "react-icons/tb";
 import { LuEyeOff } from "react-icons/lu";
 import { CgLogIn } from "react-icons/cg";
@@ -24,6 +24,7 @@ import { GoDotFill } from "react-icons/go";
 import { MdHistory } from "react-icons/md";
 import { Input } from "../../components/reservationforms";
 import SkeletonReservationDetailpage from "../../components/skeletonpageforreservationindidetail";
+import { formatFileSize } from "../../../utilits/utilits";
 const DetailCard = ({ icon, heading = "", value = "", secondValue = "" }) => {
   return (
     <div className={styles.detailcard}>
@@ -242,6 +243,53 @@ const TransactionForm = ({
     </>
   );
 };
+
+const GuestDocumentsHolder = ({documents=[]})=>{
+
+  return(
+    
+    <div className={styles.guestDocumentHolder}>
+    {documents.map((document)=>{
+      return (
+        <div className={styles.documentimageholder} key={document._id}>
+
+          <div className={styles.imagemetadata}>
+            <div className={styles.imagenameanddate}>
+              <div className={styles.imagename}>
+              {document.originalname.split(".")[0]}
+                
+              </div>
+
+             
+              
+            </div>
+            <div className={styles.othermetadata}>
+              <div className={styles.documenttypeandsize}>
+                {formatFileSize(document.size)} .{document.mimetype.split("/")[1]}
+                
+              </div>
+               <div className={styles.imageulploaditiondate}>
+                {formatDate(document.createdAt)}
+                
+              </div>
+              
+            </div>
+            
+          </div>
+          <div className={styles.documentimage}>
+            <img src={`${import.meta.env.VITE_BASE_URL}/stream/hotel/${document.hotel}/media/${document._id}`} alt="Loading....." />
+            
+          </div>
+          
+        </div>
+      )
+    })}
+      
+    </div>
+    
+  )
+
+}
 const ReservationDetailedView = () => {
   let [reservation, setReservation] = useState(null);
   let [loading, setLoading] = useState(false);
@@ -536,6 +584,28 @@ const ReservationDetailedView = () => {
                     value={reservation.guest.address}
                   />
                 </div>
+               
+
+
+               {reservation?.guest?.documents?.length>0 && (
+                  <>
+                  <div className={styles.frdivider} />
+
+                <div className={styles.guestdocumentholder}>
+                   <div className={styles.infocardhead}>
+                  <div className={styles.infoheadicon}>
+                    <IoDocumentsOutline />
+                  </div>
+                  <div className={styles.infocardheading}>
+                    Documents:
+                  </div>
+                </div>
+                  <GuestDocumentsHolder documents={reservation.guest.documents}/>
+                  
+                </div>
+                  </>
+                )}
+                
               </div>
 
               <div className={styles.infocard}>

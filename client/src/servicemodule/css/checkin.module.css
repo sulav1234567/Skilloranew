@@ -390,6 +390,11 @@
   border: 1px solid rgb(0, 202, 0);
   color: rgb(0, 197, 0);
 }
+.checked_in {
+  background-color: rgba(215, 255, 209, 0.71);
+  border: 1px solid rgb(0, 202, 0);
+  color: rgb(0, 197, 0);
+}
 .pending {
   background-color: rgba(232, 232, 232, 0.71);
   border: 1px solid rgb(181, 181, 181);

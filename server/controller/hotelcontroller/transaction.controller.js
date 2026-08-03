@@ -68,7 +68,7 @@ let CreateTransaction = async (req, res) => {
       });
     }
 
-    if(folioDocument.status==="closed"){
+    if(folioDocument.status==="closed" || folioDocument.status==="transferred" ){
        return res.status(400).json({
         message: "this folio is closed so cannot make changes in this",
       });

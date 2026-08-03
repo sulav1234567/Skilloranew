@@ -7,7 +7,7 @@ import styles from "../../css/checkindetailview.module.css";
 import { formatDate } from "../../../Adminpannel/components/dateformatter";
 import { LuClock5, LuPhone } from "react-icons/lu";
 import { MdOutlineSource } from "react-icons/md";
-import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
+import { FaArrowLeftLong, FaArrowRightLong, FaLeaf } from "react-icons/fa6";
 import { LuBedDouble } from "react-icons/lu";
 import { RxPeople } from "react-icons/rx";
 import { BiWallet } from "react-icons/bi";
@@ -31,6 +31,9 @@ import {
   ActionBtn,
   GuestCard,
 } from "../../components/checkinprocess.components";
+import { HiOutlineDocumentCheck } from "react-icons/hi2";
+import { BsCheck } from "react-icons/bs";
+import { emailRegex, phoneRegex } from "../../../Adminpannel/components/regex";
 
 const CheckinProcess = () => {
   let [reservation, setReservation] = useState(null);
@@ -40,9 +43,17 @@ const CheckinProcess = () => {
   let { showMessages } = useGlobalMessageContext();
   let { setConfirmationMessageData, clearMessage } =
     useConfirmationMessageContext();
+  let [primaryGuest, setPrimaryGuest] = useState({});
+  let [consentSelectBtn, setConsentSelectBtn] = useState(false);
+  let consentText = `I confirm that I have carefully reviewed the guest’s information, identification documents, reservation details, room assignment, payment information, and all other details entered during the check-in process.
 
-  let [otherGuestsLength, setOtherGuestLength] = useState(0);
+To the best of my knowledge, the information entered is complete, accurate, and based on the documents and information provided by the guest.
 
+Also the remaining amount to be paid will automatically be transferred to the folio of the primary guest.
+
+I understand that entering false, incomplete, altered, or misleading information may result in disciplinary action and, where applicable, legal action according to hotel policy and applicable law.
+
+By completing this check-in, I accept responsibility for verifying and accurately recording the provided information.`;
   let UpdateReservation = async (value) => {
     if (loading) {
       return;
@@ -131,6 +142,9 @@ const CheckinProcess = () => {
   useEffect(() => {
     FetchReservation();
   }, []);
+
+ 
+
   return (
     <>
       {loading && <SkeletonReservationDetailpage />}
@@ -339,11 +353,9 @@ const CheckinProcess = () => {
                   guest={reservation.guest}
                   isprimary
                   guestType="Primary Guest:"
+                  setGuestData={setPrimaryGuest}
+                  index={"primary"}
                 />
-
-                <div className={styles.addGuestBtnholder}>
-                  <div className={styles.addGuestBtn}>Add Guest</div>
-                </div>
               </div>
 
               <div className={styles.infocard}>
@@ -545,6 +557,39 @@ const CheckinProcess = () => {
                         );
                       },
                     )}
+                </div>
+              </div>
+
+              <div className={styles.infocard}>
+                <div className={styles.infocardhead}>
+                  <div className={styles.infoheadicon}>
+                    <HiOutlineDocumentCheck />
+                  </div>
+                  <div className={styles.infocardheading}>Consent Screen</div>
+                </div>
+
+                <div className={styles.primaryGuestSelection}>
+                  <div
+                    className={`${styles.selectionbtn} ${consentSelectBtn ? styles.selectionbtnactive : styles.selectionbtninactive}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setConsentSelectBtn(!consentSelectBtn);
+                    }}
+                  >
+                    {consentSelectBtn ? <BsCheck /> : ""}
+                  </div>
+                  <div className={styles.selectiontext}>
+                    <pre>{consentText}</pre>
+                  </div>
+                </div>
+
+                <div
+                  className={`${styles.checkinbutton} ${consentSelectBtn && !loading ? styles.checkinactivebutton : styles.checkininactivebutton}`}
+                  onClick={() => {
+                    CreateReservation();
+                  }}
+                >
+                  {loading ? <div className={styles.loader}></div> : "Check In"}
                 </div>
               </div>
             </div>

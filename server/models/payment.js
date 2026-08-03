@@ -29,7 +29,7 @@ let PaymentSchema = new mongoose.Schema({
     }],
     payableModel:{
         type:String,
-        enum:["Reservation","Room"],
+        enum:["Reservation","Room","CheckIn","Folio"],
         required:true,
         
     },
