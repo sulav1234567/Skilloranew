@@ -33,8 +33,11 @@ import ReservationOutlet from "./servicemodule/pages/frontOffice/reservationOutl
 import ReservationDetailedView from "./servicemodule/pages/frontOffice/ReservationDetailedView.jsx";
 import CheckInOutlet from "./servicemodule/pages/frontOffice/checkinoutlet.jsx";
 import CheckIn from "./servicemodule/pages/frontOffice/checkin.jsx";
-import UserManagementOutlet from "./Adminpannel/pages/userManagementOutlet.jsx";
 import CheckinProcess from "./servicemodule/pages/frontOffice/checkinprocess.jsx";
+import InHouseInOutlet from "./servicemodule/pages/frontOffice/inhouse pages/inhouseOutlet.jsx";
+import InHouse from "./servicemodule/pages/frontOffice/inhouse pages/inhouse.jsx";
+import InhouseDetailedView from "./servicemodule/pages/frontOffice/inhouse pages/inhousedetailedview.jsx";
+import UserOutlet from "./Adminpannel/pages/Useroutlet.jsx";
 
 
 function App() {
@@ -61,8 +64,8 @@ function App() {
               <Route path="staffmanagement" element={"Staffmanagement"} />
             </Route>
           </Route>
-          <Route path="usermanagement/*"element={<UserManagementOutlet/>}>
-          </Route>
+         <Route path="users/*" element={<UserOutlet/>}>
+         </Route>
         </Route>
 
         <Route
@@ -93,6 +96,11 @@ function App() {
             <Route path="check-in/*" element={<CheckInOutlet/>}>
             <Route index element={<CheckIn/>}/>
             <Route path="checkinprocess/:reservationid" element={<CheckinProcess/>}/>
+            </Route>
+
+            <Route path="In-House" element={<InHouseInOutlet/>}>
+            <Route index element={<InHouse/>}/>
+            <Route path="iihr/:inhousecode" element={<InhouseDetailedView/>}/>
             </Route>
           </Route>
         </Route>

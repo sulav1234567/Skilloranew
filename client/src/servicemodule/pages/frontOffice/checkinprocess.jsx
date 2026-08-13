@@ -6,13 +6,17 @@ import api from "../../../axios/axios";
 import styles from "../../css/checkindetailview.module.css";
 import { formatDate } from "../../../Adminpannel/components/dateformatter";
 import { LuClock5, LuPhone } from "react-icons/lu";
-import { MdOutlineSource } from "react-icons/md";
+import { MdErrorOutline, MdOutlineSource } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong, FaLeaf } from "react-icons/fa6";
 import { LuBedDouble } from "react-icons/lu";
-import { RxPeople } from "react-icons/rx";
-import { BiWallet } from "react-icons/bi";
+import { RxCross1, RxPeople } from "react-icons/rx";
+import { BiExpandAlt, BiWallet } from "react-icons/bi";
 import { NameInitials } from "../../../leftnavbar/leftnavbar";
-import { IoLocationOutline, IoMailOutline } from "react-icons/io5";
+import {
+  IoDocumentsOutline,
+  IoLocationOutline,
+  IoMailOutline,
+} from "react-icons/io5";
 import { TbNotebook } from "react-icons/tb";
 import { LuEyeOff } from "react-icons/lu";
 import { CgLogIn } from "react-icons/cg";
@@ -34,10 +38,119 @@ import {
 import { HiOutlineDocumentCheck } from "react-icons/hi2";
 import { BsCheck } from "react-icons/bs";
 import { emailRegex, phoneRegex } from "../../../Adminpannel/components/regex";
+import { formatFileSize } from "../../../utilits/utilits";
+import SkeletonLoader from "../../../loader/loaders";
+
+let HugeImageViewer = ({ url = null, onExit = () => {} }) => {
+  return (
+    <div className={styles.imageholderbig}>
+      <div
+        className={styles.exitbtn}
+        onClick={() => {
+          onExit();
+        }}
+      >
+        <RxCross1 />
+      </div>
+
+      <img src={url} alt="" />
+    </div>
+  );
+};
+const GuestDocumentsHolder = ({ documents = [] }) => {
+  let [loading, setLoading] = useState(true);
+  let [error, setError] = useState(false);
+  let [bigImage, setBigImage] = useState(false);
+  let [imageUrl, setImageUrl] = useState(null);
+
+  return (
+    <div className={styles.guestDocumentHolder}>
+      {documents.map((document) => {
+        return (
+          <div className={styles.documentimageholder} key={document._id}>
+            <div className={styles.imagemetadata}>
+              <div className={styles.imagenameanddate}>
+                <div className={styles.imagename}>
+                  {document.originalname.split(".")[0]}
+                </div>
+              </div>
+              <div className={styles.othermetadata}>
+                <div className={styles.documenttypeandsize}>
+                  {formatFileSize(document.size)} .
+                  {document.mimetype.split("/")[1]}
+                </div>
+                <div className={styles.imageulploaditiondate}>
+                  {formatDate(document.createdAt)}
+                </div>
+              </div>
+            </div>
+            <div
+              className={styles.documentimage}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                if (!loading && !error) {
+                  setImageUrl(
+                    `${import.meta.env.VITE_BASE_URL}/stream/hotel/${document.hotel}/media/${document._id}`,
+                  );
+                  setBigImage(true);
+                }
+              }}
+            >
+              {loading && !error && (
+                <SkeletonLoader
+                  style={{
+                    position: "absolute",
+                    top: "0",
+                    left: "0",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                />
+              )}
+              {!loading && error && (
+                <div className={styles.imageerror}>
+                  <MdErrorOutline />
+                </div>
+              )}
+              {!loading && !error && (
+                <div className={styles.expandingiconholder}>
+                  <BiExpandAlt />
+                </div>
+              )}
+
+              <img
+                src={`${import.meta.env.VITE_BASE_URL}/stream/hotel/${document.hotel}/media/${document._id}`}
+                alt=""
+                onLoad={() => {
+                  setLoading(false);
+                }}
+                onError={() => {
+                  setError(true);
+                  setLoading(false);
+                }}
+              />
+            </div>
+          </div>
+        );
+      })}
+      {bigImage && (
+        <HugeImageViewer
+          url={imageUrl}
+          onExit={() => {
+            setBigImage(false);
+            setImageUrl(null);
+          }}
+        />
+      )}
+    </div>
+  );
+};
 
 const CheckinProcess = () => {
   let [reservation, setReservation] = useState(null);
   let [loading, setLoading] = useState(false);
+  let[uploadingLoading,setUploadingLoading]=useState(false)
   let { hotelid, reservationid } = useParams();
   let navigate = useNavigate();
   let { showMessages } = useGlobalMessageContext();
@@ -117,7 +230,7 @@ By completing this check-in, I accept responsibility for verifying and accuratel
       }
 
       let res = await api.get(
-        `/reservation/getreservation?hotelid=${hotelid}&reservationid=${reservationid}`,
+        `/checkin/getreservation?hotelid=${hotelid}&reservationid=${reservationid}`,
       );
 
       if (res.status === 200) {
@@ -139,11 +252,215 @@ By completing this check-in, I accept responsibility for verifying and accuratel
     }
   };
 
+  let CreateReservation = async () => {
+    if (uploadingLoading|| !hotelid || !reservationid) {
+      return;
+    }
+    let {
+      files,
+      isprimary,
+      guest,
+      inputdata,
+      selectBtn,
+      maxfilesize,
+      maxfile,
+      accept,
+      searchStatus,
+      requiredfiles,
+      setfileError,
+      setinputError,
+    } = primaryGuest["primary"];
+    let {
+      guestaddress,
+      guestemail,
+      guestname,
+      guestphone,
+      guesttype,
+      idnumber,
+      idtype,
+      nationality,
+    } = inputdata;
+    let idTypeEnum = ["citizenship", "passport", "license", "national_id"];
+    let guestTypeEnum = ["normal", "vip", "corporate", "blacklisted"];
+    
+
+    const cleanedAddress = guestaddress?.value?.trim() || "";
+    const cleanedEmail = guestemail?.value?.trim().toLowerCase() || "";
+    const isValidEmail = cleanedEmail ? emailRegex.test(cleanedEmail) : false;
+    const cleanedPhone = guestphone?.value?.trim() || "";
+    const isValidPhone = phoneRegex.test(cleanedPhone) || false;
+    const cleanedName = guestname?.value?.trim() || "";
+    const isValidName = cleanedName.length > 0;
+    const cleanedGuestType = guesttype?.value?.trim() || null;
+    const isValidGuestType = cleanedGuestType
+      ? guestTypeEnum.includes(cleanedGuestType)
+      : false;
+    const cleanedIdNumber = idnumber?.value?.trim() || null;
+    const cleanedIdType = idtype?.value?.trim() || null;
+    const isValidIdType = cleanedIdType
+      ? idTypeEnum.includes(cleanedIdType)
+      : false;
+    const cleanedNationality = nationality?.value?.trim() || null;
+
+    const isValidFiles =
+      Array.isArray(files) &&
+      files.length >= Number(requiredfiles) &&
+      files.every((file) => {
+        const acceptedMainType = accept.trim().split("/")[0];
+        const currentMainType = file.type?.split("/")[0];
+
+        return acceptedMainType === currentMainType;
+      });
+
+    
+
+    if (!searchStatus) {
+      showMessages("Search the Guest First", "reject");
+      return;
+    }
+
+    if (!isValidFiles) {
+      setfileError("Please Upload the Valid And Required Files");
+      showMessages("File Error", "reject");
+      return;
+    }
+    let error = {};
+
+    const Data = new FormData();
+
+    if (searchStatus && guest) {
+      if (!guest._id) {
+        error = {
+          ...error,
+          guestid: "Guestid not found",
+        };
+      }
+
+      if (typeof isprimary != "boolean") {
+        error = {
+          ...error,
+          isprimary: "Invalid Is Primary",
+        };
+      }
+      Data.append("guestid", guest._id);
+      Data.append("isprimary", isprimary);
+      Data.append("hasconsented", consentSelectBtn);
+      Data.append("consenttext", consentText);
+      files.forEach((file) => {
+        Data.append("Document", file);
+      });
+    } else if (searchStatus && !guest) {
+      if (!isValidEmail) {
+        error = {
+          ...error,
+          guestemail: "Invalid email",
+        };
+      }
+
+      if (!isValidPhone) {
+        error = {
+          ...error,
+          guestphone: "Invalid Phone Number",
+        };
+      }
+
+      if (!isValidName) {
+        error = {
+          ...error,
+          guestname: "Invalid guest name",
+        };
+      }
+      if (!cleanedAddress) {
+        error = {
+          ...error,
+          guestaddress: "Invalid address",
+        };
+      }
+
+      if (!isValidName) {
+        error = {
+          ...error,
+          guestname: "Invalid Phone Number",
+        };
+      }
+
+      if (!isValidGuestType) {
+        error = {
+          ...error,
+          guesttype: "Invalid guest type",
+        };
+      }
+
+      if (!cleanedIdNumber) {
+        error = {
+          ...error,
+          idnumber: "Invalid id number",
+        };
+      }
+
+      if (!isValidIdType) {
+        error = {
+          ...error,
+          idtype: "Invalid id type",
+        };
+      }
+
+      if (!cleanedNationality) {
+        error = {
+          ...error,
+          nationality: "Invalid id nationality",
+        };
+      }
+
+      setinputError(error);
+      Data.append("isprimary", isprimary);
+      Data.append("hasconsented", consentSelectBtn);
+      Data.append("consenttext", consentText);
+      Data.append("guestname", guestname?.value?.trim());
+      Data.append("guestemail", cleanedEmail);
+      Data.append("guestphone", cleanedPhone);
+      Data.append("guestaddress", cleanedAddress);
+      Data.append("guesttype", cleanedGuestType);
+      Data.append("guestidtype", cleanedIdType);
+      Data.append("guestidnumber", cleanedIdNumber);
+      Data.append("guestnationality", cleanedNationality);
+
+      files.forEach((file) => {
+        Data.append("Document", file);
+      });
+    } else {
+      showMessages("Error Occured");
+      return
+    }
+    if (Object.keys(error).length === 0) {
+      try {
+        setUploadingLoading(true);
+
+        let res = await api.post(
+          `/checkin/create/${hotelid}/${reservationid}`,
+          Data,
+        );
+
+        if (res.status === 201) {
+          showMessages(res.data.message, "success");
+        }
+      } catch (err) {
+        if (err) {
+          console.log(err);
+          showMessages(
+            err?.response?.data?.message || "internal server error",
+            "reject",
+          );
+        }
+      } finally {
+        setUploadingLoading(false);
+      }
+    }
+  };
+
   useEffect(() => {
     FetchReservation();
   }, []);
-
- 
 
   return (
     <>
@@ -339,6 +656,23 @@ By completing this check-in, I accept responsibility for verifying and accuratel
                     value={reservation.guest.address}
                   />
                 </div>
+                {reservation?.guest?.documents?.length > 0 && (
+                  <>
+                    <div className={styles.frdivider} />
+
+                    <div className={styles.guestdocumentholder}>
+                      <div className={styles.infocardhead}>
+                        <div className={styles.infoheadicon}>
+                          <IoDocumentsOutline />
+                        </div>
+                        <div className={styles.infocardheading}>Documents:</div>
+                      </div>
+                      <GuestDocumentsHolder
+                        documents={reservation.guest.documents}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
               <div className={styles.infocard}>
                 <div className={styles.infocardhead}>
@@ -584,12 +918,14 @@ By completing this check-in, I accept responsibility for verifying and accuratel
                 </div>
 
                 <div
-                  className={`${styles.checkinbutton} ${consentSelectBtn && !loading ? styles.checkinactivebutton : styles.checkininactivebutton}`}
+                  className={`${styles.checkinbutton} ${consentSelectBtn && !uploadingLoading ? styles.checkinactivebutton : styles.checkininactivebutton}`}
                   onClick={() => {
-                    CreateReservation();
+                    if(!uploadingLoading && consentSelectBtn){
+                      CreateReservation()
+                    }
                   }}
                 >
-                  {loading ? <div className={styles.loader}></div> : "Check In"}
+                  {uploadingLoading ? <div className={styles.loader}></div> : "Check In"}
                 </div>
               </div>
             </div>

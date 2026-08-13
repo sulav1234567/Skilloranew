@@ -9,10 +9,14 @@ import { LuClock5, LuPhone } from "react-icons/lu";
 import { MdOutlineSource } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { LuBedDouble } from "react-icons/lu";
-import { RxPeople } from "react-icons/rx";
-import { BiWallet } from "react-icons/bi";
+import { RxCross1, RxPeople } from "react-icons/rx";
+import { BiExpandAlt, BiWallet } from "react-icons/bi";
 import { NameInitials } from "../../../leftnavbar/leftnavbar";
-import { IoDocumentsOutline, IoLocationOutline, IoMailOutline } from "react-icons/io5";
+import {
+  IoDocumentsOutline,
+  IoLocationOutline,
+  IoMailOutline,
+} from "react-icons/io5";
 import { TbNotebook } from "react-icons/tb";
 import { LuEyeOff } from "react-icons/lu";
 import { CgLogIn } from "react-icons/cg";
@@ -25,6 +29,8 @@ import { MdHistory } from "react-icons/md";
 import { Input } from "../../components/reservationforms";
 import SkeletonReservationDetailpage from "../../components/skeletonpageforreservationindidetail";
 import { formatFileSize } from "../../../utilits/utilits";
+import { MdErrorOutline } from "react-icons/md";
+import SkeletonLoader from "../../../loader/loaders";
 const DetailCard = ({ icon, heading = "", value = "", secondValue = "" }) => {
   return (
     <div className={styles.detailcard}>
@@ -232,64 +238,122 @@ const TransactionForm = ({
       />
 
       <div
-        className={`${styles.createtransactionbtn} ${loading?styles.loadingbtn:styles.activebtn}`}
+        className={`${styles.createtransactionbtn} ${loading ? styles.loadingbtn : styles.activebtn}`}
         onClick={() => {
           CreateTransaction();
         }}
       >
-        {loading ? (<div className={styles.loader}></div>):"Create Transaction"}
-        
+        {loading ? <div className={styles.loader}></div> : "Create Transaction"}
       </div>
     </>
   );
 };
 
-const GuestDocumentsHolder = ({documents=[]})=>{
+let HugeImageViewer = ({ url = null, onExit = () => {} }) => {
+  return (
+    <div className={styles.imageholderbig}>
+      <div
+        className={styles.exitbtn}
+        onClick={() => {
+          onExit();
+        }}
+      >
+        <RxCross1 />
+      </div>
 
-  return(
-    
-    <div className={styles.guestDocumentHolder}>
-    {documents.map((document)=>{
-      return (
-        <div className={styles.documentimageholder} key={document._id}>
-
-          <div className={styles.imagemetadata}>
-            <div className={styles.imagenameanddate}>
-              <div className={styles.imagename}>
-              {document.originalname.split(".")[0]}
-                
-              </div>
-
-             
-              
-            </div>
-            <div className={styles.othermetadata}>
-              <div className={styles.documenttypeandsize}>
-                {formatFileSize(document.size)} .{document.mimetype.split("/")[1]}
-                
-              </div>
-               <div className={styles.imageulploaditiondate}>
-                {formatDate(document.createdAt)}
-                
-              </div>
-              
-            </div>
-            
-          </div>
-          <div className={styles.documentimage}>
-            <img src={`${import.meta.env.VITE_BASE_URL}/stream/hotel/${document.hotel}/media/${document._id}`} alt="Loading....." />
-            
-          </div>
-          
-        </div>
-      )
-    })}
-      
+      <img src={url} alt="" />
     </div>
-    
-  )
+  );
+};
+const GuestDocumentsHolder = ({ documents = [] }) => {
+  let [loading, setLoading] = useState(true);
+  let [error, setError] = useState(false);
+  let [bigImage, setBigImage] = useState(false);
+  let [imageUrl, setImageUrl] = useState(null);
 
-}
+  return (
+    <div className={styles.guestDocumentHolder}>
+      {documents.map((document) => {
+        return (
+          <div className={styles.documentimageholder} key={document._id}>
+            <div className={styles.imagemetadata}>
+              <div className={styles.imagenameanddate}>
+                <div className={styles.imagename}>
+                  {document.originalname.split(".")[0]}
+                </div>
+              </div>
+              <div className={styles.othermetadata}>
+                <div className={styles.documenttypeandsize}>
+                  {formatFileSize(document.size)} .
+                  {document.mimetype.split("/")[1]}
+                </div>
+                <div className={styles.imageulploaditiondate}>
+                  {formatDate(document.createdAt)}
+                </div>
+              </div>
+            </div>
+            <div
+              className={styles.documentimage}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                if (!loading && !error) {
+                  setImageUrl(
+                    `${import.meta.env.VITE_BASE_URL}/stream/hotel/${document.hotel}/media/${document._id}`,
+                  );
+                  setBigImage(true);
+                }
+              }}
+            >
+              {loading && !error && (
+                <SkeletonLoader
+                  style={{
+                    position: "absolute",
+                    top: "0",
+                    left: "0",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                />
+              )}
+              {!loading && error && (
+                <div className={styles.imageerror}>
+                  <MdErrorOutline />
+                </div>
+              )}
+              {!loading && !error && (
+                <div className={styles.expandingiconholder}>
+                  <BiExpandAlt />
+                </div>
+              )}
+
+              <img
+                src={`${import.meta.env.VITE_BASE_URL}/stream/hotel/${document.hotel}/media/${document._id}`}
+                alt=""
+                onLoad={() => {
+                  setLoading(false);
+                }}
+                onError={() => {
+                  setError(true);
+                  setLoading(false);
+                }}
+              />
+            </div>
+          </div>
+        );
+      })}
+      {bigImage && (
+        <HugeImageViewer
+          url={imageUrl}
+          onExit={() => {
+            setBigImage(false);
+            setImageUrl(null);
+          }}
+        />
+      )}
+    </div>
+  );
+};
 const ReservationDetailedView = () => {
   let [reservation, setReservation] = useState(null);
   let [loading, setLoading] = useState(false);
@@ -377,10 +441,7 @@ const ReservationDetailedView = () => {
         );
         setTimeout(() => {
           return navigate(-1, { replace: true });
-          
         }, 500);
-
-        
       }
     } finally {
       setLoading(false);
@@ -584,28 +645,24 @@ const ReservationDetailedView = () => {
                     value={reservation.guest.address}
                   />
                 </div>
-               
 
-
-               {reservation?.guest?.documents?.length>0 && (
+                {reservation?.guest?.documents?.length > 0 && (
                   <>
-                  <div className={styles.frdivider} />
+                    <div className={styles.frdivider} />
 
-                <div className={styles.guestdocumentholder}>
-                   <div className={styles.infocardhead}>
-                  <div className={styles.infoheadicon}>
-                    <IoDocumentsOutline />
-                  </div>
-                  <div className={styles.infocardheading}>
-                    Documents:
-                  </div>
-                </div>
-                  <GuestDocumentsHolder documents={reservation.guest.documents}/>
-                  
-                </div>
+                    <div className={styles.guestdocumentholder}>
+                      <div className={styles.infocardhead}>
+                        <div className={styles.infoheadicon}>
+                          <IoDocumentsOutline />
+                        </div>
+                        <div className={styles.infocardheading}>Documents:</div>
+                      </div>
+                      <GuestDocumentsHolder
+                        documents={reservation.guest.documents}
+                      />
+                    </div>
                   </>
                 )}
-                
               </div>
 
               <div className={styles.infocard}>
@@ -732,28 +789,25 @@ const ReservationDetailedView = () => {
                   );
                 })}
               </div>
-              {
-                Number(reservation.openFolio.totalAmount)-Number(reservation.openFolio.amountPaid)!=0 &&
-                 (
-                  <div className={styles.infocard}>
-                <div className={styles.infocardhead}>
-                  <div className={styles.infoheadicon}>
-                    <GrTransaction />
+              {Number(reservation.openFolio.totalAmount) -
+                Number(reservation.openFolio.amountPaid) !=
+                0 && reservation.openFolio.status==="open" &&  (
+                <div className={styles.infocard}>
+                  <div className={styles.infocardhead}>
+                    <div className={styles.infoheadicon}>
+                      <GrTransaction />
+                    </div>
+                    <div className={styles.infocardheading}>
+                      Create Transaction
+                    </div>
                   </div>
-                  <div className={styles.infocardheading}>
-                    Create Transaction
-                  </div>
+                  <TransactionForm
+                    guestid={reservation.guest._id}
+                    folioid={reservation.openFolio._id}
+                    fetch={FetchReservation}
+                  />
                 </div>
-                <TransactionForm
-                  guestid={reservation.guest._id}
-                  folioid={reservation.openFolio._id}
-                  fetch={FetchReservation}
-                />
-              </div>
-                )
-              }
-
-              
+              )}
 
               <div className={styles.infocard}>
                 <div className={styles.infocardhead}>
@@ -766,50 +820,50 @@ const ReservationDetailedView = () => {
                 </div>
 
                 <div className={styles.historycardwrapper}>
-                 {reservation.openFolio.transactions.length==0&&(
-                  <div className={styles.emptymessage}>
-                    No Transactions Available
-                  </div>
-                 )}
-                  {reservation.openFolio.transactions.length>0&&reservation.openFolio.transactions.map(
-                    (transaction, ind) => {
-                      return (
-                        <div className={styles.transactionscard}>
-                          <div className={styles.transactioniddiv}>
-                            <div className={styles.topwrapper}>
-                              {transaction.transactionId}
-                              <div className={styles.successid}>
-                                {transaction.status.slice(0, 7)}
+                  {reservation.openFolio.transactions.length == 0 && (
+                    <div className={styles.emptymessage}>
+                      No Transactions Available
+                    </div>
+                  )}
+                  {reservation.openFolio.transactions.length > 0 &&
+                    reservation.openFolio.transactions.map(
+                      (transaction, ind) => {
+                        return (
+                          <div className={styles.transactionscard}>
+                            <div className={styles.transactioniddiv}>
+                              <div className={styles.topwrapper}>
+                                {transaction.transactionId}
+                                <div className={styles.successid}>
+                                  {transaction.status.slice(0, 7)}
+                                </div>
+                              </div>
+
+                              <div className={styles.transactiondate}>
+                                {transaction.createdAt
+                                  ? `${formatDate(transaction.createdAt)}`
+                                  : ""}
                               </div>
                             </div>
 
-                            <div className={styles.transactiondate}>
-                              {transaction.createdAt
-                                ? `${formatDate(transaction.createdAt)}`
-                                : ""}
+                            <div className={styles.paymenthistry}>
+                              Rs. {transaction.amount}
                             </div>
-                          </div>
+                            <div className={styles.paymentmodeandmodeid}>
+                              <div className={styles.paymentmode}>
+                                {transaction.modeOfPayment}
+                              </div>
+                              <div className={styles.modeid}>
+                                {transaction.paymentModeId}
+                              </div>
+                            </div>
 
-                          <div className={styles.paymenthistry}>
-                            Rs. {transaction.amount}
-                          </div>
-                          <div className={styles.paymentmodeandmodeid}>
-                            <div className={styles.paymentmode}>
-                              {transaction.modeOfPayment}
-                            </div>
-                            <div className={styles.modeid}>
-                              {transaction.paymentModeId}
+                            <div className={styles.remarks}>
+                              {transaction.remarks}
                             </div>
                           </div>
-
-                          <div className={styles.remarks}>
-                            {transaction.remarks}
-                            
-                          </div>
-                        </div>
-                      );
-                    },
-                  )}
+                        );
+                      },
+                    )}
                 </div>
               </div>
             </div>

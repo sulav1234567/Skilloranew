@@ -20,6 +20,7 @@ import {
   FaUsers,
   FaBan,
 } from "react-icons/fa";
+import { PiHouseLineBold } from "react-icons/pi";
 import { Outlet, useParams } from 'react-router';
 
 const FrontOfficeOutlet = () => {
@@ -54,9 +55,9 @@ const FrontOfficeOutlet = () => {
   />
 
   <NavbarLink
-    text="Receipt"
-    icon={<FaReceipt />}
-    path={`/services/${hotelid}/frontoffice/receipt`}
+    text="In House"
+    icon={<PiHouseLineBold/>}
+    path={`/services/${hotelid}/frontoffice/In-House`}
   />
 
   <NavbarLink

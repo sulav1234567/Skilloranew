@@ -1,5 +1,0 @@
-const UserManagement = ()=>{
-    return (
-        "usermanagement"
-    )
-}

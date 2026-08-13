@@ -1,0 +1,533 @@
+.reservationcreationdiv {
+  display: flex;
+  align-items: center;
+  height: fit-content;
+  width: 100%;
+  background-color: white;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 15px;
+  border-radius: 15px;
+  padding: 15px 30px;
+  min-height: 150px;
+  border: 1px solid rgb(237, 237, 237);
+}
+.headingandsubheading {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.heading {
+  font-size: 2.3rem;
+  font-weight: 600;
+}
+.subheading {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: rgb(132, 132, 132);
+}
+.reservationcreatebtn {
+  display: flex;
+  align-items: center;
+  height: fit-content;
+  width: fit-content;
+  padding: 14px 20px;
+  background-color: rgb(0, 51, 255);
+  color: white;
+  cursor: pointer;
+  gap: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+  transition: background-color 0.2s ease-in-out;
+}
+.reservationcreatebtn:hover {
+  background-color: rgb(0, 41, 203);
+}
+.btnsvg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  width: 18px;
+}
+.btnsvg svg {
+  color: white;
+  height: 100%;
+  width: 100%;
+}
+
+.reservationcardsholder {
+  display: grid;
+  height: fit-content;
+  width: 100%;
+  margin-top: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+.reservationcard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  border: 1px solid rgb(237, 237, 237);
+  border-radius: 15px;
+  padding: 25px;
+  gap: 5px;
+}
+.svgsholder {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.iconholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  padding: 10px;
+  border-radius: 10px;
+}
+.iconholder svg {
+  height: 100%;
+  width: 100%;
+}
+.secondiconholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+  transform: rotateZ(50deg);
+  padding: 2px;
+}
+.secondiconholder svg {
+  color: rgb(144, 144, 144);
+  height: 100%;
+  width: 100%;
+}
+.cardvalue {
+  font-size: 1.9rem;
+  margin-top: 10px;
+  font-weight: 600;
+}
+.cardname {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgb(100, 100, 100);
+}
+.reservationstable {
+  display: flex;
+
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+  padding: 0px 0px 20px 0px;
+  overflow: hidden;
+  border-radius: 15px;
+  background-color: white;
+  border: 1px solid rgb(237, 237, 237);
+  margin-top: 20px;
+}
+.filterrow{
+  display: flex;
+  align-items: center;
+  height: fit-content;
+  width: 100%;
+  padding: 15px 20px;
+  background-color: rgb(244, 244, 244);
+}
+.filtersearch{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  min-width: 200px;
+  width: 250px;
+  border-radius: 10px;
+  padding: 5px 15px;
+  border: 1px solid rgb(213, 213, 213);
+  background-color: rgb(248, 249, 255);
+}
+.filtersearch:focus-within{
+  border: 1px solid blue;
+
+}
+.filtersearch input{
+  height: 100%;
+  width: 100%;
+  border: none;
+  background-color: rgb(248, 249, 255);
+}
+.filtersearch input:focus{
+  border: none;
+  outline: none;
+}
+.reservationstable table {
+  height: fit-content;
+  width: 100%;
+  border-collapse: collapse;
+}
+.reservationstable table thead {
+  height: 50px;
+  background-color: rgb(250, 250, 250);
+  border-top: 1px solid rgb(220, 220, 220);
+  border-bottom: 1px solid rgb(220, 220, 220);
+}
+.reservationstable table thead tr {
+  height: 100%;
+  width: 100%;
+}
+.reservationstable table thead tr th {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  text-align: left;
+  color: rgb(109, 109, 109);
+}
+.reservationstable table thead tr th:first-child {
+  width: 180px;
+  padding-left: 30px;
+}
+.reservationstable table thead tr th:nth-child(4) {
+  padding: 0px 15px 0px 15px;
+}
+.reservationstable table tbody tr td:nth-child(2) {
+  width: 190px;
+  max-width: 190px;
+  overflow: hidden;
+  padding: 0px 15px 0px 0px;
+}
+.reservationstable table thead tr th:last-child {
+  padding-right: 30px;
+}
+
+.reservationstable table tbody tr {
+  height: 80px;
+  width: 100%;
+  border-bottom: 1px solid rgb(220, 220, 220);
+}
+.reservationstable table tbody tr td:first-child {
+  width: 180px;
+  padding-left: 30px;
+  font-size: 13px;
+  cursor: pointer;
+  color: blue;
+  font-weight: 600;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+.reservationstable table tbody tr td:first-child:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+}
+
+.guestholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+.guestname {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.guestemail {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgb(104, 104, 104);
+}
+
+.reservationstable table tbody tr td:nth-child(3) {
+  width: 150px;
+  max-width: 150px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  padding: 0px 15px 0px 0px;
+}
+.roomsholder {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  height: 100%;
+  width: fit-content;
+}
+.rooms {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  width: fit-content;
+  min-width: 150px;
+  gap: 5px;
+}
+.roomname {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.roomnamesvg {
+  height: 18px;
+  width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.roomnamesvg svg {
+  height: 100%;
+  width: 100%;
+  color: rgb(127, 127, 127);
+}
+.roomcategory {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgb(127, 127, 127);
+}
+.reservationstable table tbody tr td:nth-child(4) {
+  width: 190px;
+  max-width: 190px;
+  overflow: hidden;
+  padding: 0px 15px 0px 15px;
+}
+.checkinandcheckout {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  gap: 3px;
+}
+.checkindate {
+  font-size: 15px;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.checkoutdate {
+  display: flex;
+  height: fit-content;
+  width: 100%;
+  gap: 5px;
+}
+.checkouticon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 15px;
+  width: 15px;
+}
+.checkouticon svg {
+  height: 100%;
+  width: 100%;
+  color: rgb(127, 127, 127);
+}
+.checkoutvalue {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgb(127, 127, 127);
+}
+
+.reservationstable table tbody tr td:nth-child(5) {
+  width: 50px;
+  max-width: 50px;
+  overflow: hidden;
+  padding: 0px 15px 0px 0px;
+}
+.paxholder {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 5px;
+}
+.paxicon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+}
+.paxicon svg {
+  height: 100%;
+  width: 100%;
+  color: rgb(96, 96, 96);
+}
+.paxvalue {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.reservationstable table tbody tr td:nth-child(6) {
+  width: 120px;
+  max-width: 120px;
+  overflow: hidden;
+  padding: 0px 15px 0px 0px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.reservationstable table tbody tr td:nth-child(7) {
+  width: 130px;
+  max-width: 130px;
+  overflow: hidden;
+  padding: 0px 15px 0px 0px;
+}
+.status {
+  display: flex;
+  height: fit-content;
+  width: fit-content;
+  padding: 5px 10px;
+  border-radius: 99999px;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: capitalize;
+}
+.confirmed {
+  background-color: rgba(215, 255, 209, 0.71);
+  border: 1px solid rgb(0, 202, 0);
+  color: rgb(0, 197, 0);
+}
+.checked_in {
+  background-color: rgba(215, 255, 209, 0.71);
+  border: 1px solid rgb(0, 202, 0);
+  color: rgb(0, 197, 0);
+}
+.pending {
+  background-color: rgba(232, 232, 232, 0.71);
+  border: 1px solid rgb(181, 181, 181);
+  color: rgb(128, 128, 128);
+}
+.cancelled {
+  background-color: rgb(255, 231, 231);
+  border: 1px solid rgb(255, 20, 20);
+  color: rgb(255, 30, 30);
+}
+.no_show{
+  background-color: rgb(255, 242, 231);
+  border: 1px solid rgb(255, 140, 0);
+  color: rgb(255, 132, 0);
+
+}
+.actionbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  height: 35px;
+  width: fit-content;
+  border-radius: 8px;
+  background-color: blue;
+  cursor: pointer;
+  position: relative;
+  color: white;
+  transition: 0.2s ease-in-out;
+  font-size: 0.875rem;
+}
+.actionbtn:hover {
+  background-color: rgb(0, 0, 189);
+}
+.actionbtnholder {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 150px;
+  background-color: white;
+  padding: 12px;
+  border: 1px solid rgb(238, 238, 238);
+  border-radius: 10px;
+  right: 20px;
+  top: 20px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  z-index: 10;
+  gap: 2px;
+}
+.actionButton {
+  display: flex;
+  align-items: center;
+  height: 35px;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease-in-out;
+}
+.actionButton:hover {
+  background-color: rgb(239, 239, 239);
+}
+.cancelbtn {
+  color: red;
+}
+.cancelbtn:hover {
+  background-color: #ffe5e5;
+}
+
+  mark {
+  background: yellow;
+  color: black;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+tfoot{
+  height: 120px;
+  
+}
+
+tfoot tr{
+  height: 100%;
+  width: 100%;
+}
+tfoot tr td{
+  height: 100%;
+  width: 100%;
+  padding: 10px 20px;
+}
+.foottext{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height:100%;
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: rgb(100, 100, 100);
+
+}

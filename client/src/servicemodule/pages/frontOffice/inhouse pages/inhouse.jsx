@@ -1,10 +1,9 @@
 import { useState } from "react";
-import CreateReservationform from "../../components/reservationforms";
-import styles from "../../css/checkin.module.css";
+import styles from "../../../css/inhouse css/inhouse.module.css";
 import { IoAddOutline } from "react-icons/io5";
-import api from "../../../axios/axios";
+import api from "../../../../axios/axios";
 import { useNavigate, useParams } from "react-router";
-import { useGlobalMessageContext } from "../../../Globalmessage/components/globalmessage";
+import { useGlobalMessageContext } from "../../../../Globalmessage/components/globalmessage";
 import { useEffect } from "react";
 import { LuCalendarDays } from "react-icons/lu";
 import { IoMdArrowRoundUp } from "react-icons/io";
@@ -13,13 +12,13 @@ import { FaRegTimesCircle } from "react-icons/fa";
 import { LuBedDouble } from "react-icons/lu";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { RxPeople } from "react-icons/rx";
-import { formatDate } from "../../../Adminpannel/components/dateformatter";
-import SkeletonLoader from "../../../loader/loaders";
+import { formatDate } from "../../../../Adminpannel/components/dateformatter";
+import SkeletonLoader from "../../../../loader/loaders";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { TbPlaneArrival } from "react-icons/tb";
-import { useConfirmationMessageContext } from "../../../forms/components/confirmationmessage";
+import { useConfirmationMessageContext } from "../../../../forms/components/confirmationmessage";
 
-const CheckInCard = ({
+const InHouseCard = ({
   children,
   value = "",
   label = "",
@@ -72,7 +71,7 @@ const TableRow = ({
   return (
     <tr>
       <td onClick={()=>{
-       navigate(`/services/${hotelid}/frontoffice/reservation/ir/${id}`)
+       navigate(`/services/${hotelid}/frontoffice/In-House/iihr/${id}`)
 
       }}>{reservation}</td>
       <td>
@@ -130,7 +129,7 @@ const TableRow = ({
           navigate(`/services/${hotelid}/frontoffice/check-in/checkinprocess/${id}`)
          
         }}>
-          Check In
+          View Inhouse
 
         
           
@@ -192,9 +191,10 @@ let SkeletonLoaderTR=()=>{
 
   )
 }
-const CheckIn= () => {
-  let [reservationForm, setReservationForm] = useState(false);
+const InHouse= () => {
+
   let [reservations, setReservations] = useState(null);
+  let [filteredReservation,setFilteredReservation]=useState(null)
   let [loading, setLoading] = useState(false);
   let { showMessages } = useGlobalMessageContext();
   let { hotelid } = useParams();
@@ -213,15 +213,17 @@ const CheckIn= () => {
     }
 
     try {
-      let res = await api.get(`/checkin/getalleligiblereservations/${hotelid}`);
+      let res = await api.get(`/inhouse/getallinhouse/${hotelid}`);
 
       if (res.status === 200) {
-        setReservations(res.data.eligibleReservations);
+        setReservations(res.data.inhousecheckin);
+        console.log(res.data.inhousecheckin)
        
     
       }
     } catch (err) {
       if (err) {
+        console.log(err)
         showMessages(
           err.response?.message || "Internal server error",
           "reject",
@@ -241,9 +243,9 @@ const CheckIn= () => {
    
         <div className={styles.reservationcreationdiv}>
           <div className={styles.headingandsubheading}>
-            <div className={styles.heading}>Check In</div>
+            <div className={styles.heading}>In House Management</div>
             <div className={styles.subheading}>
-             Process guest arrivals — verify identity, assign room, collect balance and hand over keys.
+            Manage in-house guests — monitor guest requests, coordinate room services, address concerns, maintain accurate guest records, and ensure a comfortable stay throughout the guest’s visit.
             </div>
           </div>
 
@@ -261,14 +263,14 @@ const CheckIn= () => {
           </div>
         </div>
         <div className={styles.reservationcardsholder}>
-          <CheckInCard
+          <InHouseCard
             value={reservations ? reservations.length : "0"}
             label="Total Reservations"
             backgroundcolor="rgb(243, 245, 255)"
           >
             <LuCalendarDays color="rgb(0, 20, 238)" />
-          </CheckInCard>
-          <CheckInCard
+          </InHouseCard>
+          <InHouseCard
             label="Today's Arrival"
             value={
               reservations
@@ -288,8 +290,8 @@ const CheckIn= () => {
             backgroundcolor="rgb(217, 255, 204)"
           >
             <TbPlaneArrival color="rgb(14, 121, 4)" />
-          </CheckInCard>
-          <CheckInCard
+          </InHouseCard>
+          <InHouseCard
             label="Pending"
             value={
               reservations
@@ -299,8 +301,8 @@ const CheckIn= () => {
             backgroundcolor="rgb(255, 240, 228)"
           >
             <IoMdTime color="rgb(241, 109, 0)" />
-          </CheckInCard>
-          <CheckInCard
+          </InHouseCard>
+          <InHouseCard
             backgroundcolor="rgb(240, 240, 240)"
             label="Cancelled"
             value={
@@ -311,17 +313,25 @@ const CheckIn= () => {
             }
           >
             <FaRegTimesCircle color="rgb(103, 103, 103)" />
-          </CheckInCard>
+          </InHouseCard>
         </div>
 
         <div className={styles.reservationstable} onClick={()=>{
           setActiveId(null)
         }}>
+
+          <div className={styles.filterrow}>
+            <div className={styles.filtersearch}>
+              <input type="text"  placeholder="Type To Search" name="searchfilter"/>
+              
+            </div>
+            
+          </div>
           <table>
             <thead>
               <tr>
-                <th>Reservation</th>
-                <th>Guest</th>
+                <th>Checkin</th>
+                <th>Primary Guest</th>
                 <th>Rooms</th>
                 <th>Stay</th>
                 <th>Pax</th>
@@ -342,16 +352,16 @@ const CheckIn= () => {
              {!loading && reservations && reservations.map((resv,ind)=>{
               return (
                 <TableRow
-                reservation={resv.confirmationCode}
-                guestname={`${resv.guest.firstName} ${resv.guest.lastName}`}
-                guestemail={resv.guest.email}
+                reservation={resv.checkinCode}
+                guestname={`${resv.primaryGuest.firstName} ${resv.primaryGuest.lastName}`}
+                guestemail={resv.primaryGuest.email}
                 rooms={resv.rooms}
-                checkindate={resv.checkIn}
-                checkoutdate={resv.checkOut}
-                pax={Number(resv.adults) + Number(resv.children)}
+                checkindate={resv.actualCheckInTime}
+                checkoutdate={resv.expectedCheckoutDate}
+                pax={1+ Number(resv.otherGuests.length)}
                 total={resv.payment.dueAmount}
                 status={resv.status}
-                id={resv._id}
+                id={resv.checkinCode}
                 key={resv._id}
                 fetch={fetchReservations}
                 
@@ -380,17 +390,10 @@ const CheckIn= () => {
         </div>
      
 
-      {reservationForm && (
-        <CreateReservationform
-          onexit={() => {
-            setReservationForm(false);
-          }}
-          fetch={fetchReservations}
-        />
-      )}
+     
        </>
    
   );
 };
 
-export default CheckIn;
+export default InHouse;

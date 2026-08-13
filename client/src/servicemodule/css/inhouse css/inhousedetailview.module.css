@@ -39,6 +39,7 @@
   font-weight: 600;
   margin-left: 20px;
   margin-top: 10px;
+  text-transform: capitalize;
 }
 .bookedByTag {
   font-size: 12px;
@@ -79,6 +80,11 @@
   background-color: rgb(255, 242, 231);
   border: 1px solid rgb(255, 140, 0);
   color: rgb(255, 132, 0);
+}
+.checked_in {
+  background-color: rgba(215, 255, 209, 0.71);
+  border: 1px solid rgb(0, 202, 0);
+  color: rgb(0, 197, 0);
 }
 
 .otherdetails {
@@ -126,11 +132,17 @@
 }
 .summarymainholder {
   display: grid;
-  grid-template-columns: 4fr 2fr;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 2fr);
+  width: 100%;
+  max-width: 100%;
   height: fit-content;
   gap: 20px;
-  width: 100%;
   margin-top: 20px;
+  box-sizing: border-box;
+}
+
+.summarymainholder > * {
+  min-width: 0;
 }
 .infocardholder {
   display: flex;
@@ -146,6 +158,7 @@
   width: 100%;
   min-height: fit-content;
   background-color: white;
+  overflow: hidden;
   gap: 20px;
   border-radius: 20px;
   padding: 25px 30px;
@@ -158,6 +171,7 @@
   height: fit-content;
   width: 100%;
   gap: 10px;
+  position: relative;
 }
 .infocardheading {
   font-size: 1.2rem;
@@ -245,29 +259,49 @@
   margin-bottom: 10px;
 }
 .paymenttitle {
+  display: -webkit-box;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 15px;
   font-weight: 300;
   color: rgb(0, 0, 0);
+  height:fit-content;
 }
 .paymenttitlelight {
+  display: -webkit-box;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 15px;
   font-weight: 300;
   color: rgb(93, 93, 93);
 }
 .paymentValuenormal {
+  
   font-size: 15px;
   font-weight: 300;
   color: rgb(0, 0, 0);
+  height: fit-content;
+  min-width: fit-content;
 }
 .paymentValuelight {
   font-size: 15px;
   font-weight: 300;
   color: rgb(88, 88, 88);
+  height: fit-content;
+  min-width: fit-content;
 }
 .paymentValueBold {
   font-size: 15px;
   font-weight: 600;
   color: rgb(0, 0, 0);
+  height: fit-content;
+  min-width: fit-content;
 }
 .frdivider {
   display: block;
@@ -419,6 +453,48 @@
   background-color: rgb(239, 239, 239);
   color: rgb(188, 188, 188);
   cursor: not-allowed;
+}
+.addinfocardbtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 30px;
+  padding: 5px;
+  position: absolute;
+  right: 0px;
+  border-radius: 50%;
+  background-color: rgb(245, 245, 245);
+  cursor: pointer;
+  
+
+}
+.seemoreicon{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 3px;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgb(83, 83, 83);
+  transition: 0.2s ease-in-out;
+  
+
+}
+.seemoreicon:hover{
+  color: black;
+}
+.addinfocardbtn:hover svg{
+  color: black;
+
+}
+.addinfocardbtn svg{
+  height: 100%;
+  width: 100%;
+  color: rgb(90, 89, 89);
+  transition: 0.2s ease-in-out;
 }
 
 .paymentrecords {
@@ -582,6 +658,172 @@
   font-weight: 500;
   color: rgb(104, 104, 104);
 }
+.guestdocumentholder {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+  overflow: hidden;
+  gap: 10px;
+  margin-top: 15px;
+}
+.guestDocumentHolder {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+  height: fit-content;
+  width: 100%;
+}
+.documentimageholder {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 15px;
+  padding: 15px;
+  background-color: rgb(248, 248, 248);
+  gap: 15px;
+}
+.imagemetadata {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+  gap: 5px;
+}
+.imagenameanddate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  height: fit-content;
+  width: 100%;
+}
+.imagename {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: fit-content;
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+.othermetadata {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+.imageulploaditiondate {
+  font-weight: 400;
+  color: black;
+}
+.documenttypeandsize {
+  color: rgb(81, 81, 81);
+}
+.documentimage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  position: relative;
+}
+
+.documentimage img {
+  height: 100%;
+  width: 100%;
+}
+.imageerror {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 15px;
+  background-color: rgb(231, 231, 231);
+}
+.imageerror svg {
+  height: 30px;
+  width: 30px;
+  color: red;
+}
+.imageholderbig {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 999999;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.68);
+  left: 0;
+}
+.imageholderbig img {
+  height: 100%;
+  width: 100%;
+}
+.exitbtn {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background-color: rgb(222, 222, 222);
+  z-index: 9999991;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 6px;
+  transition: 0.3s ease-in-out;
+}
+.exitbtn:hover {
+  background-color: rgb(188, 182, 182);
+}
+.exitbtn svg {
+  height: 100%;
+  width: 100%;
+}
+.expandingiconholder {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 15px;
+  background-color: rgba(57, 57, 57, 0.677);
+  z-index: 1;
+  cursor: pointer;
+  transform: scale(0);
+  transition: 0.2s ease-in-out;
+}
+.documentimage:hover .expandingiconholder {
+  transform: scale(1);
+}
+
+.expandingiconholder svg {
+  height: 30px;
+  width: 30px;
+  color: white;
+  transform: scale(0.6);
+  transition: 0.3s ease-in-out;
+}
+.expandingiconholder:hover svg {
+  transform: scale(1);
+}
 
 .loader {
   width: 30px;
@@ -593,6 +835,7 @@
     l20-1 0.8s infinite linear alternate,
     l20-2 1.6s infinite linear;
 }
+
 @keyframes l20-1 {
   0% {
     clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
@@ -688,488 +931,4 @@
   font-size: 0.875rem;
   font-weight: 600;
   color: rgb(122, 122, 122);
-}
-
-.guestinfo {
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  width: 100%;
-  padding-bottom: 40px;
-  border-bottom: 1px solid rgb(231, 231, 231);
-  margin-bottom: 15px;
-  position: relative;
-}
-
-.buttonsholder {
-  display: flex;
-  align-items: center;
-  height: fit-content;
-  width: fit-content;
-  gap: 5px;
-  position: absolute;
-  right: 10px;
-  top: 5px;
-}
-.deletebutton {
-  height: 25px;
-  width: 25px;
-  border-radius: 8px;
-  padding: 3px;
-  background-color: rgb(255, 237, 237);
-  display: flex;
-  cursor: pointer;
-  border: 1px solid rgb(255, 226, 226);
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s ease-in-out;
-}
-.deletebutton:hover {
-  background-color: rgb(255, 226, 226);
-}
-.deletebutton svg {
-  height: 100%;
-  width: 100%;
-  color: red;
-}
-.searchbtn {
-  height: 25px;
-  width: 25px;
-  border-radius: 8px;
-  padding: 3px;
-  background-color: rgb(237, 237, 255);
-  display: flex;
-  cursor: pointer;
-  border: 1px solid rgb(226, 226, 255);
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s ease-in-out;
-}
-.searchbtn:hover {
-  background-color: rgb(226, 227, 255);
-}
-.searchbtn svg {
-  height: 100%;
-  width: 100%;
-  color: rgb(8, 0, 255);
-}
-.guestinfo:last-child {
-  margin-bottom: 0px;
-  padding-bottom: 0px;
-  border-bottom: none;
-}
-.guesttypeheading {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-.requiredTag {
-  color: red;
-}
-
-.primaryGuestSelection {
-  display: flex;
-  gap: 8px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-bottom: 20px;
-  color: rgb(74, 74, 74);
-}
-.primaryGuestSelection pre{
-  width: calc(100% - 23px);
-  height: fit-content;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: normal;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: #333;
-  text-align: left;
-}
-.selectionbtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 15px;
-  width: 15px;
-  min-height: 15px;
-  min-width: 15px;
-  border-radius: 5px;
-  transition: 0.2s ease-in-out;
-  cursor: pointer;
-}
-.selectionbtnactive {
-  border: 1px solid rgb(13, 0, 255);
-  background-color: rgb(8, 0, 250);
-  color: white;
-}
-.selectionbtnactive svg {
-  height: 100%;
-  width: 100%;
-  color: white;
-}
-
-.selectionbtninactive {
-  border: 1px solid rgb(220, 220, 220);
-  background-color: rgb(238, 238, 238);
-}
-.guestInfoForm {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  height: fit-content;
-  width: 100%;
-  margin-bottom: 30px;
-}
-.formrow {
-  gap: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-}
-.guestDocuments {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: fit-content;
-  width: 100%;
-
-  min-height: 260px;
-  margin-top: 5px;
-  border-radius: 20px;
-  padding: 20px;
-}
-.dragfileserror {
-  display: flex;
-  align-items: center;
-  font-size: 0.75rem;
-  color: red;
-  text-transform: capitalize;
-}
-.dragging {
-  background-color: rgb(248, 248, 255);
-  border: 1px dashed blue;
-}
-.notdragging {
-  background-color: rgb(240, 240, 240);
-  border: 1px dashed rgb(182, 182, 182);
-}
-.dragfeatures {
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  width: fit-content;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-}
-.title {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: rgb(109, 109, 109);
-}
-.icondrag {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px;
-  width: 50px;
-}
-.icondrag svg {
-  height: 100%;
-  width: 100%;
-  color: blue;
-}
-.secondtitle {
-  font-size: 0.9rem;
-  color: blue;
-}
-
-.selectedFilesHolder {
-  display: grid;
-  height: fit-content;
-  width: 100%;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.selectedfile {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 150px;
-  width: 100%;
-  border-radius: 15px;
-  overflow: hidden;
-  border: 1px solid rgb(224, 224, 224);
-}
-.selectedfile img {
-  height: 100%;
-  width: 100%;
-}
-.removefile {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  height: 20px;
-  width: 20px;
-  background-color: rgb(237, 237, 237);
-  border-radius: 50%;
-  padding: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: 0.3s ease-in-out;
-}
-.removefile svg {
-  height: 100%;
-  width: 100%;
-  color: rgb(108, 108, 108);
-}
-.removefile:hover {
-  background-color: rgb(206, 206, 206);
-}
-
-.addGuestBtnholder {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  height: fit-content;
-  width: 100%;
-}
-
-.addGuestBtn {
-  display: flex;
-  align-items: center;
-  height: 40px;
-  width: fit-content;
-  background-color: blue;
-  padding: 5px 15px;
-  border-radius: 10px;
-  border: 1px solid blue;
-  color: white;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-.addGuestBtn:hover {
-  background-color: rgb(0, 0, 211);
-}
-
-.checkinbutton{
-    display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px;
-  width: 100%;
-  padding: 5px 15px;
-  border-radius: 10px;
-  color: white;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-
-}
-.checkinactivebutton{
-     background-color: blue;
-     border: 1px solid blue;
-     color: white;
-
-}
-.checkinactivebutton:hover{
-     background-color: rgb(0, 0, 187);
-
-}
-.checkininactivebutton{
-     background-color: rgb(239, 239, 239);
-     border: 1px solid rgb(221, 221, 221);
-     color: rgb(180, 180, 180);
-     cursor: not-allowed;
-
-}
-.guestFoundMessage {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  background: #eaf8ef;
-  color: #17763a;
-}
-
-
-.guestdocumentholder {
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  width: 100%;
-  overflow: hidden;
-  gap: 10px;
-  margin-top: 15px;
-}
-.guestDocumentHolder {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 10px;
-  height: fit-content;
-  width: 100%;
-}
-.documentimageholder {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  overflow: hidden;
-  border-radius: 15px;
-  padding: 15px;
-  background-color: rgb(248, 248, 248);
-  gap: 15px;
-}
-.imagemetadata {
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  width: 100%;
-  gap: 5px;
-}
-.imagenameanddate {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  height: fit-content;
-  width: 100%;
-}
-.imagename {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  line-clamp: 1;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: fit-content;
-  width: 100%;
-  font-size: 1.1rem;
-  font-weight: 500;
-  text-transform: capitalize;
-}
-.othermetadata {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.65rem;
-  font-weight: 500;
-}
-.imageulploaditiondate {
-  font-weight: 400;
-  color: black;
-}
-.documenttypeandsize {
-  color: rgb(81, 81, 81);
-}
-.documentimage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  width: 100%;
-  overflow: hidden;
-  border-radius: 10px;
-  position: relative;
-}
-
-.documentimage img {
-  height: 100%;
-  width: 100%;
-
-  filter: grayscale(1) brightness(1.4) contrast(2.4);
-}
-.imageerror {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-  padding: 15px;
-  background-color: rgb(231, 231, 231);
-}
-.imageerror svg {
-  height: 30px;
-  width: 30px;
-  color: red;
-}
-.imageholderbig {
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 999999;
-  top: 0;
-  background-color: rgba(0, 0, 0, 0.68);
-  left: 0;
-}
-.imageholderbig img {
-  height: 100%;
-  width: 100%;
-  filter: grayscale(1) brightness(1.4) contrast(2.4);
-}
-.exitbtn {
-  position: absolute;
-  top: 40px;
-  right: 40px;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  background-color: rgb(222, 222, 222);
-  z-index: 9999991;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 6px;
-  transition: 0.3s ease-in-out;
-}
-.exitbtn:hover {
-  background-color: rgb(188, 182, 182);
-}
-.exitbtn svg {
-  height: 100%;
-  width: 100%;
-}
-.expandingiconholder {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-  padding: 15px;
-  background-color: rgba(57, 57, 57, 0.677);
-  z-index: 1;
-  cursor: pointer;
-  transform: scale(0);
-  transition: 0.2s ease-in-out;
-}
-.documentimage:hover .expandingiconholder {
-  transform: scale(1);
-}
-
-.expandingiconholder svg {
-  height: 30px;
-  width: 30px;
-  color: white;
-  transform: scale(0.6);
-  transition: 0.3s ease-in-out;
-}
-.expandingiconholder:hover svg {
-  transform: scale(1);
 }

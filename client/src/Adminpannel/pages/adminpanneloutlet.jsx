@@ -2,7 +2,7 @@ import Leftnavbar, { NameInitials, NavbarLink } from "../../leftnavbar/leftnavba
 import Maincontainer from "../../maincontainer/maincontainer";
 import styles from "../css/adminpannel.module.css";
 import { MdSpaceDashboard } from "react-icons/md";
-import { GoMortarBoard } from "react-icons/go";
+import { GoMortarBoard, GoPerson } from "react-icons/go";
 import { Outlet } from "react-router";
 import { PiTreeViewBold } from "react-icons/pi";
 import FormContainer from "../../forms/components/FormContainer";
@@ -12,6 +12,7 @@ import SkeletonLoader from "../../loader/loaders";
 import Usernavigation from "../../landingpage/components/usernavigation";
 import { useUserInfo } from "../../userinfo/userinfo";
 import { LuHotel } from "react-icons/lu";
+
 const Adminpanneloutlet = () => {
   let {user}=useUserInfo()
   return (
@@ -24,15 +25,11 @@ const Adminpanneloutlet = () => {
           path="/admin"
         />
         <NavbarLink
-          text="Faculty"
-          icon={<GoMortarBoard />}
-          path="/admin/faculty"
+          text="Users"
+          icon={<GoPerson/>}
+          path="/admin/users"
         />
-        <NavbarLink
-          text="Department"
-          icon={<PiTreeViewBold />}
-          path="/admin/department"
-        />
+       
         <NavbarLink
           text="Hotels"
           icon={<LuHotel />}

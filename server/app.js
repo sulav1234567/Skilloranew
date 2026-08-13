@@ -18,6 +18,8 @@ import ReservationRouter from "./routes/reservation.routes.js"
 import TransactionRouter from "./routes/transaction.routes.js"
 import CheckinRouter from "./routes/checkin.routes.js";
 import ImageServingRouter from "./routes/ImageServing.routes.js";
+import InHouseRouter from "./routes/inhouse.routes.js";
+import PaymentRouter from "./routes/payment.routes.js";
 
 
 
@@ -48,8 +50,10 @@ app.use("/roomcategory",RoomCategoryRouter)
 app.use("/room",RooomRouter)
 app.use("/reservation",ReservationRouter)
 app.use("/transaction",TransactionRouter)
+app.use("/payment",PaymentRouter)
 app.use("/checkin",CheckinRouter)
 app.use("/stream",ImageServingRouter)
+app.use("/inhouse",InHouseRouter)
 
 
 export default app;

@@ -51,7 +51,7 @@ let checkinSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "inHouse","checkedOut"],
+      enum: ["pending", "inHouse","checkedOut"],
       required:true
     },
     actualCheckinDate:{
@@ -101,9 +101,9 @@ checkinSchema.pre("validate", function () {
       .toUpperCase()}`;
   }
 });
-checkinSchema.index({ hotel: 1, reservation: 1 }, { unique: true });
+checkinSchema.index({ hotel: 1, reservation: 1 });
 
-checkinSchema.index({ hotel: 1,checkinCode: 1}, { unique: true });
+checkinSchema.index({ hotel: 1,checkinCode: 1});
 
 let CheckIn = mongoose.model("CheckIn", checkinSchema);
 

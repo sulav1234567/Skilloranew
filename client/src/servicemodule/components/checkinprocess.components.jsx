@@ -1,4 +1,4 @@
-import { data, useParams } from "react-router";
+import { data, Form, useParams } from "react-router";
 import { useConfirmationMessageContext } from "../../forms/components/confirmationmessage";
 import { useGlobalMessageContext } from "../../Globalmessage/components/globalmessage";
 import styles from "../css/checkindetailview.module.css";
@@ -236,45 +236,154 @@ export const TransactionForm = ({
   );
 };
 
-const GuestFilePreview = ({ file, onRemove }) => {
+const GuestFilePreview = ({
+  file,
+  onRemove = () => {},
+  direct = false,
+  removable = true,
+}) => {
   const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
+    if (!file) {
+      setPreviewUrl("");
+      return;
+    }
+
+    if (direct) {
+      setPreviewUrl(file);
+      return;
+    }
+
+    if (!(file instanceof Blob)) {
+      console.error("Preview requires a File or Blob:", file);
+      setPreviewUrl("");
+      return;
+    }
+
     const objectUrl = URL.createObjectURL(file);
     setPreviewUrl(objectUrl);
 
     return () => {
       URL.revokeObjectURL(objectUrl);
     };
-  }, [file]);
+  }, [file, direct]);
 
   return (
     <div className={styles.selectedfile}>
-      <div
-        className={styles.removefile}
-        role="button"
-        tabIndex={0}
-        onClick={(e) => {
-          e.stopPropagation();
-          onRemove();
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
+      {removable && (
+        <button
+          type="button"
+          className={styles.removefile}
+          onClick={(e) => {
+            e.stopPropagation();
             onRemove();
-          }
-        }}
-      >
-        <RxCross2 />
-      </div>
+          }}
+        >
+          <RxCross2 />
+        </button>
+      )}
 
       <div className={styles.imageholder}>
-        {previewUrl && <img src={previewUrl} alt={file.name} />}
+        {previewUrl && (
+          <img
+            src={previewUrl}
+            alt={direct ? "Guest document" : file?.name || "Selected document"}
+            onLoad={() => {
+              console.log("Image loaded:", previewUrl);
+            }}
+            onError={(e) => {
+              console.error("Image failed to load:", previewUrl);
+              e.currentTarget.style.display = "none";
+            }}
+          />
+        )}
       </div>
     </div>
   );
 };
 
+const GuestIdentificationInputs = ({
+  guest = null,
+  setFormData = () => {},
+  formData = null,
+  formError = null,
+}) => {
+  let idTypeEnum = ["citizenship", "passport", "license", "national_id"];
+  let guestTypeEnum = ["normal", "vip", "corporate", "blacklisted"];
+
+  return (
+    <div className={styles.guestInfoForm}>
+      <div className={styles.formrow}>
+        <Input
+          type="select"
+          Name="guesttype"
+          label="Guest Type:"
+          required
+          readonly={Boolean(guest?.guestType)}
+          setData={setFormData}
+          value={guest?.guestType ?? formData?.guesttype?.value ?? ""}
+          errors={formError}
+        >
+          <option value="">---Select One---</option>
+          {guestTypeEnum.map((type, ind) => {
+            return (
+              <option value={type} key={ind}>
+                {type.toUpperCase()}
+              </option>
+            );
+          })}
+        </Input>
+
+        <Input
+          Name="idtype"
+          type="select"
+          label="ID Type:"
+          required
+          readonly={Boolean(guest?.idType)}
+          setData={setFormData}
+          value={guest?.idType ?? formData?.idtype?.value ?? ""}
+          errors={formError}
+        >
+          <option value="">---Select One---</option>
+          {idTypeEnum.map((type, ind) => {
+            return (
+              <option value={type} key={ind}>
+                {type.toUpperCase()}
+              </option>
+            );
+          })}
+        </Input>
+      </div>
+
+      <div className={styles.formrow}>
+        <Input
+          Name="idnumber"
+          label="ID Number:"
+          required
+          placeholder="Enter ID Number"
+          readonly={Boolean(guest?.idNumber)}
+          setData={setFormData}
+          value={guest?.idNumber ?? formData?.idnumber?.value ?? ""}
+          errors={formError}
+        />
+        <Input
+          Name="nationality"
+          type="select"
+          label="Nationality:"
+          required
+          readonly={Boolean(guest?.nationality)}
+          setData={setFormData}
+          value={guest?.nationality ?? formData?.nationality?.value ?? ""}
+          errors={formError}
+        >
+          <option value="">---select one---</option>
+          <option value="Nepali">Nepali</option>
+        </Input>
+      </div>
+    </div>
+  );
+};
 export const GuestCard = ({
   guest = null,
   isprimary = false,
@@ -285,11 +394,30 @@ export const GuestCard = ({
   index = null,
 }) => {
   const [selectBtn, setSelectBtn] = useState(false);
-  const [formData, setFormData] = useState(null);
-  const[clearform,setClearForm]=useState(false)
+  const [formData, setFormData] = useState({
+    guestname: {
+      value: null,
+      isRequired: true,
+    },
+    guestemail: {
+      value: null,
+      isRequired: true,
+    },
+    guestphone: {
+      value: null,
+      isRequired: true,
+    },
+    guestaddress: {
+      value: null,
+      isRequired: true,
+    },
+  });
+  const [clearform, setClearForm] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [searchedGuest, setSearchedGuest] = useState(null);
+  const [searchStatus, setSearchStatus] = useState(false);
 
   const [files, setFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -302,6 +430,84 @@ export const GuestCard = ({
   const { hotelid } = useParams();
   const { showMessages } = useGlobalMessageContext();
   const accept = "image/*";
+
+  const existingDocuments = Array.isArray(searchedGuest?.documents)
+    ? searchedGuest.documents
+    : [];
+
+  const existingDocumentCount = existingDocuments.length;
+
+  const remainingDocumentSlots = Math.max(
+    maxfile - existingDocumentCount - files.length,
+    0,
+  );
+  let searchGuest = async () => {
+    console.log("evoked");
+    if (!hotelid) {
+      showMessages("Hotel Id Not Found", "reject");
+      return;
+    }
+    if (searchLoading) {
+      return;
+    }
+
+    try {
+      setSearchLoading(true);
+      let { guestname, guestphone, guestemail } = formData;
+      let guestfirstname = guestname.value?.trim().split(" ")[0] || null;
+      let guestlastname = guestname.value?.trim().split(" ")[1] || null;
+
+      let error = {};
+
+      if (!guestfirstname || !guestlastname) {
+        error = {
+          ...error,
+          guestname: "Invalid Name Format",
+        };
+      }
+
+      if (!guestphone.value || !phoneRegex.test(guestphone.value)) {
+        error = {
+          ...error,
+          guestphone: "Invalid Phone Number",
+        };
+      }
+
+      if (!guestemail.value || !emailRegex.test(guestemail.value)) {
+        error = {
+          ...error,
+          guestemail: "Invalid Guest Email",
+        };
+      }
+      setFormError(error);
+
+      if (Object.keys(error).length === 0) {
+        let Formdata = new FormData();
+        Formdata.append("firstName", guestfirstname);
+        Formdata.append("lastName", guestlastname);
+        Formdata.append("phonenumber", guestphone.value);
+        Formdata.append("email", guestemail.value);
+        let res = await api.post(`/guest/search/${hotelid}`, Formdata);
+        if (res.status === 200) {
+          setSearchedGuest(res.data?.guest);
+          console.log(res.data.guest);
+          setSearchStatus(true);
+          showMessages("Guest Found", "success");
+        }
+      }
+    } catch (err) {
+      if (err) {
+        if (err && err.response) {
+          setSearchStatus(true);
+          setSearchedGuest(null)
+          showMessages(err.response?.data.message, "reject");
+        }
+      }
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
   const validateFiles = (selectedFiles) => {
     const validFiles = [];
     const validationMessages = [];
@@ -312,7 +518,7 @@ export const GuestCard = ({
         return;
       }
 
-      if (file.size >maxfilesize) {
+      if (file.size > maxfilesize) {
         const maximumSizeInMb = Math.round(maxfilesize / (1024 * 1024));
 
         validationMessages.push(
@@ -329,24 +535,18 @@ export const GuestCard = ({
       validationMessage: validationMessages[0] || "",
     };
   };
-
   const addFiles = (selectedFiles) => {
-    const selectedFileArray = Array.from(selectedFiles || []);
-
-    if (selectedFileArray.length === 0) {
-      return;
-    }
-
     setFiles((previousFiles) => {
-      const remainingFileSlots = maxfile - previousFiles.length;
+      const remainingFileSlots =
+        maxfile - existingDocumentCount - previousFiles.length;
 
       if (remainingFileSlots <= 0) {
-        setFileError(`Only ${maxfile} files are allowed`);
+        setFileError(`Only ${maxfile} total files are allowed`);
         return previousFiles;
       }
 
       const { validFiles, validationMessage } =
-        validateFiles(selectedFileArray);
+        validateFiles(Array.from(selectedFiles));
 
       const uniqueFiles = validFiles.filter((newFile) => {
         return !previousFiles.some((existingFile) => {
@@ -360,7 +560,7 @@ export const GuestCard = ({
 
       const filesThatCanBeAdded = uniqueFiles.slice(0, remainingFileSlots);
 
-      if (selectedFileArray.length > remainingFileSlots) {
+      if (validFiles.length > remainingFileSlots) {
         setFileError(
           `Only ${remainingFileSlots} more ${
             remainingFileSlots === 1 ? "file is" : "files are"
@@ -377,21 +577,18 @@ export const GuestCard = ({
       return [...previousFiles, ...filesThatCanBeAdded];
     });
   };
-
   const HandleDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     setIsDragging(true);
   };
-
   const HandleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     setIsDragging(true);
   };
-
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -400,7 +597,6 @@ export const GuestCard = ({
       setIsDragging(false);
     }
   };
-
   const HandleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -415,7 +611,6 @@ export const GuestCard = ({
 
     addFiles(droppedFiles);
   };
-
   const HandleFileSelect = (e) => {
     const selectedFiles = e.target.files;
 
@@ -426,7 +621,6 @@ export const GuestCard = ({
     // Allows selecting the same file again after it has been removed.
     e.target.value = "";
   };
-
   const RemoveFile = (fileIndex) => {
     setFiles((previousFiles) => {
       return previousFiles.filter((_, indexValue) => {
@@ -437,111 +631,110 @@ export const GuestCard = ({
     setFileError("");
   };
 
-
-   useEffect(()=>{
-
-    if(selectBtn && isprimary && guest){
-      setFormData((prev)=>{
-       return {
+  useEffect(() => {
+    if (selectBtn && isprimary && guest) {
+      setFormData((prev) => {
+        return {
           ...prev,
-        guestname:{
-          ...prev.guestname,
-          value:`${guest.firstName} ${guest.lastName}`
-        },
-        guestphone:{
-          ...prev.guestphone,
-          value:guest.phone
-        },
-        guestemail:{
-          ...prev.guestemail,
-          value:guest.email
-        },
-        guestaddress:{
-          ...prev.guestaddress,
-          value:guest.address
-        }
-        }
-
-      })
-      
-
+          guestname: {
+            ...prev.guestname,
+            value: `${guest.firstName} ${guest.lastName}`,
+          },
+          guestphone: {
+            ...prev.guestphone,
+            value: guest.phone,
+          },
+          guestemail: {
+            ...prev.guestemail,
+            value: guest.email,
+          },
+          guestaddress: {
+            ...prev.guestaddress,
+            value: guest.address,
+          },
+        };
+      });
+    } else {
+      setFormData((prev) => {
+        return {
+          guestname: {
+            ...prev.guestname,
+            value: null,
+          },
+          guestphone: {
+            ...prev.guestphone,
+            value: null,
+          },
+          guestemail: {
+            ...prev.guestemail,
+            value: null,
+          },
+          guestaddress: {
+            ...prev.guestaddress,
+            value: null,
+          },
+        };
+      });
     }
-    else{
+  }, [selectBtn]);
 
-      setFormData((prev)=>{
-       return {
-          ...prev,
-        guestname:{
-          ...prev.guestname,
-          value:null
-        },
-        guestphone:{
-          ...prev.guestphone,
-          value:null
-        },
-        guestemail:{
-          ...prev.guestemail,
-          value:null
-        },
-        guestaddress:{
-          ...prev.guestaddress,
-          value:null
-        }
-        }
+  let deleteCard = (Okey) => {
+    setGuestData((prev) => {
+      return Object.fromEntries(
+        Object.entries(prev).filter(([key, value]) => {
+          return Okey && key != Okey;
+        }),
+      );
+    });
+  };
 
-      })
-      
-   
-      
-      
-
-    }
-
-  },[selectBtn]);
-
-  let deleteCard=(Okey)=>{
-    setGuestData((prev)=>{
-      
-      return Object.fromEntries(Object.entries(prev).filter(([key,value])=>{
-        return Okey && key != Okey
-      }))
-
-     
-    })
-
-  }
-
-
-  useEffect(()=>{
-    setGuestData((prev)=>{
-      return{
+  useEffect(() => {
+    setGuestData((prev) => {
+      return {
         ...prev,
-        [index]:{
-        files:files,
-        isprimary:isprimary,
-        guest:guest,
-        inputdata:formData,
-        selectBtn,
-        maxfilesize,
-        maxfile,
-        accept
+        [index]: {
+          files: files,
+          isprimary: isprimary,
+          guest: searchedGuest,
+          inputdata: formData,
+          selectBtn,
+          maxfilesize,
+          maxfile,
+          accept,
+          searchStatus,
+          requiredfiles: Number(maxfile) - Number(searchedGuest?.documents?.length || 0),
+          setfileError:setFileError,
+          setinputError:setFormError
+        },
+      };
+    });
+  }, [selectBtn, formData, files, searchedGuest, searchStatus]);
 
-        }
-
-
-
-      }
-      
-    })
-  },[selectBtn,formData,files])
+  useEffect(() => {
+    setSearchedGuest(null);
+    setSearchStatus(false);
+    setFiles([]);
+  }, [
+    selectBtn,
+    formData?.guestname?.value,
+    formData?.guestphone?.value,
+    formData?.guestemail?.value,
+  ]);
 
   return (
     <div className={styles.guestinfo}>
       <div className={styles.buttonsholder}>
         <div
-          className={`${styles.searchbtn} ${loading ? styles.loadingbtn : ""}`}
+          className={`${styles.searchbtn} ${searchLoading ? styles.loadingbtn : ""}`}
+          onClick={() => {
+            searchGuest();
+          }}
         >
-          {loading ? <div className={styles.loader}></div> : <IoSearchSharp />}
+          {searchLoading ? (
+            <div className={styles.loader}></div>
+          ) : (
+            <IoSearchSharp />
+          )}
         </div>
 
         {!isprimary && (
@@ -596,9 +789,7 @@ export const GuestCard = ({
             placeholder="Enter Guest Name"
             readonly={selectBtn}
             setData={setFormData}
-            value={
-              formData?.guestname?.value || ""
-            }
+            value={formData?.guestname?.value || ""}
             errors={formError}
             changes={clearform}
           />
@@ -609,9 +800,7 @@ export const GuestCard = ({
             required
             placeholder="Enter Guest Phone"
             readonly={selectBtn}
-            value={
-              formData?.guestphone?.value || ""
-            }
+            value={formData?.guestphone?.value || ""}
             setData={setFormData}
             errors={formError}
             changes={clearform}
@@ -623,9 +812,7 @@ export const GuestCard = ({
             required
             placeholder="Enter Guest Email"
             readonly={selectBtn}
-            value={
-               formData?.guestemail?.value || ""
-            }
+            value={formData?.guestemail?.value || ""}
             setData={setFormData}
             errors={formError}
             changes={clearform}
@@ -639,9 +826,7 @@ export const GuestCard = ({
             required
             placeholder="Enter Guest Address"
             readonly={selectBtn}
-            value={
-               formData?.guestaddress?.value || ""
-            }
+            value={formData?.guestaddress?.value || ""}
             setData={setFormData}
             errors={formError}
             changes={clearform}
@@ -649,64 +834,92 @@ export const GuestCard = ({
         </div>
       </div>
 
-      {searchedGuest && !selectBtn && (
+      {searchedGuest && (
         <div className={styles.guestFoundMessage}>Existing guest selected</div>
       )}
 
-      <div className={styles.selectedFilesHolder}>
-        {files.map((file, fileIndex) => (
-          <GuestFilePreview
-            key={`${file.name}-${file.size}-${file.lastModified}`}
-            file={file}
-            onRemove={() => RemoveFile(fileIndex)}
-          />
-        ))}
-      </div>
+      {searchStatus && (
+        <GuestIdentificationInputs
+          guest={searchedGuest}
+          setFormData={setFormData}
+          formData={formData}
+          formError={formError}
+        />
+      )}
 
-      {files.length < maxfile && (
+      {searchStatus && (
         <>
-          {fileError && (
-            <div className={styles.dragfileserror}>{fileError}</div>
-          )}
+          <div className={styles.selectedFilesHolder}>
+            {/* Newly selected local files */}
+            {files.map((file, fileIndex) => (
+              <GuestFilePreview
+                key={`${file.name}-${file.size}-${file.lastModified}`}
+                file={file}
+                onRemove={() => RemoveFile(fileIndex)}
+              />
+            ))}
 
-          <div
-            className={`${styles.guestDocuments} ${
-              isDragging ? styles.dragging : styles.notdragging
-            }`}
-            onClick={() => inputRef.current?.click()}
-            onDragEnter={HandleDragEnter}
-            onDragOver={HandleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={HandleDrop}
-          >
-            <div className={styles.dragfeatures}>
-              {!isDragging && (
-                <div className={styles.title}>Upload guest documents</div>
+            {/* Existing server documents */}
+            {existingDocuments.map((document, fileIndex) => {
+              const documentUrl =
+                `${import.meta.env.VITE_BASE_URL}` +
+                `/stream/hotel/${document.hotel}/media/${document._id}`;
+
+              return (
+                <GuestFilePreview
+                  key={document._id || fileIndex}
+                  file={documentUrl}
+                  direct
+                  removable={false}
+                />
+              );
+            })}
+          </div>
+
+          {remainingDocumentSlots > 0 && (
+            <>
+              {fileError && (
+                <div className={styles.dragfileserror}>{fileError}</div>
               )}
 
-              <div className={styles.icondrag}>
-                {isDragging ? <IoIosAdd /> : <IoDocumentsOutline />}
-              </div>
+              <div
+                className={`${styles.guestDocuments} ${
+                  isDragging ? styles.dragging : styles.notdragging
+                }`}
+                onClick={() => inputRef.current?.click()}
+                onDragEnter={HandleDragEnter}
+                onDragOver={HandleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={HandleDrop}
+              >
+                <div className={styles.dragfeatures}>
+                  {!isDragging && (
+                    <div className={styles.title}>Upload guest documents</div>
+                  )}
 
-              <div className={styles.secondtitle}>
-                <input
-                  type="file"
-                  ref={inputRef}
-                  multiple
-                  accept={accept}
-                  hidden
-                  onChange={HandleFileSelect}
-                  capture="environment"
-                />
+                  <div className={styles.icondrag}>
+                    {isDragging ? <IoIosAdd /> : <IoDocumentsOutline />}
+                  </div>
 
-                {isDragging
-                  ? "Drop the files here"
-                  : `Click to upload or drag and drop — ${
-                      maxfile - files.length
-                    } remaining`}
+                  <div className={styles.secondtitle}>
+                    <input
+                      type="file"
+                      ref={inputRef}
+                      multiple
+                      accept={accept}
+                      hidden
+                      onChange={HandleFileSelect}
+                      capture="environment"
+                    />
+
+                    {isDragging
+                      ? "Drop the files here"
+                      : `Click to upload or drag and drop — ${remainingDocumentSlots} remaining`}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </>
       )}
     </div>

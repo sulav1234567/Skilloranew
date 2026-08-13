@@ -9,6 +9,7 @@ import Folio from "../../models/folio.js";
 import { deletefile, uploadToS3 } from "../../config/multer.config.js";
 import PaymentModel from "../../models/payment.js";
 import fs from "fs/promises";
+import { emailRegex, phoneRegex } from "../../utlits/rejex.utlits.js";
 
 export const GetAllReservationEligibleForCheckin = async (req, res) => {
   let { hotelid } = req.params;
@@ -195,6 +196,319 @@ export const GetAllReservationEligibleForCheckin = async (req, res) => {
     }
   }
 };
+export const  GetIndividualReservation = async (req, res) => {
+  let { hotelid, reservationid } = req.query;
+
+  if (!hotelid || !reservationid) {
+    return res.status(400).json({
+      message: "hotel id or reservation id not found",
+    });
+  }
+
+  if (
+    !mongoose.Types.ObjectId.isValid(hotelid) ||
+    !mongoose.Types.ObjectId.isValid(reservationid)
+  ) {
+    return res.status(400).json({
+      message: "Invalid resv id or hotel id",
+    });
+  }
+
+  try {
+    let findHotel = await Hotel.findById(hotelid);
+
+    if (!findHotel) {
+      return res.status(400).json({
+        message: "Hotel not found",
+      });
+    }
+    let reservationId = new mongoose.Types.ObjectId(reservationid);
+
+    let reservation = await Reservation.aggregate([
+      {
+        $match: {
+          $expr: {
+            $and: [
+              {
+                $eq: ["$_id", reservationId],
+              },
+              {
+                $eq: ["$hotel", findHotel._id],
+              },
+              {
+                $eq:["$status","confirmed"]
+              }
+            ],
+          },
+        },
+      },
+      {
+        $set: {
+          guestId: "$guest",
+        },
+      },
+      {
+        $lookup: {
+          from: "guests",
+          let: {
+            guestid: "$guestId",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$_id", "$$guestid"],
+                },
+              },
+            },
+
+            {
+              $lookup: {
+                from: "files",
+                let: {
+                  guestID: "$$guestid",
+                  hotelID: "$hotel",
+                },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $and: [
+                          { $eq: ["$linkedDocumentid", "$$guestID"] },
+                          { $eq: ["$linkedModel", "Guest"] },
+                          { $eq: ["$hotel", "$$hotelID"] },
+                        ],
+                      },
+                    },
+                  },
+                  {
+                    $project: {
+                      key: 0,
+                      Url: 0,
+                      linkedDocumentid: 0,
+                      linkedModel: 0,
+                    },
+                  },
+                ],
+                as: "documents",
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                firstName: 1,
+                lastName: 1,
+                email: 1,
+                phone: 1,
+                address: 1,
+                documents: 1,
+              },
+            },
+          ],
+          as: "guest",
+        },
+      },
+      {
+        $unwind: {
+          path: "$guest",
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $lookup: {
+          from: "rooms",
+          let: {
+            roomIds: {
+              $ifNull: ["$rooms", []],
+            },
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$_id", "$$roomIds"],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "roomcategories",
+                let: {
+                  categoryId: "$category",
+                },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ["$_id", "$$categoryId"],
+                      },
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 0,
+                      name: 1,
+                      baseRate: 1,
+                    },
+                  },
+                ],
+                as: "category",
+              },
+            },
+            {
+              $unwind: {
+                path: "$category",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $set: {
+                effectivePrice: {
+                  $ifNull: ["$priceOverride", "$category.baseRate"],
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                roomNumber: 1,
+                category: 1,
+                pax: 1,
+                floor: 1,
+                effectivePrice: 1,
+              },
+            },
+          ],
+          as: "rooms",
+        },
+      },
+      {
+        $lookup: {
+          from: "folios",
+          let: {
+            reservationId: "$_id",
+            hotelId: "$hotel",
+            guestId: "$guestId",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$guest", "$$guestId"],
+                    },
+                    {
+                      $eq: ["$hotel", "$$hotelId"],
+                    },
+                    {
+                      $eq: ["$linkedModelId", "$$reservationId"],
+                    },
+                    {
+                      $eq: ["$linkedModel", "Reservation"],
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "transactions",
+                let: {
+                  folioId: "$_id",
+                },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ["$folioid", "$$folioId"],
+                      },
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 0,
+                      amount: 1,
+                      modeOfPayment: 1,
+                      paymentModeId: 1,
+                      transactionId: 1,
+                      status: 1,
+                      remarks: 1,
+                      createdAt: 1,
+                    },
+                  },
+                ],
+                as: "transactions",
+              },
+            },
+            {
+              $project: {
+                totalAmount: 1,
+                status: 1,
+                amountPaid: 1,
+                transactions: 1,
+              },
+            },
+          ],
+          as: "openFolio",
+        },
+      },
+      {
+        $unwind: {
+          path: "$openFolio",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "payments",
+          let: {
+            folioId: "$openFolio._id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$folio", "$$folioId"],
+                },
+              },
+            },
+            {
+              $project: {
+                paymentName: 1,
+                amountToPay: 1,
+                paidAmount: 1,
+                paymentFor: 1,
+                paymentType: 1,
+                payableModel: 1,
+              },
+            },
+          ],
+          as: "payments",
+        },
+      },
+      {
+        $unset: "guestId",
+      },
+    ]);
+
+    if (reservation.length === 0) {
+      return res.status(404).json({
+        message: "Reservation not found",
+      });
+    }
+
+    return res.status(200).json({
+      reservation: reservation[0],
+    });
+  } catch (err) {
+    if (err) {
+      return res.status(500).json({
+        message: err.message || err.data.message || "Internal Server Error",
+      });
+    }
+  }
+};
 
 class AppError extends Error {
   constructor(message, statusCode = 500) {
@@ -230,7 +544,20 @@ export const CreateCheckin = async (req, res) => {
   const uploadedFileInfo = [];
 
   try {
-    const { guestid, isprimary, hasconsented, consenttext } = req.body;
+    const {
+      guestid,
+      isprimary,
+      hasconsented,
+      consenttext,
+      guestname,
+      guestemail,
+      guestphone,
+      guestaddress,
+      guesttype,
+      guestidtype,
+      guestidnumber,
+      guestnationality,
+    } = req.body;
 
     const { hotelid, reservationid } = req.params;
 
@@ -259,16 +586,89 @@ export const CreateCheckin = async (req, res) => {
       throw new AppError("Invalid Reservation ID", 400);
     }
 
-    if (!guestid || !mongoose.Types.ObjectId.isValid(guestid)) {
-      throw new AppError("Invalid Guest ID", 400);
+    if (
+      !guestid &&
+      (!guestname ||
+        !guestemail ||
+        !guestphone ||
+        !guestaddress ||
+        !guestidnumber ||
+        !guestidtype ||
+        !guesttype ||
+        !guestnationality)
+    ) {
+      throw new AppError("There is not enough Guest Information", 400);
     }
 
     session.startTransaction();
+
+    let guest = null;
 
     const hotel = await Hotel.findById(hotelid).session(session);
 
     if (!hotel) {
       throw new AppError("Hotel not found", 404);
+    }
+
+    if (!guestid) {
+      const cleanedGuestEmail = guestemail.trim().toLowerCase() || null;
+      const isValidguestemail = cleanedGuestEmail
+        ? emailRegex.test(cleanedGuestEmail)
+        : null;
+      const isValidguestphone = guestphone ? phoneRegex.test(guestphone) : null;
+      let splittedGuestName = guestname.trim().split(" ");
+
+      let cleanedguestidtype = guestidtype.trim();
+      let cleanedguesttype = guesttype.trim();
+
+      const guestIdTypeEnum = Guest.schema.path("idType").enumValues;
+      const guestTypeEnum = Guest.schema.path("guestType").enumValues;
+
+      if (!isValidguestemail || !isValidguestphone) {
+        throw new AppError("Invalid guest email or phone", 400);
+      }
+
+      if (
+        !guestIdTypeEnum.includes(cleanedguestidtype) ||
+        !guestTypeEnum.includes(cleanedguesttype)
+      ) {
+        throw new AppError("Invalid guest idtype or guesttype", 400);
+      }
+
+      let findExistingGuest = await Guest.find({
+        hotel: hotel._id,
+        $or: [
+          {
+            email: cleanedGuestEmail,
+          },
+          {
+            phone: guestphone,
+          },
+        ],
+      });
+
+      if (findExistingGuest.length != 0) {
+        throw new AppError("This Guest Already Exists so search it first", 400);
+      }
+
+      guest = new Guest({
+        firstName: splittedGuestName[0],
+        lastName: splittedGuestName[1],
+        phone: guestphone,
+        email: cleanedGuestEmail,
+        hotel: hotel._id,
+        idType: cleanedguestidtype,
+        guestType: cleanedguesttype,
+        address: guestaddress,
+
+        nationality: guestnationality,
+
+        idNumber: guestidnumber,
+
+        createdBy: req.user._id,
+      });
+
+      await guest.save({ session });
     }
 
     const reservation = await Reservation.findOne({
@@ -279,11 +679,12 @@ export const CreateCheckin = async (req, res) => {
     if (!reservation) {
       throw new AppError("Reservation not found in this hotel", 400);
     }
-
-    const guest = await Guest.findOne({
-      _id: guestid,
-      hotel: hotel._id,
-    }).session(session);
+    if (guestid) {
+      guest = await Guest.findOne({
+        _id: guestid,
+        hotel: hotel._id,
+      }).session(session);
+    }
 
     if (!guest) {
       throw new AppError("Guest not found in this hotel", 400);
@@ -301,6 +702,9 @@ export const CreateCheckin = async (req, res) => {
       status: {
         $ne: "checked_out",
       },
+
+      actualCheckInTime: { $lt: reservation.checkOut },
+      expectedCheckoutDate: { $gt: reservation.checkIn },
     }).session(session);
 
     if (conflictingCheckIn) {
@@ -375,7 +779,6 @@ export const CreateCheckin = async (req, res) => {
      * to be transferred to the check-in folio.
      */
     const guestFolios = await Folio.find({
-      guest: guest._id,
       hotel: hotel._id,
       status: "open",
       linkedModelId: reservation._id,
@@ -498,6 +901,7 @@ export const CreateCheckin = async (req, res) => {
      * Create transfer payment only when there
      * is an amount to transfer.
      */
+    console.log(amountToTransfer);
     if (amountToTransfer > 0) {
       const transferredFolioIds = guestFolios.map((folio) => folio._id);
 
@@ -540,6 +944,7 @@ export const CreateCheckin = async (req, res) => {
       checkIn: newCheckIn,
     });
   } catch (err) {
+    console.log(err);
     if (session.inTransaction()) {
       await session.abortTransaction();
     }

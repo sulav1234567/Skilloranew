@@ -61,12 +61,12 @@ let PaymentSchema = new mongoose.Schema({
     // },
     paymentType:{
         type:String,
-        enum:["receive","pay"],
+        enum:["receive","pay","return"],
         default:"receive"
     }
 },{timestamps:true})
 
-PaymentSchema.index({folio:1,paymentItem:1,paymentType:1,createdBy:1},{unique:true});
+PaymentSchema.index({_id:1,folio:1,paymentItem:1,paymentType:1,createdBy:1},{unique:true});
 
 let PaymentModel = mongoose.model("Payment",PaymentSchema)
 

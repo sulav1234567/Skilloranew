@@ -36,7 +36,7 @@ let CreateRoom = async (req, res) => {
       role: "owner",
     });
 
-    if (!isOwner || !user.role === "admin") {
+    if (!isOwner && user.role != "admin") {
       return res.status(400).json({
         message: "unauthorized to perform this action",
       });
@@ -381,7 +381,7 @@ let GetAllRooms = async (req, res) => {
       role: "owner",
     });
 
-    if (!isOwner || !user.role === "admin") {
+    if (!isOwner && user.role != "admin") {
       return res.status(400).json({
         message: "unauthorized to perform this action",
       });

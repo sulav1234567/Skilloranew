@@ -98,10 +98,17 @@ let CreateReservation = async (req, res) => {
   let nooofNights =
     (new Date(checkoutdate) - new Date(checkindate)) / (1000 * 60 * 60 * 24);
   let totalPax = Number(adults) + Number(children);
-  let isBeforeDate =
-    new Date() - new Date(checkoutdate) <= 0 &&
-    new Date() - new Date(checkindate) < 0;
-  if (!isBeforeDate) {
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const checkIn = new Date(`${checkindate}T00:00:00`);
+  const checkOut = new Date(`${checkoutdate}T00:00:00`);
+
+  const isValidCheckInDate = checkIn >= today;
+  const isValidCheckOutDate = checkOut > checkIn;
+
+  if (!isValidCheckInDate && !isValidCheckOutDate) {
     return res.status(400).json({
       message: "Invalid checkin or checkout date",
     });

@@ -83,7 +83,7 @@ export let Input = ({
   );
 };
 
-const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
+const CreateReservationform = ({ onexit = () => {}, fetch = () => {} }) => {
   let [formLevel, setFormLevel] = useState(1);
   let [loading, setLoading] = useState(false);
   let [errors, setErrors] = useState({});
@@ -102,13 +102,13 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
     L6: "Create Reservation",
   };
 
-  let setToDefault = ()=>{
-    setSelectedRooms([])
+  let setToDefault = () => {
+    setSelectedRooms([]);
     setFormData({});
     setGuest(null);
     setFormLevel(1);
-    setAvailableRooms(null)
-  }
+    setAvailableRooms(null);
+  };
   let HandlePageChange = (type) => {
     if ((!type && formLevel < 1) || loading) return;
     if (type === "back" && formLevel > 1) {
@@ -403,14 +403,13 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
       Data.append("children", children.value);
 
       try {
-        
         let res = await api.post(
           `/room/getavailableroomsforreservation/${hotelid}`,
           Data,
         );
 
         if (res?.status === 200) {
-          setSelectedRooms([])
+          setSelectedRooms([]);
           setAvailableRooms(res.data.availableRooms);
           console.log(res.data.availableRooms);
           HandlePageChange("next");
@@ -450,13 +449,11 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
       specialrequest,
     } = formData;
 
-
-    if(!guest){
-      setFormLevel(1)
-      showMessages("Guest not found","reject");
-      setLoading(false)
+    if (!guest) {
+      setFormLevel(1);
+      showMessages("Guest not found", "reject");
+      setLoading(false);
       return;
-
     }
 
     if (!checkindate || !isValidDate(checkindate.value)) {
@@ -479,7 +476,6 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
         estimatedcheckintime: "Please Enter the valid time",
       };
     }
-  
 
     let totalpax = Number(adults.value || 0) + Number(children.value || 0);
 
@@ -500,22 +496,30 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
       };
     }
 
-    let isvalidcheckindate = Date.now() - new Date(checkindate.value) < 0;
-    let isvalidcheckoutdate = Date.now() - new Date(checkoutdate.value) < 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    if (!isvalidcheckindate) {
+    const checkIn = new Date(`${checkindate.value}T00:00:00`);
+    const checkOut = new Date(`${checkoutdate.value}T00:00:00`);
+
+    const isValidCheckInDate = checkIn >= today;
+    const isValidCheckOutDate = checkOut > checkIn;
+
+    if (!isValidCheckInDate) {
       errors = {
         ...errors,
         checkindate: "Invalid checkin date",
       };
     }
 
-    if (!isvalidcheckoutdate) {
+    if (!isValidCheckOutDate) {
       errors = {
         ...errors,
         checkindate: "Invalid checkout date",
       };
+     
     }
+
 
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
@@ -524,73 +528,65 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
       return;
     }
 
-    if(selectedRooms.length===0){
-      setFormLevel(4)
-      showMessages("Select At Least 1 Room","reject");
-      setLoading(false)
-      return;
-    }
- 
-
-   
-    if(!source || !sourceEnum.includes(source.value)){
-      errors={
-        ...errors,
-        source:"Invalid Source"
-      }
-    }
-
-   if(!reservationFee || !Number.isInteger(reservationFee))
-
-    if (Object.keys(errors).length > 0) {
-      setErrors(errors);
-      setFormLevel(5);
+    if (selectedRooms.length === 0) {
+      setFormLevel(4);
+      showMessages("Select At Least 1 Room", "reject");
       setLoading(false);
       return;
     }
 
-
-    if(Object.keys(errors).length===0){
-      let data = new FormData();
-      data.append("guest",guest._id);
-      data.append("checkindate",checkindate.value)
-      data.append("checkoutdate",checkoutdate.value)
-      data.append("estimatedcheckintime",estimatedcheckintime.value)
-      data.append("adults",adults.value)
-      data.append("children",children.value)
-      selectedRooms.forEach((rooms)=>{
-        data.append("rooms",rooms._id)
-      })
-
-      data.append("reservationfee",reservationFee.value);
-      data.append("source",source.value)
-      data.append("note",note.value);
-      data.append("specialrequest",specialrequest.value)
-
-     try{
-
-      let res=await api.post(`/reservation/create/${hotelid}`,data)
-      if(res.status===201){
-        showMessages(res?.data.message,"success")
-        setToDefault();
-        fetch()
-        onexit()
-      }
-     }catch(err){
-      if(err){
-        showMessages(err?.response?.data.message || "internal server error",'reject')
-      }
-
-     }
-
+    if (!source || !sourceEnum.includes(source.value)) {
+      errors = {
+        ...errors,
+        source: "Invalid Source",
+      };
     }
 
-    setLoading(false)
+    if (!reservationFee || !Number.isInteger(reservationFee))
+      if (Object.keys(errors).length > 0) {
+        setErrors(errors);
+        setFormLevel(5);
+        setLoading(false);
+        return;
+      }
+
+    if (Object.keys(errors).length === 0) {
+      let data = new FormData();
+      data.append("guest", guest._id);
+      data.append("checkindate", checkindate.value);
+      data.append("checkoutdate", checkoutdate.value);
+      data.append("estimatedcheckintime", estimatedcheckintime.value);
+      data.append("adults", adults.value);
+      data.append("children", children.value);
+      selectedRooms.forEach((rooms) => {
+        data.append("rooms", rooms._id);
+      });
+
+      data.append("reservationfee", reservationFee.value);
+      data.append("source", source.value);
+      data.append("note", note.value);
+      data.append("specialrequest", specialrequest.value);
+
+      try {
+        let res = await api.post(`/reservation/create/${hotelid}`, data);
+        if (res.status === 201) {
+          showMessages(res?.data.message, "success");
+          setToDefault();
+          fetch();
+          onexit();
+        }
+      } catch (err) {
+        if (err) {
+          showMessages(
+            err?.response?.data.message || "internal server error",
+            "reject",
+          );
+        }
+      }
+    }
+
+    setLoading(false);
   };
-
-  
-
-
 
   useEffect(() => {
     const adults = Number(formData.adults?.value || 0);
@@ -669,10 +665,13 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
               Fill Up This Form To Create The Reservation
             </div>
           </div>
-          <div className={styles.exitbtn} onClick={()=>{
-            setToDefault()
-            onexit()
-          }}>
+          <div
+            className={styles.exitbtn}
+            onClick={() => {
+              setToDefault();
+              onexit();
+            }}
+          >
             <RxCross1 />
           </div>
         </div>
@@ -1038,7 +1037,7 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
                   errors={errors}
                   value={formData.reservationFee?.value || 0}
                 />
-                 <Input
+                <Input
                   type="select"
                   required
                   placeholder="Source"
@@ -1057,12 +1056,7 @@ const CreateReservationform = ({onexit=()=>{},fetch=()=>{}}) => {
                     );
                   })}
                 </Input>
-
-               
               </div>
-
-            
-
 
               <div className={styles.formrow}>
                 <Input
