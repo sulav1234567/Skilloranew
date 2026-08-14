@@ -27,6 +27,7 @@
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7",
-    "resend": "^6.12.3"
+    "resend": "^6.12.3",
+    "socket.io": "^4.8.3"
   }
 }

@@ -12,7 +12,7 @@ import GuestCard from "./guestCard";
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^[0-9]{10}$/;
 const guestTypeEnum = ["normal", "vip", "corporate", "blacklisted"];
-const idTypeEnum = ["citizenship", "passport", "liscense", "national_Id"];
+const idTypeEnum = ["citizenship", "passport", "license", "national_Id"];
 let sourceEnum = ["direct", "website", "phone", "walk_in", "ota", "other"];
 
 export let Input = ({
@@ -296,6 +296,7 @@ const CreateReservationform = ({ onexit = () => {}, fetch = () => {} }) => {
         if (res?.status === 201) {
           setGuest(res?.data.guest);
           showMessages(res?.data.message, "success");
+          HandlePageChange("next");
         }
 
         if (res?.status === 404) {
@@ -305,15 +306,15 @@ const CreateReservationform = ({ onexit = () => {}, fetch = () => {} }) => {
 
         if (res?.status === 409) {
           setGuest(res?.data.guest);
+          HandlePageChange("next");
         }
       } catch (err) {
+        console.log(err)
         if (err) {
           setGuest(null);
           showMessages(err?.response?.data.message, "reject");
         }
-      } finally {
-        HandlePageChange("next");
-      }
+      } 
     }
     setErrors(error);
     setLoading(false);
@@ -576,6 +577,7 @@ const CreateReservationform = ({ onexit = () => {}, fetch = () => {} }) => {
           onexit();
         }
       } catch (err) {
+        console.log(err)
         if (err) {
           showMessages(
             err?.response?.data.message || "internal server error",

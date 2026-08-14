@@ -23,6 +23,7 @@ import PaymentRouter from "./routes/payment.routes.js";
 
 
 
+
 var app = express();
 
 app.use("/uploads", express.static("uploads"));
@@ -54,6 +55,7 @@ app.use("/payment",PaymentRouter)
 app.use("/checkin",CheckinRouter)
 app.use("/stream",ImageServingRouter)
 app.use("/inhouse",InHouseRouter)
+
 
 
 export default app;

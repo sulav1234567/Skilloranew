@@ -25,16 +25,18 @@ import SkeletonReservationDetailpage from "../../../components/skeletonpageforre
 import { NameInitials } from "../../../../leftnavbar/leftnavbar";
 import { GrTransaction } from "react-icons/gr";
 import {
+  IoAddOutline,
   IoChevronDown,
   IoChevronUp,
   IoDocumentsOutline,
   IoLocationOutline,
   IoMailOutline,
+  IoAdd
 } from "react-icons/io5";
 import { formatFileSize } from "../../../../utilits/utilits";
 import SkeletonLoader from "../../../../loader/loaders";
 import { BiExpandAlt, BiWallet } from "react-icons/bi";
-import { IoAdd } from "react-icons/io5";
+
 
 let HugeImageViewer = ({ url = null, onExit = () => {} }) => {
   return (
@@ -410,38 +412,100 @@ const InhouseDetailedView = () => {
                   )}
                 </div>
               )}
-              {/* <div className={styles.infocard}>
-                <div className={styles.infocardhead}>
-                  <div className={styles.infoheadicon}>
-                    <FaPeopleRoof />
-                  </div>
-                  <div className={styles.infocardheading}>
-                    Staying Guests Information{" "}
-                  </div>
-                </div>
-                <GuestCard
-                  guest={reservation.guest}
-                  isprimary
-                  guestType="Primary Guest:"
-                  setGuestData={setPrimaryGuest}
-                  index={"primary"}
-                />
-              </div>
 
-              <div className={styles.infocard}>
-                <div className={styles.infocardhead}>
-                  <div className={styles.infoheadicon}>
-                    <TbNotebook />
-                  </div>
-                  <div className={styles.infocardheading}>Notes </div>
-                </div>
 
-                <div className={styles.notecontent}>
-                  {reservation.specialRequests != "N/A"
-                    ? reservation.specialRequests
-                    : "Note is not Uploaded"}
+              <div className={styles.infocard} style={{ gap: "0px" }}>
+                  <div className={styles.infocardhead}>
+                    <div className={styles.infoheadicon}>
+                      <RxPeople />
+                    </div>
+                    <div className={styles.infocardheading}>Staying Guests</div>
+                  </div>
+
+
+                  {checkin.otherGuests.length>0 && checkin.otherGuests.map((guest)=>{
+
+                    return (
+                      <>
+                       <div className={styles.guestinfoholder}>
+                    <div className={styles.guestProfilePic}>
+                      {NameInitials(
+                        `${guest.firstName} ${guest.lastName}`,
+                      )}
+                    </div>
+
+                    <div className={styles.nameholder}>
+                      <div className={styles.guestname}>
+                        {guest.firstName}{" "}
+                        {guest.lastName}
+                      </div>
+
+                      <div className={styles.guesttag}>
+                        Staying Guest
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.frdivider} />
+
+                  <div className={styles.guestcontacinfo}>
+                    <ContactCard
+                      icon={<IoMailOutline />}
+                      name="email"
+                      value={guest.email}
+                    />
+                    <ContactCard
+                      icon={<LuPhone />}
+                      name="phone"
+                      value={guest.phone}
+                    />
+                    <ContactCard
+                      icon={<IoLocationOutline />}
+                      name="Address"
+                      value={guest.address}
+                    />
+                  </div>
+                  {guest.documents?.length > 0 && (
+                    <>
+                      <div className={styles.frdivider} />
+
+                      <div className={styles.guestdocumentholder}>
+                        <div className={styles.infocardhead}>
+                          <div className={styles.infoheadicon}>
+                            <IoDocumentsOutline />
+                          </div>
+                          <div className={styles.infocardheading}>
+                            Documents:
+                          </div>
+                        </div>
+                        <GuestDocumentsHolder
+                          documents={guest.documents}
+                        />
+                      </div>
+                    </>
+                  )}
+                      
+                      </>
+                    )
+                  })}
+
+                  <div className={styles.addMoreGuestbtnHolder}>
+
+                    <div className={styles.addmoreicon}>
+                      <IoAddOutline/>
+
+                      
+                    </div>
+
+                    <div className={styles.addmorebtn}>
+                      Add
+                      
+                    </div>
+                    
+                  </div>
+
+                 
                 </div>
-              </div> */}
+             
             </div>
 
             <div className={styles.infocardholder}>

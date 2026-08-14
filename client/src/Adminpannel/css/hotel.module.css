@@ -416,3 +416,17 @@
   height: 100%;
   width: 100%;
 }
+
+.authproviderholder{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  height: fit-content;
+  width: 100%;
+}
+.authprovider{
+  font-size: 0.75rem;
+  text-transform: capitalize;
+  font-weight: 600;
+  color: rgb(0, 0, 0);
+}

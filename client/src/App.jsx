@@ -38,10 +38,16 @@ import InHouseInOutlet from "./servicemodule/pages/frontOffice/inhouse pages/inh
 import InHouse from "./servicemodule/pages/frontOffice/inhouse pages/inhouse.jsx";
 import InhouseDetailedView from "./servicemodule/pages/frontOffice/inhouse pages/inhousedetailedview.jsx";
 import UserOutlet from "./Adminpannel/pages/Useroutlet.jsx";
+import User from "./Adminpannel/pages/user.jsx";
+import MessageOutlet from "./Adminpannel/pages/messagegs/messageOutlet.jsx";
 
 
 function App() {
   let { user } = useUserInfo();
+  useEffect(()=>{
+
+    console.log(window.history)
+  },[])
   
 
   return (
@@ -65,6 +71,9 @@ function App() {
             </Route>
           </Route>
          <Route path="users/*" element={<UserOutlet/>}>
+         <Route index element={<User/>}/>
+         </Route>
+         <Route path="messages/*" element={<MessageOutlet/>}>
          </Route>
         </Route>
 

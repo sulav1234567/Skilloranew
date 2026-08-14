@@ -771,7 +771,7 @@
 }
 .imageholderbig img {
   height: 100%;
-  width: 100%;
+  width: auto;
 }
 .exitbtn {
   position: absolute;
@@ -834,6 +834,54 @@
   animation:
     l20-1 0.8s infinite linear alternate,
     l20-2 1.6s infinite linear;
+}
+
+.addMoreGuestbtnHolder{
+  display: flex;
+  flex-direction: column;
+  height: 250px;
+  width: 100%;
+  margin-top: 20px;
+  background-color: rgb(247, 248, 255);
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 20px;
+  gap: 5px;
+
+}
+.addmoreicon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+
+}
+.addmoreicon svg{
+  height: 100%;
+  width: 100%;
+  color: rgb(106, 0, 255);
+}
+.addmorebtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 10px 15px;
+  font-size: 0.85rem;
+  background-color: rgb(106, 0, 255);
+  min-width: 100px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 400;
+  color: white;
+  width: fit-content;
+  transition: 0.3s ease-in-out;
+}
+.addmorebtn:hover{
+    background-color: rgb(80, 0, 193);
+
 }
 
 @keyframes l20-1 {

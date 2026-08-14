@@ -126,7 +126,6 @@
   height: fit-content;
   width: 100%;
   padding: 0px 0px 20px 0px;
-  overflow: hidden;
   border-radius: 15px;
   background-color: white;
   border: 1px solid rgb(237, 237, 237);
@@ -140,6 +139,7 @@
   padding: 15px 20px;
   background-color: rgb(244, 244, 244);
 }
+
 .filtersearch{
   display: flex;
   align-items: center;
@@ -177,6 +177,7 @@
   border-top: 1px solid rgb(220, 220, 220);
   border-bottom: 1px solid rgb(220, 220, 220);
 }
+
 .reservationstable table thead tr {
   height: 100%;
   width: 100%;
@@ -209,6 +210,10 @@
   height: 80px;
   width: 100%;
   border-bottom: 1px solid rgb(220, 220, 220);
+}
+.reservationstable table tbody tr:last-child{
+    border-bottom: none;
+
 }
 .reservationstable table tbody tr td:first-child {
   width: 180px;

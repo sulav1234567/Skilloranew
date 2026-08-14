@@ -3,6 +3,7 @@ import { upload } from "../config/multer.config.js";
 import { allowRoles, AuthUser } from "../middlewares/authuser.middleware.js";
 import { SearchUser } from "../controller/hotelcontroller/hotelrole.controller.js";
 import HotelRole from "../models/hotelroles.js";
+import { GetAllUser } from "../controller/user.controller.js";
 const Router = express.Router()
 
 
@@ -27,5 +28,6 @@ Router.post("/getmyinfo",async(req,res)=>{
 })
 
 Router.post("/getuser",allowRoles("admin"),SearchUser)
+Router.get("/getalluser",allowRoles("admin"),GetAllUser)
 
 export default Router;

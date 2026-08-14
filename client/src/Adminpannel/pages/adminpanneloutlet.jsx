@@ -12,6 +12,7 @@ import SkeletonLoader from "../../loader/loaders";
 import Usernavigation from "../../landingpage/components/usernavigation";
 import { useUserInfo } from "../../userinfo/userinfo";
 import { LuHotel } from "react-icons/lu";
+import { LuMessageSquare } from "react-icons/lu";
 
 const Adminpanneloutlet = () => {
   let {user}=useUserInfo()
@@ -34,6 +35,11 @@ const Adminpanneloutlet = () => {
           text="Hotels"
           icon={<LuHotel />}
           path="/admin/hotels"
+        />
+         <NavbarLink
+          text="Messages"
+          icon={<LuMessageSquare/>}
+          path="/admin/messages"
         />
       </Leftnavbar>
       <div className={styles.rightside}>

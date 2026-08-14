@@ -179,7 +179,7 @@ export const GetAllInhouseCheckins = async (req, res) => {
     ]);
 
     return res.status(200).json({
-      inhousecheckin: AllCheckIn,
+      inhousecheckins: AllCheckIn,
     });
   } catch (err) {
     console.log(err);

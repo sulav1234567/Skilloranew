@@ -216,8 +216,8 @@ const InHouse= () => {
       let res = await api.get(`/inhouse/getallinhouse/${hotelid}`);
 
       if (res.status === 200) {
-        setReservations(res.data.inhousecheckin);
-        console.log(res.data.inhousecheckin)
+        setReservations(res.data.inhousecheckins);
+        console.log(res.data.inhousecheckins)
        
     
       }
@@ -350,6 +350,7 @@ const InHouse= () => {
                 </>
               )}
              {!loading && reservations && reservations.map((resv,ind)=>{
+              console.log(resv)
               return (
                 <TableRow
                 reservation={resv.checkinCode}
@@ -369,6 +370,7 @@ const InHouse= () => {
 
               )
              })}
+
             </tbody>
             
             {!loading && Array.isArray(reservations) && reservations.length==0 && (

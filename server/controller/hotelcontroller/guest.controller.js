@@ -102,6 +102,7 @@ let SearchGuest = async (req, res) => {
       guest: GuestModel[0],
     });
   } catch (err) {
+    console.log(err)
     if (err) {
       return res.status(500).json({
         message: err.message || "internal server error",
