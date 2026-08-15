@@ -17,7 +17,7 @@ let SocketContext = createContext(null);
 // backend. Normalize either shape to a plain id string.
 const getId = (value) => {
   if (!value) return null;
-  return typeof value === "string" ? value : value._id?.toString() ?? null;
+  return typeof value === "string" ? value : (value._id?.toString() ?? null);
 };
 
 const MessageOutlet = () => {
@@ -30,20 +30,16 @@ const MessageOutlet = () => {
     state: false,
     userId: null,
   });
+  const [screenWidth, setScreenWidth] = useState(null);
   const [notifPermission, setNotifPermission] = useState(
     typeof window !== "undefined" && "Notification" in window
       ? Notification.permission
-      : "unsupported"
+      : "unsupported",
   );
 
   let navigate = useNavigate();
   const socketRef = useRef(null);
 
-  // The socket effect below intentionally only depends on [user, loading],
-  // so it won't tear down/reconnect on every route change. handleNewMessage
-  // still needs the *currently open* conversation, so we track receiverid
-  // in a ref it can read fresh on every message without adding receiverid
-  // to that effect's deps.
   const receiverIdRef = useRef(receiverid ?? null);
   useEffect(() => {
     receiverIdRef.current = receiverid ?? null;
@@ -100,8 +96,9 @@ const MessageOutlet = () => {
   }, [user?._id, loading]);
 
   useEffect(() => {
+    console.log(receiverid);
     if (selectedReceiver) {
-      navigate(`/admin/messages/i/${selectedReceiver._id}`, { replace: true });
+      navigate(`/admin/messages/i/${selectedReceiver._id}`);
     }
   }, [selectedReceiver]);
 
@@ -136,11 +133,18 @@ const MessageOutlet = () => {
       });
 
       if (isIncomingMessage && (!isCurrentConversation || !isPageVisible)) {
+        console.log(
+          "🔔 Attempting notification, permission is:",
+          Notification.permission,
+        );
+
         sendBrowserNotification({
           title: data?.senderName || "New Message",
           body: message.content || "You received a new message",
           icon: data?.senderavatar || "/favicon.ico",
           tag: `message-${message._id ?? Date.now()}`,
+        }).then((result) => {
+          console.log("🔔 sendBrowserNotification returned:", result);
         });
       }
 
@@ -150,14 +154,14 @@ const MessageOutlet = () => {
         const updatedUsers = prevUsers.map((useri) =>
           useri._id?.toString() !== otherUserId
             ? useri
-            : { ...useri, LastMessage: [message] }
+            : { ...useri, LastMessage: [message] },
         );
 
         const targetUser = updatedUsers.find(
-          (useri) => useri._id?.toString() === otherUserId
+          (useri) => useri._id?.toString() === otherUserId,
         );
         const otherUsers = updatedUsers.filter(
-          (useri) => useri._id?.toString() !== otherUserId
+          (useri) => useri._id?.toString() !== otherUserId,
         );
 
         return targetUser ? [targetUser, ...otherUsers] : updatedUsers;
@@ -177,7 +181,7 @@ const MessageOutlet = () => {
               status: data.status,
             })),
           };
-        })
+        }),
       );
     };
 
@@ -203,49 +207,58 @@ const MessageOutlet = () => {
     setSelectedReceiver(receiver);
   };
 
+  useEffect(() => {
+    setScreenWidth(window.innerWidth);
+  }, [receiverid]);
+
   return (
     <div className={styles.mainchatcontainer}>
-      <div className={styles.chatsleft}>
-        <div className={styles.messagingheading}>
-          Messages
-          {notifPermission === "default" && (
-            <button onClick={enableNotifications} className={styles.notifBtn}>
-              Enable notifications
-            </button>
-          )}
-          {notifPermission === "denied" && (
-            <span
-              className={styles.notifBlocked}
-              title="Notifications are blocked for this site. Allow them in your browser's site settings, then reload."
-            >
-              Notifications blocked
-            </span>
-          )}
-        </div>
-        <div className={styles.searchbarholder}>
-          <div className={styles.searchbar}>
-            <IoSearch />
-            <input type="text" placeholder="Search Messages" name="search" />
+      {(screenWidth > 900 ||(screenWidth<=900 &&  !receiverid)) && (
+        <div className={styles.chatsleft}>
+          <div className={styles.messagingheading}>
+            Messages
+            {notifPermission === "default" && (
+              <button onClick={enableNotifications} className={styles.notifBtn}>
+                Enable notifications
+              </button>
+            )}
+            {notifPermission === "denied" && (
+              <span
+                className={styles.notifBlocked}
+                title="Notifications are blocked for this site. Allow them in your browser's site settings, then reload."
+              >
+                Notifications blocked
+              </span>
+            )}
+          </div>
+          <div className={styles.searchbarholder}>
+            <div className={styles.searchbar}>
+              <IoSearch />
+              <input type="text" placeholder="Search Messages" name="search" />
+            </div>
+          </div>
+
+          <div className={styles.messagecardsholder}>
+            {users.map((item) => (
+              <MessageCard
+                key={item._id}
+                carduser={item}
+                onclick={handleSelectReceiver}
+                selectedReceiver={selectedReceiver}
+                typing={typingStatus}
+              />
+            ))}
           </div>
         </div>
+      )}
 
-        <div className={styles.messagecardsholder}>
-          {users.map((item) => (
-            <MessageCard
-              key={item._id}
-              carduser={item}
-              onclick={handleSelectReceiver}
-              selectedReceiver={selectedReceiver}
-              typing={typingStatus}
-            />
-          ))}
-        </div>
-      </div>
-      <SocketContext.Provider
-        value={{ socketRef: socketRef, receiverUser: selectedReceiver }}
-      >
-        <Outlet />
-      </SocketContext.Provider>
+      {(screenWidth > 900 || (screenWidth <= 900 && receiverid)) && (
+        <SocketContext.Provider
+          value={{ socketRef: socketRef, receiverUser: selectedReceiver }}
+        >
+          <Outlet />
+        </SocketContext.Provider>
+      )}
     </div>
   );
 };

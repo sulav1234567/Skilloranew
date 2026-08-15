@@ -415,4 +415,31 @@
   display: block;
 }
 
+@media only screen and (max-width:900px){
+  .mainchatcontainer {
+  
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  padding: 25px 20px;
+  
+
+}
+.chatsleft {
+ 
+  border-right: none;
+}
+
+.chatsright {
+  
+  padding-right: 0px;
+
+}
+
+
+
+
+
+
+}
 
