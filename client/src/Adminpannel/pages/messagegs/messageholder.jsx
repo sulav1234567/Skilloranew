@@ -6,9 +6,10 @@ import styles from "../../css/messages/messages.module.css";
 import { IoMdAdd } from "react-icons/io";
 import { IoSend } from "react-icons/io5";
 import { formatMessageTime } from "../../../utilits/utilits";
+import { sendBrowserNotification } from "../../../utilits/notification.utilits";
 
 export const MessageRightSide = () => {
-  const { socketRef , receiverUser} = useSocket();
+  const { socketRef } = useSocket();
   let { user, loading } = useUserInfo();
   let { receiverid } = useParams();
   const containerRef = useRef(null);
@@ -16,6 +17,7 @@ export const MessageRightSide = () => {
   const [messages, setMessages] = useState(null);
   const [User, setUser] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [receiver, setReceiver] = useState(null);
   const bottomRef = useRef();
   const typingTimeoutRef = useRef(null);
 
@@ -84,45 +86,49 @@ export const MessageRightSide = () => {
       sendMessage();
     }
   };
-  const handleNewMesssage = (message) => {
-    if (message) {
-      setMessages((prev) => {
-        return [...prev, message];
-      });
-    }
-  };
-  const handleMessagesRead = ({ receiverid }) => {
-  setMessages((prev) =>
-    prev.map((message) => {
-      if (message.sender.toString() === receiverid.toString()) {
-        return {
-          ...message,
-          status: "read",
-        };
-      }
+ const handleNewMesssage = (data) => {
+  const message = data?.message;
 
-      return message;
-    })
-  );
-};
-const handleStatusUpdate = (data) => {
+  if (!message) return;
+
   setMessages((prev) => {
-    if (!Array.isArray(prev)) return prev;
+    if (!Array.isArray(prev)) {
+      return [message];
+    }
 
-    return prev.map((message) => {
-      if (
-        message.receiver?.toString() === data.receiver?.toString()
-      ) {
-        return {
-          ...message,
-          status: data.status,
-        };
-      }
-
-      return message;
-    });
+    return [...prev, message];
   });
 };
+  const handleMessagesRead = ({ receiverid }) => {
+    setMessages((prev) =>
+      prev.map((message) => {
+        if (message.sender.toString() === receiverid.toString()) {
+          return {
+            ...message,
+            status: "read",
+          };
+        }
+
+        return message;
+      }),
+    );
+  };
+  const handleStatusUpdate = (data) => {
+    setMessages((prev) => {
+      if (!Array.isArray(prev)) return prev;
+
+      return prev.map((message) => {
+        if (message.receiver?.toString() === data.receiver?.toString()) {
+          return {
+            ...message,
+            status: data.status,
+          };
+        }
+
+        return message;
+      });
+    });
+  };
 
   const handleTyping = () => {
     const socket = socketRef.current;
@@ -143,37 +149,37 @@ const handleStatusUpdate = (data) => {
   };
 
   useEffect(() => {
-  if (!socketRef.current || !user || loading || !receiverid) {
-    return;
-  }
-
-  const socket = socketRef.current;
-
-  socket.emit("send_all_message", { receiverid });
-
-  socket.on("all_messages", (messages) => {
-    if (!messages) return;
-    setMessages(messages);
-  });
-
-  socket.on("new_message", handleNewMesssage);
-
-  socket.on("status_update", handleStatusUpdate);
-
-  socket.on("typing_state", ({ state, userId }) => {
-    if (userId?.toString() === receiverid?.toString()) {
-      setIsTyping(Boolean(state));
+    if (!socketRef.current || !user || loading || !receiverid) {
+      return;
     }
-  });
 
-  return () => {
-    socket.off("all_messages");
-    socket.off("new_message", handleNewMesssage);
-    socket.off("status_update", handleStatusUpdate);
-    socket.off("typing_state");
-    clearTimeout(typingTimeoutRef.current);
-  };
-}, [user, loading, receiverid,socketRef.current]);
+    const socket = socketRef.current;
+
+    socket.emit("send_all_message", { receiverid });
+
+    socket.on("all_messages", (messages) => {
+      if (!messages) return;
+      setMessages(messages);
+    });
+
+    socket.on("new_message", handleNewMesssage);
+
+    socket.on("status_update", handleStatusUpdate);
+
+    socket.on("typing_state", ({ state, userId }) => {
+      if (userId?.toString() === receiverid?.toString()) {
+        setIsTyping(Boolean(state));
+      }
+    });
+
+    return () => {
+      socket.off("all_messages");
+      socket.off("new_message", handleNewMesssage);
+      socket.off("status_update", handleStatusUpdate);
+      socket.off("typing_state");
+      clearTimeout(typingTimeoutRef.current);
+    };
+  }, [user, loading, receiverid, socketRef.current]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
@@ -188,21 +194,42 @@ const handleStatusUpdate = (data) => {
     socket.emit("mark_read", { receiverid });
   }, [messages]);
 
+  useEffect(() => {
+
+    let socket = socketRef.current
+    if (!socket || !receiverid || !user || loading) {
+      return;
+    }
+
+    const handleReceiver = (data) => {
+      console.log(data)
+      setReceiver(data || null);
+    };
+
+    socket.emit("get_receiver", { receiverid });
+
+    socket.on("receiver_user", handleReceiver);
+
+    return () => {
+      socket.off("receiver_user", handleReceiver);
+    };
+  }, [ receiverid, user, loading,socketRef.current]);
+
   return (
     <div className={styles.chatsright}>
-      {receiverid && (
+      {receiverid && receiver && (
         <>
           <div className={styles.chatsHeader}>
             <div className={styles.useravatar}>
-              <img src={receiverUser?.avatar} alt="" />
+              <img src={receiver?.avatar} alt="" />
             </div>
 
-            <div className={styles.username}>{receiverUser?.Fullname}</div>
+            <div className={styles.username}>{receiver?.Fullname}</div>
           </div>
           <div className={styles.chatmainholder} ref={containerRef}>
             {messages &&
               Array.isArray(messages) &&
-              messages.map((message,index) => {
+              messages.map((message, index) => {
                 return (
                   <div
                     className={`${styles.messagerow} ${message.sender.toString().trim() === user._id.toString().trim() ? styles.senderrow : styles.receiverrow}`}
@@ -213,12 +240,10 @@ const handleStatusUpdate = (data) => {
                       {message.content}
                     </div>
 
-
-                    <div className={`${styles.timespampsandstate} ${messages.length === index+1 && message.sender.toString().trim() === user._id.toString().trim() ? styles.timestampsshow:styles.timestampshide}`}>
-
+                    <div
+                      className={`${styles.timespampsandstate} ${messages.length === index + 1 && message.sender.toString().trim() === user._id.toString().trim() ? styles.timestampsshow : styles.timestampshide}`}
+                    >
                       {formatMessageTime(message.createdAt)} . {message.status}
-
-                      
                     </div>
                   </div>
                 );

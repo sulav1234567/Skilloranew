@@ -113,6 +113,28 @@ export const initializeMessageSocket = (io) => {
       }
     });
 
+    socket.on("get_receiver", async ({ receiverid }) => {
+      try {
+        const userId = socket.user._id;
+
+        if (!receiverid || !mongoose.Types.ObjectId.isValid(receiverid)) {
+          return socket.emit("message_error", {
+            message: "Invalid Receiver Id",
+          });
+        }
+
+        let Userfind = await User.findById(receiverid).select(
+          "-password -refreshtoken -googleId -role",
+        );
+
+        socket.emit("receiver_user", Userfind);
+      } catch (error) {
+        socket.emit("message_error", {
+          message: error.message,
+        });
+      }
+    });
+
     socket.on("send_message", async ({ receiverid, content }) => {
       try {
         const sender = socket.user;
@@ -149,8 +171,16 @@ export const initializeMessageSocket = (io) => {
           content: content.trim(),
         });
 
-        messageIO.to(`user:${receiver._id}`).emit("new_message", newMessage);
-        messageIO.to(`user:${sender._id}`).emit("new_message", newMessage);
+        messageIO.to(`user:${receiver._id}`).emit("new_message", {
+          message: newMessage,
+          senderName: sender.Fullname,
+          senderavatar: sender.avatar,
+        });
+        messageIO.to(`user:${sender._id}`).emit("new_message", {
+          message: newMessage,
+          senderName: sender.Fullname,
+          senderavatar: sender.avatar,
+        });
       } catch (error) {
         console.error("Send message error:", error);
 
@@ -231,20 +261,17 @@ export const initializeMessageSocket = (io) => {
       }
     });
 
-
-     socket.on("typing", async ({ receiverid }) => {
-        messageIO.to(`user:${receiverid}`).emit("typing_state", {
-          state:true,
-          userId:userId
-        });
-      
+    socket.on("typing", async ({ receiverid }) => {
+      messageIO.to(`user:${receiverid}`).emit("typing_state", {
+        state: true,
+        userId: userId,
+      });
     });
     socket.on("stop_typing", async ({ receiverid }) => {
-        messageIO.to(`user:${receiverid}`).emit("typing_state", {
-          state:false,
-          userId:userId
-        });
-      
+      messageIO.to(`user:${receiverid}`).emit("typing_state", {
+        state: false,
+        userId: userId,
+      });
     });
 
     socket.on("disconnect", () => {
