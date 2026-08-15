@@ -184,7 +184,7 @@ const MessageOutlet = () => {
           ))}
         </div>
       </div>
-      <SocketContext.Provider value={{ socketRef: socketRef }}>
+      <SocketContext.Provider value={{ socketRef: socketRef, receiverUser:selectedReceiver }}>
         <Outlet />
       </SocketContext.Provider>
     </div>

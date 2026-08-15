@@ -8,7 +8,7 @@ import { IoSend } from "react-icons/io5";
 import { formatMessageTime } from "../../../utilits/utilits";
 
 export const MessageRightSide = () => {
-  const { socketRef } = useSocket();
+  const { socketRef , receiverUser} = useSocket();
   let { user, loading } = useUserInfo();
   let { receiverid } = useParams();
   const containerRef = useRef(null);
@@ -193,11 +193,11 @@ const handleStatusUpdate = (data) => {
       {receiverid && (
         <>
           <div className={styles.chatsHeader}>
-            {/* <div className={styles.useravatar}>
-              <img src={selectedReceiver.avatar} alt="" />
+            <div className={styles.useravatar}>
+              <img src={receiverUser?.avatar} alt="" />
             </div>
 
-            <div className={styles.username}>{selectedReceiver.Fullname}</div> */}
+            <div className={styles.username}>{receiverUser?.Fullname}</div>
           </div>
           <div className={styles.chatmainholder} ref={containerRef}>
             {messages &&
