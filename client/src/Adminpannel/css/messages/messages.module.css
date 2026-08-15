@@ -306,7 +306,7 @@
 
   overflow-y: auto;
 
-  gap: 10px;
+  gap: 3px;
 
   padding: 15px;
 
@@ -318,10 +318,13 @@
   width: 100%;
   height: fit-content;
   flex-shrink: 0;
+  gap: 3px;
+  flex-direction: column;
 }
 
-.senderrow{
-    justify-content: flex-end;
+.senderrow {
+  align-items: flex-end;
+
 }
 
 .messagemain {
@@ -338,12 +341,11 @@
   min-height: 40px;
 }
 .receivermessage {
-  background-color: rgb(238, 238, 238);
+  background-color: #e4e6eb;
   font-size: 0.875rem;
-  color: rgb(79, 79, 79);
+  color: #65676b;
   font-weight: 500;
 }
-
 .sendermessage {
   right: 0;
   background-color: rgb(81, 0, 211);
@@ -351,3 +353,62 @@
   color: rgb(246, 246, 246);
   font-weight: 300;
 }
+
+.typinganimation {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 9px 13px;
+  width: fit-content;
+
+  background: #e4e6eb;
+  border-radius: 20px;
+}
+
+.typinganimation span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #65676b;
+  animation: messengerTyping 1.2s infinite;
+}
+
+.typinganimation span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typinganimation span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes messengerTyping {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-3px);
+  }
+}
+
+
+
+.timespampsandstate{
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgb(82, 82, 82);
+  
+}
+
+
+.timestampshide{
+  display: none;
+}
+.timestampshide{
+  display: none;
+}
+.messagemain:hover .timestampshide{
+  display: block;
+}
+
+

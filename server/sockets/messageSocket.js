@@ -9,39 +9,13 @@ import {
 
 export const initializeMessageSocket = (io) => {
   const messageIO = io.of("/message");
-
-  // ======================================
-  // SOCKET AUTHENTICATION
-  // ======================================
-
   messageIO.use(SocketAuthUser);
-
   messageIO.use(SocketAllowRoles("admin"));
 
-  // ======================================
-  // CONNECTION
-  // ======================================
-
   messageIO.on("connection", (socket) => {
-    console.log("Message socket connected:", socket.id);
+    const userId = socket.user._id.toString();
 
-    console.log("Authenticated user:", socket.user.Fullname);
-
-    // ==================================
-    // JOIN PERSONAL ROOM
-    // ==================================
-
-    socket.on("join", () => {
-      const userId = socket.user._id.toString();
-
-      socket.join(`user:${userId}`);
-
-      console.log(`User ${userId} joined user:${userId}`);
-    });
-
-    // ==================================
-    // GET USERS
-    // ==================================
+    socket.join(`user:${userId}`);
 
     socket.on("get_users", async () => {
       try {
@@ -133,23 +107,14 @@ export const initializeMessageSocket = (io) => {
 
         socket.emit("users", users);
       } catch (error) {
-        console.error(error);
-
         socket.emit("message_error", {
           message: error.message,
         });
       }
     });
 
-    // ==================================
-    // SEND MESSAGE
-    // ==================================
-
     socket.on("send_message", async ({ receiverid, content }) => {
       try {
-        // IMPORTANT:
-        // sender comes from authenticated socket
-
         const sender = socket.user;
 
         if (!receiverid || !mongoose.Types.ObjectId.isValid(receiverid)) {
@@ -184,12 +149,7 @@ export const initializeMessageSocket = (io) => {
           content: content.trim(),
         });
 
-        // Send to receiver
-
         messageIO.to(`user:${receiver._id}`).emit("new_message", newMessage);
-
-        // Send to sender
-
         messageIO.to(`user:${sender._id}`).emit("new_message", newMessage);
       } catch (error) {
         console.error("Send message error:", error);
@@ -246,9 +206,46 @@ export const initializeMessageSocket = (io) => {
       }
     });
 
-    // ==================================
-    // DISCONNECT
-    // ==================================
+    socket.on("mark_read", async ({ receiverid }) => {
+      const currentUser = socket.user;
+
+      const result = await ChatModel.updateMany(
+        {
+          sender: receiverid,
+          receiver: currentUser._id,
+          status: { $ne: "read" },
+        },
+        {
+          $set: {
+            status: "read",
+          },
+        },
+      );
+
+      if (result.modifiedCount > 0) {
+        messageIO.to(`user:${receiverid}`).emit("status_update", {
+          sender: receiverid,
+          receiver: currentUser._id,
+          status: "read",
+        });
+      }
+    });
+
+
+     socket.on("typing", async ({ receiverid }) => {
+        messageIO.to(`user:${receiverid}`).emit("typing_state", {
+          state:true,
+          userId:userId
+        });
+      
+    });
+    socket.on("stop_typing", async ({ receiverid }) => {
+        messageIO.to(`user:${receiverid}`).emit("typing_state", {
+          state:false,
+          userId:userId
+        });
+      
+    });
 
     socket.on("disconnect", () => {
       console.log("Message socket disconnected:", socket.id);

@@ -40,6 +40,7 @@ import InhouseDetailedView from "./servicemodule/pages/frontOffice/inhouse pages
 import UserOutlet from "./Adminpannel/pages/Useroutlet.jsx";
 import User from "./Adminpannel/pages/user.jsx";
 import MessageOutlet from "./Adminpannel/pages/messagegs/messageOutlet.jsx";
+import { MessageRightSide } from "./Adminpannel/pages/messagegs/messageholder.jsx";
 
 
 function App() {
@@ -74,6 +75,7 @@ function App() {
          <Route index element={<User/>}/>
          </Route>
          <Route path="messages/*" element={<MessageOutlet/>}>
+         <Route path="i/:receiverid" element={<MessageRightSide/>}/>
          </Route>
         </Route>
 
