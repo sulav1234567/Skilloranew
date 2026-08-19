@@ -19,7 +19,7 @@ const Mainherosection = () => {
           </div>
 
           <div className={styles.herochilddiscriptivetext}>
-            SkillOra Hotels helps hotels manage reservations, guests, rooms,
+            SkillSoora Hotels helps hotels manage reservations, guests, rooms,
             payments, billing, and daily operations from one powerful and
             easy-to-use platform.
           </div>

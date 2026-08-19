@@ -44,6 +44,21 @@ const InHouseCard = ({
     </div>
   );
 };
+const highlightText = (text, search) => {
+  if (!search) return text;
+
+  const parts = text.split(
+    new RegExp(`(${search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi")
+  );
+
+  return parts.map((part, index) =>
+    part.toLowerCase() === search.toLowerCase() ? (
+      <mark key={index}>{part}</mark>
+    ) : (
+      part
+    )
+  );
+};
 
 
 
@@ -58,6 +73,7 @@ const TableRow = ({
   total="",
   status="",
   id="",
+  search=null,
  
   fetch=()=>{}
 }) => {
@@ -73,11 +89,15 @@ const TableRow = ({
       <td onClick={()=>{
        navigate(`/services/${hotelid}/frontoffice/In-House/iihr/${id}`)
 
-      }}>{reservation}</td>
+      }}>{
+        `
+        ${reservation.split("-")[0]}-${highlightText(reservation.split("-")[1],search)}
+        `
+        }</td>
       <td>
         <div className={styles.guestholder}>
-          <div className={styles.guestname}>{guestname}</div>
-          <div className={styles.guestemail}>{guestemail}</div>
+          <div className={styles.guestname}>{highlightText(guestname,search)}</div>
+          <div className={styles.guestemail}>{highlightText(guestemail,search)}</div>
         </div>
       </td>
       <td>
@@ -140,6 +160,7 @@ const TableRow = ({
   );
 };
 
+
 let SkeletonLoaderTR=()=>{
   return(
     <tr>
@@ -198,6 +219,7 @@ const InHouse= () => {
   let [loading, setLoading] = useState(false);
   let { showMessages } = useGlobalMessageContext();
   let { hotelid } = useParams();
+  let [searchedText,setSearchedText]=useState(null)
  
 
   let fetchReservations = async () => {
@@ -237,6 +259,11 @@ const InHouse= () => {
   useEffect(() => {
     fetchReservations();
   }, []);
+
+  useEffect(()=>{
+    setFilteredReservation(reservations)
+
+  },[reservations])
   return (
    
     <>
@@ -322,7 +349,27 @@ const InHouse= () => {
 
           <div className={styles.filterrow}>
             <div className={styles.filtersearch}>
-              <input type="text"  placeholder="Type To Search" name="searchfilter"/>
+              <input type="text"  placeholder="Type To Search" name="searchfilter" onChange={(e)=>{
+
+                let value = e.target.value;
+
+                setFilteredReservation(()=>{
+                  if(Array.isArray(reservations)){
+                    
+                    return reservations.filter((resv)=>{
+                      let actualCode = resv.checkinCode.split("-")[1].trim() || "";
+                      let primaryGuestName = `${resv.primaryGuest.firstName.trim() || ""} ${resv.primaryGuest.lastName.trim() || ""}`;
+                      let primaryGuestEmail = resv.primaryGuest.email.trim() || "";
+
+                      return actualCode.includes(value) || primaryGuestName.includes(value) || primaryGuestEmail.includes(value)
+                    })
+                  }
+
+                })
+
+                setSearchedText(value)
+
+              }}/>
               
             </div>
             
@@ -349,7 +396,7 @@ const InHouse= () => {
                 <SkeletonLoaderTR/>
                 </>
               )}
-             {!loading && reservations && reservations.map((resv,ind)=>{
+             {!loading && filteredReservation && filteredReservation.map((resv,ind)=>{
               console.log(resv)
               return (
                 <TableRow
@@ -365,6 +412,7 @@ const InHouse= () => {
                 id={resv.checkinCode}
                 key={resv._id}
                 fetch={fetchReservations}
+                search={searchedText}
                 
                 />
 
@@ -373,7 +421,7 @@ const InHouse= () => {
 
             </tbody>
             
-            {!loading && Array.isArray(reservations) && reservations.length==0 && (
+            {!loading && Array.isArray(filteredReservation) && filteredReservation.length==0 && (
               <tfoot>
               <tr>
                   <td colSpan={8}>

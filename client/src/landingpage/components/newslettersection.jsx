@@ -9,7 +9,7 @@ const Newsletter = () => {
         {/* LEFT CONTENT */}
         <div className={styles.leftSection}>
           <div className={styles.heading}>
-            Stay Updated with Skillora Hotels
+            Stay Updated with SkilSoora Hotels
           </div>
 
           <div className={styles.subText}>

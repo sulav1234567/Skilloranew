@@ -536,3 +536,9 @@ tfoot tr td{
   color: rgb(100, 100, 100);
 
 }
+mark{
+  background-color: rgb(225, 83, 0);
+  padding: 0px 3px;
+  color: white;
+  margin: 0px 4px;
+}

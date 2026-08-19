@@ -221,7 +221,7 @@ export const initializeMessageSocket = (io) => {
           ],
         })
           .sort({ createdAt: -1 })
-          .limit(20)
+
           .lean();
 
         allMessages.reverse();

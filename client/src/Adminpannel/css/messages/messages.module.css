@@ -422,6 +422,8 @@
   align-items: center;
   gap: 0px;
   padding: 25px 20px;
+  box-shadow: none;
+  border-radius: none;
   
 
 }

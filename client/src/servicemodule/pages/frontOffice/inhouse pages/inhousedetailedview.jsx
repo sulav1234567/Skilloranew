@@ -153,6 +153,7 @@ const InhouseDetailedView = () => {
   let [transactionLimit, setTransactionLimit] = useState(2);
   let { showMessages } = useGlobalMessageContext();
   let navigate = useNavigate();
+  let [addGuestForm,setAddGuestForm]=useState(false)
   let FetchCheckin = async () => {
     if (loading) {
       return;
@@ -487,7 +488,7 @@ const InhouseDetailedView = () => {
                       </>
                     )
                   })}
-
+                  {!addGuestForm &&
                   <div className={styles.addMoreGuestbtnHolder}>
 
                     <div className={styles.addmoreicon}>
@@ -502,6 +503,10 @@ const InhouseDetailedView = () => {
                     </div>
                     
                   </div>
+                  
+                  }
+
+                  
 
                  
                 </div>

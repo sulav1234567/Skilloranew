@@ -387,7 +387,7 @@ const TableRow = ({
   role="",
   providers={}
 }) => {
-  let [editHotelForm, setEditHotelForm] = useState(false);
+  
   let { setConfirmationMessageData, clearMessage } =
     useConfirmationMessageContext();
   let { showMessages } = useGlobalMessageContext();
@@ -433,19 +433,13 @@ const TableRow = ({
         </td>
         <td>
           <div className={styles.tableactionsholder}>
+            asdfas
             
           </div>
         </td>
       </tr>
 
-      {editHotelForm && (
-        <EditHotelFrom
-          onclose={() => {
-            setEditHotelForm(false);
-          }}
-          hoteldata={data}
-        />
-      )}
+     
     </>
   );
 };

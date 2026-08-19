@@ -16,7 +16,7 @@ const Footer = () => {
         
         {/* LEFT SECTION */}
         <div className={styles.brandSection}>
-          <div className={styles.brandName}>Skillora Hotels</div>
+          <div className={styles.brandName}>SkillSoora Hotels</div>
           <div className={styles.brandDescription}>
             Helping hotels, lodges, resorts, and guest houses manage
             reservations, guests, rooms, billing, and daily operations with ease.
@@ -81,7 +81,7 @@ const Footer = () => {
       {/* BOTTOM BAR */}
       <div className={styles.footerBottom}>
         <div className={styles.copyright}>
-          © 2026 Skillora Hotels. All rights reserved. Created By Sulav Khatiwada
+          © 2026 SkillSoora Hotels. All rights reserved. Created By Sulav Khatiwada
         </div>
 
         <div className={styles.bottomLinks}>

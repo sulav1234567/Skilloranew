@@ -41,20 +41,19 @@ import UserOutlet from "./Adminpannel/pages/Useroutlet.jsx";
 import User from "./Adminpannel/pages/user.jsx";
 import MessageOutlet from "./Adminpannel/pages/messagegs/messageOutlet.jsx";
 import { MessageRightSide } from "./Adminpannel/pages/messagegs/messageholder.jsx";
+import { AuthSuccessPage } from "./AuthSystem/pages/AuthSuccess.jsx";
 
 
 function App() {
   let { user } = useUserInfo();
-  useEffect(()=>{
-
-    console.log(window.history)
-  },[])
+ 
   
 
   return (
     <>
       <Routes>
         <Route path="/" element={<Landingpage />} />
+        <Route path="/auth/success" element={<AuthSuccessPage/>}/>
 
         <Route
           path="/admin/*"

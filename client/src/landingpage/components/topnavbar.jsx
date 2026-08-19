@@ -40,7 +40,7 @@ useEffect(() => {
               <div className={styles.topnavbarlogo}>
                 <img src={logo} alt="logo" />
               </div>
-              <div className={styles.topnavbarlogotext}>SkillOra</div>
+              <div className={styles.topnavbarlogotext}>SkillSoora</div>
             </div>
               
             {loading && <div className={styles.loginandsignupbtnholder}>
